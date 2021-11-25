@@ -6,7 +6,7 @@ from django.views.generic import (
 )
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-from .models import Stock
+from .models import Category, Stock
 from .forms import StockForm
 from django_filters.views import FilterView
 from .filters import StockFilter
@@ -17,6 +17,7 @@ class StockListView(FilterView):
     queryset = Stock.objects.filter(is_deleted=False)
     template_name = 'inventory.html'
     paginate_by = 10
+
 
 
 class StockCreateView(SuccessMessageMixin, CreateView):                                 # createview class to add new stock, mixin used to display message
@@ -30,6 +31,8 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
         context = super().get_context_data(**kwargs)
         context["title"] = 'Nuevo producto'
         context["savebtn"] = 'Agregar al inventario'
+        
+
         return context       
 
 
@@ -44,7 +47,7 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):                         
         context = super().get_context_data(**kwargs)
         context["title"] = 'Editar producto'
         context["savebtn"] = 'Actualizar producto'
-        context["delbtn"] = 'Eliminar producto'
+        context["delbtn"] = 'Vender producto'
         return context
 
 
@@ -58,7 +61,6 @@ class StockDeleteView(View):                                                    
 
     def post(self, request, pk):  
         stock = get_object_or_404(Stock, pk=pk)
-        stock.is_deleted = True
-        stock.save()                                               
+        stock.delete()                                              
         messages.success(request, self.success_message)
         return redirect('inventory')

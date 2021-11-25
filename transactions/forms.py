@@ -23,6 +23,8 @@ class SelectSupplierForm(forms.ModelForm):
         model = PurchaseBill
         fields = ['supplier']
 
+
+
 # form used to render a single stock item form
 class PurchaseItemForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

@@ -12,7 +12,7 @@
         <div class="media">
             <div class="media-body">
                 <h2 style="color:#ea2088;" class="account-heading">&nbsp;{{ supplier.name }}</h2>
-                <a href="{% url 'edit-supplier' supplier.pk %}" class="btn ghost-button" style="float: right;">Edit Details</a>
+                <a href="{% url 'edit-supplier' supplier.pk %}" class="btn ghost-button" style="float: right;">Editar detalles</a>
                 <div class="row">
                     <div class="col-md-6">
                         <p class="fal">
@@ -37,12 +37,12 @@
         
         <thead class="thead-inverse align-middle">
             <tr>
-                <th width="10%">Bill No</th>
-                <th width="15%">Stocks Purchased</th>
-                <th width="15%">Quantity Purchased</th>
-                <th width="15%">Total Purchased Price</th>
-                <th width="15%">Purchased Date</th>
-                <th width="30%">Options</th>
+                <th width="10%">Detalle N°</th>
+                <th width="15%">Productos comprados</th>
+                <th width="15%">Cantidad comprada</th>
+                <th width="15%">Precio total</th>
+                <th width="15%">Fecha</th>
+                <th width="30%">Opciones</th>
             </tr>
         </thead>
       
@@ -54,7 +54,7 @@
                 <td class="align-middle">{% for item in purchase.get_items_list %} {{ item.quantity }} <br> {% endfor %}</td>     
                 <td class="align-middle">{{ purchase.get_total_price }}</td>
                 <td class="align-middle">{{ purchase.time.date }}</td>
-                <td class="align-middle"> <a href="{% url 'purchase-bill' purchase.billno %}" class="btn ghost-pink">View Bill</a> <a href="{% url 'delete-purchase' purchase.pk %}" class="btn ghost-red">Delete Bill</a> </td>
+                <td class="align-middle"> <a href="{% url 'purchase-bill' purchase.billno %}" class="btn ghost-pink">Ver detalle</a> <a href="{% url 'delete-purchase' purchase.pk %}" class="btn ghost-red">Delete Bill</a> </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -66,7 +66,7 @@
 
             {% if bills.has_previous %}
                 <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
-                <a class="btn btn-outline-info mb-4" href="?page={{ bills.previous_page_number }}">Previous</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ bills.previous_page_number }}">Anterior</a>
             {% endif %}
 
             {% for num in bills.paginator.page_range %}
@@ -78,8 +78,8 @@
             {% endfor %}
 
             {% if bills.has_next %}
-                <a class="btn btn-outline-info mb-4" href="?page={{ bills.next_page_number }}">Next</a>
-                <a class="btn btn-outline-info mb-4" href="?page={{ bills.paginator.num_pages }}">Last</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ bills.next_page_number }}">Siguiente</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ bills.paginator.num_pages }}">Último</a>
             {% endif %}
 
         {% endif %}

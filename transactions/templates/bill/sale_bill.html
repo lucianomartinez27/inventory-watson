@@ -2,12 +2,12 @@
 {% load static %}
 
 
-{% block title %} Sale Bill No : {{ bill.billno }}{% endblock title %}
+{% block title %} Detalle venta N° : {{ bill.billno }}{% endblock title %}
 
 
 {% block content %}
     
-    <div style="color:#ea2088; font-style: bold; font-size: 3rem;  border-bottom: 1px solid white;">Sale Bill No : {{ bill.billno }}</div>
+    <div style="color:#ea2088; font-style: bold; font-size: 3rem;  border-bottom: 1px solid white;">Detalle venta N° : {{ bill.billno }}</div>
 
     <br><br>
 
@@ -182,5 +182,7 @@
             document.body.innerHTML = originalContents;
         }       
         </script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+        <script src="{% static 'js/sidebar.js' %}"></script>
 
 {% endblock %}

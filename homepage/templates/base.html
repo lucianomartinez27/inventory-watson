@@ -36,76 +36,83 @@
     <main id="wrapper">
     
     {% if user.is_authenticated %}
+        <div id="sidebar-wrapper">
+          
+            <nav class="sidebar-nav" id=sidebar>
+                
+                <div class="sidebar-header">
+                    <a class="navbar-brand titlefont mr-4" href="{% url 'home' %}"><h3>Watson</h3></a>
+                   
+                </div>
     
-        <nav id="sidebar">
-            
-            <div class="sidebar-header">
-                <a class="navbar-brand titlefont mr-4" href="{% url 'home' %}"><h3>Invi</h3></a>
-            </div>
-
-            <ul class="list-unstyled sidebar-components">
-                {# <p class="sidebar-paragraph">Dummy Heading</p> #}
-                <li>
-                    <a class="sidebar-text sidebar-button" href="{% url 'home' %}">Inicio</a>
-                </li>               
-                <li>
-                    <a href="#inventorySubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Inventario</a>
-                    <ul class="collapse list-unstyled" id="inventorySubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'inventory' %}">Listado de Inventario</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-stock' %}">Agregar nuevo producto</a> </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#purchaseSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Compras</a>
-                    <ul class="collapse list-unstyled" id="purchaseSubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'purchases-list' %}">Lista de compras</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'select-supplier' %}">Nuevo Producto entrante</a> </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#saleSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Ventas</a>
-                    <ul class="collapse list-unstyled" id="saleSubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'sales-list' %}">Ordentes de compra</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-sale' %}">Nuevo producto saliente</a> </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#supplierSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Provedores</a>
-                    <ul class="collapse list-unstyled" id="supplierSubmenu">
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'suppliers-list' %}">Lista de Proveedores</a> </li>
-                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-supplier' %}">Agregar nuevo provedor</a> </li>
-                    </ul>
-                </li>
-                <li>
-                    <a class="sidebar-text sidebar-button" href="{% url 'about' %}">About</a>
-                </li>
-
-                <li class="bottomleft">
-                    <a href="#UserSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">{{ request.user.username }}</a>
-                    <ul class="collapse list-unstyled" id="UserSubmenu">
-                        {% if request.user.is_superuser %}
-                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'admin:index' %}">Administración</a> </li>
-                        {% endif %}
-                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'logout' %}">Salir</a> </li>
-                    </ul>
-                </li>
-
-            </ul>
-            {% comment %}
-            <ul class="list-unstyled CTAs">
-                <li>
-                    <a href="#" class="sidebar-button nav-button">Botón</a>
-                </li>
-                <li>
-                    <a href="#" class="sidebar-text">Link</a>
-                </li>
-            </ul>
-            {% endcomment %}
-
-        </nav>
+                <ul class="list-unstyled sidebar-components">
+                    {# <p class="sidebar-paragraph">Dummy Heading</p> #}
+                    <li>
+                        <a class="sidebar-text sidebar-button" href="{% url 'home' %}">Inicio</a>
+                    </li>               
+                    <li>
+                        <a href="#inventorySubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Inventario</a>
+                        <ul class="collapse list-unstyled" id="inventorySubmenu">
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'inventory' %}">Listado de Inventario</a> </li>
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-stock' %}">Agregar nuevo producto</a> </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#purchaseSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Compras</a>
+                        <ul class="collapse list-unstyled" id="purchaseSubmenu">
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'purchases-list' %}">Lista de compras</a> </li>
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'select-supplier' %}">Nuevo Producto entrante</a> </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#saleSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Ventas</a>
+                        <ul class="collapse list-unstyled" id="saleSubmenu">
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'sales-list' %}">Productos vendidos</a> </li>
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-sale' %}">Nuevo producto saliente</a> </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#supplierSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Provedores</a>
+                        <ul class="collapse list-unstyled" id="supplierSubmenu">
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'suppliers-list' %}">Lista de Proveedores</a> </li>
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-supplier' %}">Agregar nuevo provedor</a> </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="sidebar-text sidebar-button" href="{% url 'about' %}">Acerca de</a>
+                    </li>
     
+                    <li class="bottomleft">
+                        <a href="#UserSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">{{ request.user.username }}</a>
+                        <ul class="collapse list-unstyled" id="UserSubmenu">
+                            {% if request.user.is_superuser %}
+                                <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'admin:index' %}">Administración</a> </li>
+                            {% endif %}
+                                <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'logout' %}">Salir</a> </li>
+                        </ul>
+                    </li>
+    
+                </ul>
+                {% comment %}
+                <ul class="list-unstyled CTAs">
+                    <li>
+                        <a href="#" class="sidebar-button nav-button">Botón</a>
+                    </li>
+                    <li>
+                        <a href="#" class="sidebar-text">Link</a>
+                    </li>
+                </ul>
+                {% endcomment %}
+    
+            </nav>
+        
+        </div>
         <div id="content">
-
+            <div class="row">
+                <div class="col-lg-12">
+                  <a href="#" class="btn" id="menu-toggle"><img src="{% static 'svg/hamburger.svg' %}" alt=""></a>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-12">
                 
@@ -133,6 +140,8 @@
     <script src="{% static 'bootstrap/jquery-3.3.1.slim.min.js' %}"></script>
     <script src="{% static 'bootstrap/popper.min.js' %}"></script>
     <script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="{% static 'js/sidebar.js' %}"></script>
 
 </body>
 

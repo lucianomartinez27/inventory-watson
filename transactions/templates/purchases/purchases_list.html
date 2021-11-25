@@ -11,7 +11,7 @@
     <div class="row" style="color: #ea2088; font-style: bold; font-size: 3rem;">
         <div class="col-md-8">Lista de compras</div>
         <div class="col-md-4">               
-            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'select-supplier' %}">Nuevo producto entrante</a> </div>
+            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'select-supplier' %}">Comprar producto</a> </div>
         </div>
     </div>
 
@@ -21,13 +21,13 @@
 
         <thead class="thead-inverse align-middle">
             <tr>
-                <th width="10%">Factura N°</th>
-                <th width="15%">Proveedor</th>
-                <th width="15%">Productos comprados</th>
-                <th width="10%">Cantidad comprada</th>
-                <th width="15%">Precio total de compra</th>
-                <th width="10%">Fecha de compra</th>
-                <th width="25%">Opciones</th>
+                <th scope="col">Factura N°</th>
+                <th scope="col">Proveedor</th>
+                <th scope="col">Productos comprados</th>
+                <th scope="col">Cantidad comprada</th>
+                <th scope="col">Precio total de compra</th>
+                <th scope="col">Fecha de compra</th>
+                <th scope="col">Opciones</th>
             </tr>
         </thead>
 
