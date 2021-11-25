@@ -3,15 +3,15 @@
 {% load widget_tweaks %}
 
 
-{% block title %} Suppliers List {% endblock title %}
+{% block title %} Listado de Proveedores {% endblock title %}
 
 
 {% block content %}
     
     <div class="row" style="color: #ea2088; font-style: bold; font-size: 3rem;">
-        <div class="col-md-8">Suppliers List</div>
+        <div class="col-md-8">Listado de Proveedores</div>
         <div class="col-md-4">               
-            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-supplier' %}">Add New Supplier</a> </div>
+            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-supplier' %}">Agregar nuevo proveedor</a> </div>
         </div>
     </div>
 
@@ -21,10 +21,10 @@
         
         <thead class="thead-inverse align-middle">
             <tr>
-                <th width="25%">Name</th>
-                <th width="20%">Phone No</th>
+                <th width="25%">Nombre</th>
+                <th width="20%">N° teléfono</th>
                 <th width="25%">GSTIN No</th>
-                <th width="30%">Actions</th>
+                <th width="30%">Acciones</th>
             </tr>
         </thead>
 
@@ -40,8 +40,8 @@
                 <td class="align-middle"> {{ supplier.gstin }} </td>
                 <td class="align-middle">
                     <div class="align-middle">
-                        <a href="{% url 'edit-supplier' supplier.pk %}" class="btn ghost-button">Edit Details</a>
-                        <a href="{% url 'delete-supplier' supplier.pk %}" class="btn ghost-red">Delete Supplier</a>
+                        <a href="{% url 'edit-supplier' supplier.pk %}" class="btn ghost-button">Editar detalles</a>
+                        <a href="{% url 'delete-supplier' supplier.pk %}" class="btn ghost-red">Eliminar proveedor</a>
                     </div>
                 </td>              
             </tr>
@@ -55,7 +55,7 @@
 
             {% if page_obj.has_previous %}
                 <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
-                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previo</a>
             {% endif %}
 
             {% for num in page_obj.paginator.page_range %}
@@ -67,8 +67,8 @@
             {% endfor %}
 
             {% if page_obj.has_next %}
-                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
-                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Último</a>
             {% endif %}
 
         {% endif %}
@@ -80,7 +80,7 @@
     </table>
 
     <br><br><br><br><br><br><br><br>
-    <div style="color: #ea2088; font-style: bold; font-size: 1.5rem; text-align: center;">WOW, SUCH EMPTY</div>
+    <div style="color: #ea2088; font-style: bold; font-size: 1.5rem; text-align: center;">Ups, parece vacío</div>
 
 {% endif %}
 

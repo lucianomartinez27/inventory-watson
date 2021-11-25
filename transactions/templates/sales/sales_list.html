@@ -37,7 +37,7 @@
             {% for sale in bills %}
             <tr>
                 <td class="align-middle"> <h3>{{ sale.billno }}</h3> </td>
-                <td class=""> {{ sale.name }} <br> <small style="color: #909494">Ph No : {{ sale.phone }}</small> </td>
+                <td class=""> {{ sale.name }} <br> <small style="color: #909494">Tel : {{ sale.phone }}</small> </td>
                 <td class="align-middle">{% for item in sale.get_items_list %} {{ item.stock.name }} <br> {% endfor %}</td>
                 <td class="align-middle">{% for item in sale.get_items_list %} {{ item.quantity }} <br> {% endfor %}</td>     
                 <td class="align-middle">{{ sale.get_total_price }}</td>

@@ -18,6 +18,7 @@ class SelectSupplierForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['supplier'].queryset = Supplier.objects.filter(is_deleted=False)
         self.fields['supplier'].widget.attrs.update({'class': 'textinput form-control'})
+        self.fields['supplier'].label = 'Proveedor'
     class Meta:
         model = PurchaseBill
         fields = ['supplier']

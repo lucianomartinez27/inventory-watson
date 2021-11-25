@@ -8,7 +8,7 @@
 
 {% block content %}
 
-    <div style="color:#ea2088; font-style: bold; font-size: 3rem; border-bottom: 1px solid #fff">Welcome, {{ request.user.username }}</div>
+    <div style="color:#ea2088; font-style: bold; font-size: 3rem; border-bottom: 1px solid #fff">Bienvenido, {{ request.user.username }}</div>
 
     <br>
 
@@ -20,10 +20,10 @@
 
     <div class="row">
         <div class="col-md-6">
-            <a href="{% url 'select-supplier' %}" class="btn ghost-blue btn-lg btn-block btn-huge">New Incoming Stock</a>
+            <a href="{% url 'select-supplier' %}" class="btn ghost-blue btn-lg btn-block btn-huge">Agregar Producto Entrante</a>
         </div>
         <div class="col-md-6">
-            <a href="{% url 'new-sale' %}" class="btn ghost-blue btn-lg btn-block btn-huge">New Outgoing Stock</a>
+            <a href="{% url 'new-sale' %}" class="btn ghost-blue btn-lg btn-block btn-huge">Agregar Producto Saliente</a>
         </div>
     </div>
 
@@ -33,35 +33,35 @@
         <div class="row">
 
             <div class="col-md-6">
-                <div style="color:#ea2088; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff">Most Recent Sales</div><br>
+                <div style="color:#ea2088; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff">Ventas recientes</div><br>
                 {% for item in sales %}
                     {% if not forloop.first %}
                         <br><div style="border-bottom: 0.5px solid #fff"></div><br>
                     {% endif %}
                     <div class="row">               
                         <div class="col-md-9"> 
-                            Bill No: {{ item.billno }} <br> 
-                            Purchased by {{ item.name }} <br>
+                            Factura N°: {{ item.billno }} <br> 
+                            Comprado a {{ item.name }} <br>
                             <small>{{ item.time.date }}</small>
                         </div>
-                        <div class="col-md-2"> {{ item.get_total_price }} <br> <br> <a href="{% url 'sale-bill' item.billno %}">View Bill</a> </div>
+                        <div class="col-md-2"> {{ item.get_total_price }} <br> <br> <a href="{% url 'sale-bill' item.billno %}">Ver Facturas</a> </div>
                     </div>
                 {% endfor %}
             </div>
 
             <div class="col-md-6">
-                <div style="color:#ea2088; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff">Most Recent Purchases</div><br>
+                <div style="color:#ea2088; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff">Compras recientes</div><br>
                 {% for item in purchases %}
                     {% if not forloop.first %}
                         <br><div style="border-bottom: 0.5px solid #fff"></div><br>
                     {% endif %}
                     <div class="row">               
                         <div class="col-md-9"> 
-                            Bill No: {{ item.billno }} <br> 
-                            Purchased by {{ item.supplier.name }} <br>
+                            Compra N°: {{ item.billno }} <br> 
+                            Comprado a {{ item.supplier.name }} <br>
                             <small>{{ item.time.date }}</small>
                         </div>
-                        <div class="col-md-2"> {{ item.get_total_price }} <br> <br> <a href="{% url 'purchase-bill' item.billno %}">View Bill</a> </div>
+                        <div class="col-md-2"> {{ item.get_total_price }} <br> <br> <a href="{% url 'purchase-bill' item.billno %}">Ver Facturas</a> </div>
                     </div>
                 {% endfor %}
             </div>
@@ -80,7 +80,7 @@
             data: {
                 datasets: [{
                     backgroundColor: '#ea2088',
-                    label: 'Stock in Inventory',
+                    label: 'Stock en el inventario',
                     data: {{ data|safe }},
                 }],
                 labels: {{ labels|safe }}

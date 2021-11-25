@@ -13,7 +13,7 @@ function custom_alert(){
         
         document.getElementById('dialogboxhead').innerHTML = "Error";
         document.getElementById('dialogboxbody').innerHTML = dialog;
-        document.getElementById('dialogboxfoot').innerHTML = '<button onclick="custom_alert.ok()" class="ghost-red">Okay</button>';
+        document.getElementById('dialogboxfoot').innerHTML = '<button onclick="custom_alert.ok()" class="ghost-red">Aceptar</button>';
     }
     this.ok = function(){
         document.getElementById('dialogbox').style.display = "none";

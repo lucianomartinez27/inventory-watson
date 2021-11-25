@@ -7,7 +7,7 @@
 
 {% block content %}
 
-    <div style="color:#ea2088; font-style: bold; font-size: 3rem;  border-bottom: 1px solid white;">Purchase Bill No : {{ bill.billno }}</div>
+    <div style="color:#ea2088; font-style: bold; font-size: 3rem;  border-bottom: 1px solid white;">Factura N° : {{ bill.billno }}</div>
 
     <br><br>
     
@@ -166,9 +166,9 @@
         <br><br>
 
         <div class="wrapper">
-            <button class="center ghost-blue" onclick="printpage('printArea')">Print</button>
-            <button class="center ghost-green" type="submit">Save Draft</button>
-            <a href="{% url 'purchases-list' %}" class=" btn center ghost-button">Go Back</a>
+            <button class="center ghost-blue" onclick="printpage('printArea')">Imprimir</button>
+            <button class="center ghost-green" type="submit">Guardar borrador</button>
+            <a href="{% url 'purchases-list' %}" class=" btn center ghost-button">Atrás</a>
         </div>
 
     </form>

@@ -9,9 +9,9 @@
 {% block content %}
     
     <div class="row" style="color: #ea2088; font-style: bold; font-size: 3rem; ">
-        <div class="col-md-8">Inventory List</div>
+        <div class="col-md-8">Listado de inventario</div>
         <div class="col-md-4">               
-            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-stock' %}">Add New Stock</a> </div>
+            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-stock' %}">Agregar nuevo producto</a> </div>
         </div>
     </div>
     
@@ -23,9 +23,9 @@
 
         <form method="get">
             <div class="input-group search">
-                {% render_field filter.form.name class="form-control textinput" placeholder="Search by stock name" %}
+                {% render_field filter.form.name class="form-control textinput" placeholder="Buscar por producto" %}
                 <div class="input-group-append">
-                   <button type="submit" class="btn btn-pink"> Search </button>
+                   <button type="submit" class="btn btn-pink"> Buscar </button>
                 </div>
             </div>
         </form>
@@ -34,9 +34,9 @@
         
         <thead class="thead-inverse align-middle">
             <tr>
-                <th width="50%">Stock Name</th>
-                <th width="20%">Current Stock in Inventory</th>
-                <th width="30%">Options</th>
+                <th width="50%">Nombre de producto</th>
+                <th width="20%">Stock en el inventario</th>
+                <th width="30%">Opciones</th>
             </tr>
         </thead>
                   
@@ -50,8 +50,8 @@
                     </td>
                     <td class="align-middle">{{ stock.quantity }}</td>
                     <td class="align-middle">
-                        <a href="{% url 'edit-stock' stock.pk %}" class="btn ghost-button">Edit Details</a>
-                        <a href="{% url 'delete-stock' stock.pk %}" class="btn ghost-red"> Delete Stock </a>
+                        <a href="{% url 'edit-stock' stock.pk %}" class="btn ghost-button">Editar detalles</a>
+                        <a href="{% url 'delete-stock' stock.pk %}" class="btn ghost-red"> Eliminar producto </a>
                     </td>          
                 </tr>
             {% endfor %}                   
@@ -64,7 +64,7 @@
 
             {% if page_obj.has_previous %}
                 <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
-                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previo</a>
             {% endif %}
 
             {% for num in page_obj.paginator.page_range %}
@@ -76,8 +76,8 @@
             {% endfor %}
 
             {% if page_obj.has_next %}
-                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
-                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Último</a>
             {% endif %}
 
         {% endif %}
@@ -89,7 +89,7 @@
     </table>
 
     <br><br><br><br><br><br><br><br>
-    <div style="color: #ea2088; font-style: bold; font-size: 1.5rem; text-align: center;">WOW, SUCH EMPTY</div>
+    <div style="color: #ea2088; font-style: bold; font-size: 1.5rem; text-align: center;">Ups, parece vacío</div>
 
 {% endif %}
 

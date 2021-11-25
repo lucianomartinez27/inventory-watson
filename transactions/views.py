@@ -45,13 +45,13 @@ class SupplierCreateView(SuccessMessageMixin, CreateView):
     model = Supplier
     form_class = SupplierForm
     success_url = '/transactions/suppliers'
-    success_message = "Supplier has been created successfully"
+    success_message = "Proveedor creado correctamente"
     template_name = "suppliers/edit_supplier.html"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = 'New Supplier'
-        context["savebtn"] = 'Add Supplier'
+        context["title"] = 'Nuevo proveedor'
+        context["savebtn"] = 'Agregar provedor'
         return context     
 
 
@@ -60,21 +60,21 @@ class SupplierUpdateView(SuccessMessageMixin, UpdateView):
     model = Supplier
     form_class = SupplierForm
     success_url = '/transactions/suppliers'
-    success_message = "Supplier details has been updated successfully"
+    success_message = "Detalles del provedor actualizados currectamente"
     template_name = "suppliers/edit_supplier.html"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = 'Edit Supplier'
-        context["savebtn"] = 'Save Changes'
-        context["delbtn"] = 'Delete Supplier'
+        context["title"] = 'Editar Proveedor'
+        context["savebtn"] = 'Guardar cambios'
+        context["delbtn"] = 'Eliminar Proovedor'
         return context
 
 
 # used to delete a supplier
 class SupplierDeleteView(View):
     template_name = "suppliers/delete_supplier.html"
-    success_message = "Supplier has been deleted successfully"
+    success_message = "Proovedor eliminado correctamente"
 
     def get(self, request, pk):
         supplier = get_object_or_404(Supplier, pk=pk)
@@ -173,7 +173,7 @@ class PurchaseCreateView(View):
                 # saves bill item and stock
                 stock.save()
                 billitem.save()
-            messages.success(request, "Purchased items have been registered successfully")
+            messages.success(request, "Compra de productos registrada correctamente")
             return redirect('purchase-bill', billno=billobj.billno)
         formset = PurchaseItemFormset(request.GET or None)
         context = {
@@ -197,7 +197,7 @@ class PurchaseDeleteView(SuccessMessageMixin, DeleteView):
             if stock.is_deleted == False:
                 stock.quantity -= item.quantity
                 stock.save()
-        messages.success(self.request, "Purchase bill has been deleted successfully")
+        messages.success(self.request, "Factura de compra eliminada correctamente")
         return super(PurchaseDeleteView, self).delete(*args, **kwargs)
 
 
@@ -250,7 +250,7 @@ class SaleCreateView(View):
                 # saves bill item and stock
                 stock.save()
                 billitem.save()
-            messages.success(request, "Sold items have been registered successfully")
+            messages.success(request, "Items vendidos registrados correctamente")
             return redirect('sale-bill', billno=billobj.billno)
         form = SaleForm(request.GET or None)
         formset = SaleItemFormset(request.GET or None)
@@ -275,7 +275,7 @@ class SaleDeleteView(SuccessMessageMixin, DeleteView):
             if stock.is_deleted == False:
                 stock.quantity += item.quantity
                 stock.save()
-        messages.success(self.request, "Sale bill has been deleted successfully")
+        messages.success(self.request, "Factura de venta eliminada correctamente")
         return super(SaleDeleteView, self).delete(*args, **kwargs)
 
 
@@ -313,7 +313,7 @@ class PurchaseBillView(View):
             billdetailsobj.total = request.POST.get("total")
 
             billdetailsobj.save()
-            messages.success(request, "Bill details have been modified successfully")
+            messages.success(request, "Detalles de factura actualizados correctamente")
         context = {
             'bill'          : PurchaseBill.objects.get(billno=billno),
             'items'         : PurchaseItem.objects.filter(billno=billno),
@@ -355,7 +355,7 @@ class SaleBillView(View):
             billdetailsobj.total = request.POST.get("total")
 
             billdetailsobj.save()
-            messages.success(request, "Bill details have been modified successfully")
+            messages.success(request, "Detalles de factura actualizados correctamente")
         context = {
             'bill'          : SaleBill.objects.get(billno=billno),
             'items'         : SaleItem.objects.filter(billno=billno),
