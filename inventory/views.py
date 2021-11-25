@@ -7,7 +7,7 @@ from django.views.generic import (
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from .models import Category, Stock
-from .forms import StockForm
+from .forms import CategoryForm, StockForm
 from django_filters.views import FilterView
 from .filters import StockFilter
 
@@ -19,6 +19,20 @@ class StockListView(FilterView):
     paginate_by = 10
 
 
+class CategoryCreateView(SuccessMessageMixin, CreateView):                                 # createview class to add new stock, mixin used to display message
+    model = Stock                                                                       # setting 'Stock' model as model
+    form_class = CategoryForm                                                              # setting 'StockForm' form as form
+    template_name = "add_category.html"                                                   # 'edit_stock.html' used as the template
+    success_url = '/inventory'                                                          # redirects to 'inventory' page in the url after submitting the form
+    success_message = "Categoria creada correctamente"                             # displays message when form is submitted
+
+    def get_context_data(self, **kwargs):                                               # used to send additional context
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Nueva categoria'
+        context["savebtn"] = 'Agregar categoria'
+        
+
+        return context    
 
 class StockCreateView(SuccessMessageMixin, CreateView):                                 # createview class to add new stock, mixin used to display message
     model = Stock                                                                       # setting 'Stock' model as model

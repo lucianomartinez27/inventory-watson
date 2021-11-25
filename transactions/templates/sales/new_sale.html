@@ -23,32 +23,12 @@
             {{ form.phone.errors }}
             {{ form.email.errors }}
             {{ form.address.errors }}
-            {{ form.gstin.errors }}
 
             <div class="form-group">
                 <label for="{{ form.name.id_for_label }}" class="panel-body-text">Mozo:</label>
                 {{ form.name }}                
             </div>
 
-            <div class="form-row">
-                <div class="form-group col-md-6"> 
-                    <label for="{{ form.phone.id_for_label }}" class="panel-body-text">Phone No:</label>
-                    {{ form.phone }}
-                </div>
-                <div class="form-group col-md-6">              
-                    <label for="{{ form.email.id_for_label }}" class="panel-body-text">Email:</label>
-                    {{ form.email }}
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="{{ form.address.id_for_label }}" class="panel-body-text">Address:</label>
-                {{ form.address }}
-            </div>
-            <div class="form-group">
-                <label for="{{ form.gstin.id_for_label }}" class="panel-body-text">GSTIN No:</label>
-                {{ form.gstin }}
-            </div>
 
         </div>
 
@@ -216,7 +196,7 @@
                         } else {
                             element.parents('.form-row').find('.quantity').val(squantity-1);
                             quantity = squantity - 1;
-                            custom_alert.render('Exceeded current stock available');
+                            custom_alert.render('No hay suficiente stock para esta venta');
                         }
                     }
                 }

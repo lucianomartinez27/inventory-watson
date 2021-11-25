@@ -16,3 +16,13 @@ class StockForm(forms.ModelForm):
         model = Stock
         fields = ['name', 'quantity', 'category']
 
+class CategoryForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):                                                        # used to set css classes to the various fields
+        super().__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs.update({'class': 'textinput form-control'})
+        self.fields['name'].label = 'Nombre'
+
+
+    class Meta:
+        model = Category
+        fields = ['name']
