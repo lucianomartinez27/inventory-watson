@@ -18,8 +18,10 @@ class Stock(models.Model):
     quantity = models.IntegerField(default=1)
     is_deleted = models.BooleanField(default=False)
     category = models.ForeignKey(Category, on_delete=models.CASCADE,  null=True)
+
+    class Meta:
+        ordering = ['quantity']
   
     def __str__(self):
 	    return self.name
-
 

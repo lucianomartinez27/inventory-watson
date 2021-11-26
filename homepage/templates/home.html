@@ -44,7 +44,7 @@
                             Vendido por {{ item.name }} <br>
                             <small>{{ item.time.date }}</small>
                         </div>
-                        <div class="col-md-2"> {{ item.get_total_price }} <br> <br> <a href="{% url 'sale-bill' item.billno %}">Ver Facturas</a> </div>
+                        <div class="col-md-2"> {{ item.get_total_price }} <br> <br> <a href="{% url 'sale-bill' item.billno %}">Ver detalle</a> </div>
                     </div>
                 {% endfor %}
             </div>
@@ -61,7 +61,7 @@
                             Comprado a {{ item.supplier.name }} <br>
                             <small>{{ item.time.date }}</small>
                         </div>
-                        <div class="col-md-2"> {{ item.get_total_price }} <br> <br> <a href="{% url 'purchase-bill' item.billno %}">Ver Facturas</a> </div>
+                        <div class="col-md-2"> {{ item.get_total_price }} <br> <br> <a href="{% url 'purchase-bill' item.billno %}">Ver detalles</a> </div>
                     </div>
                 {% endfor %}
             </div>

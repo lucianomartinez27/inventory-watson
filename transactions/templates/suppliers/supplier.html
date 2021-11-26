@@ -16,13 +16,13 @@
                 <div class="row">
                     <div class="col-md-6">
                         <p class="fal">
-                            Phone No &nbsp; : {{ supplier.phone }} <br>
-                            Email Id &nbsp;&nbsp;&nbsp;&nbsp; : {{ supplier.email }} <br>
+                            Tel &nbsp;&nbsp;&nbsp;&nbsp; : {{ supplier.phone }} <br>
+                            Email  &nbsp;: {{ supplier.email }} <br>
                         </p>
                     </div>
                     <div class="col-md-6">
                         <p class="fal">
-                            Address: <br> {{ supplier.address|linebreaks }}
+                            Dirección: <br> {{ supplier.address|linebreaks }}
                         </p>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                 <td class="align-middle">{% for item in purchase.get_items_list %} {{ item.quantity }} <br> {% endfor %}</td>     
                 <td class="align-middle">{{ purchase.get_total_price }}</td>
                 <td class="align-middle">{{ purchase.time.date }}</td>
-                <td class="align-middle"> <a href="{% url 'purchase-bill' purchase.billno %}" class="btn ghost-pink">Ver detalle</a> <a href="{% url 'delete-purchase' purchase.pk %}" class="btn ghost-red">Delete Bill</a> </td>
+                <td class="align-middle"> <a href="{% url 'purchase-bill' purchase.billno %}" class="btn ghost-pink">Ver detalle</a> <a href="{% url 'delete-purchase' purchase.pk %}" class="btn ghost-red">Eliminar detalle</a> </td>
             </tr>
             {% endfor %}
         </tbody>

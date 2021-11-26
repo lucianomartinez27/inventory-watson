@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import (
     View,
     CreateView, 
-    UpdateView
+    UpdateView,
 )
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
@@ -13,17 +13,19 @@ from .filters import StockFilter
 
 
 class StockListView(FilterView):
+    model = Stock
     filterset_class = StockFilter
-    queryset = Stock.objects.filter(is_deleted=False)
     template_name = 'inventory.html'
     paginate_by = 10
+    ordering = ['-quantity']
 
+    
 
 class CategoryCreateView(SuccessMessageMixin, CreateView):                                 # createview class to add new stock, mixin used to display message
     model = Stock                                                                       # setting 'Stock' model as model
     form_class = CategoryForm                                                              # setting 'StockForm' form as form
     template_name = "add_category.html"                                                   # 'edit_stock.html' used as the template
-    success_url = '/inventory'                                                          # redirects to 'inventory' page in the url after submitting the form
+    success_url = '/inventario'                                                          # redirects to 'inventory' page in the url after submitting the form
     success_message = "Categoria creada correctamente"                             # displays message when form is submitted
 
     def get_context_data(self, **kwargs):                                               # used to send additional context
@@ -38,7 +40,7 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
     model = Stock                                                                       # setting 'Stock' model as model
     form_class = StockForm                                                              # setting 'StockForm' form as form
     template_name = "edit_stock.html"                                                   # 'edit_stock.html' used as the template
-    success_url = '/inventory'                                                          # redirects to 'inventory' page in the url after submitting the form
+    success_url = '/inventario'                                                          # redirects to 'inventory' page in the url after submitting the form
     success_message = "Producto creado correctamente"                             # displays message when form is submitted
 
     def get_context_data(self, **kwargs):                                               # used to send additional context
@@ -54,7 +56,7 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):                         
     model = Stock                                                                       # setting 'Stock' model as model
     form_class = StockForm                                                              # setting 'StockForm' form as form
     template_name = "edit_stock.html"                                                   # 'edit_stock.html' used as the template
-    success_url = '/inventory'                                                          # redirects to 'inventory' page in the url after submitting the form
+    success_url = '/inventario'                                                          # redirects to 'inventory' page in the url after submitting the form
     success_message = "Producto actualizado correctamente"                             # displays message when form is submitted
 
     def get_context_data(self, **kwargs):                                               # used to send additional context

@@ -44,7 +44,7 @@ class SupplierListView(ListView):
 class SupplierCreateView(SuccessMessageMixin, CreateView):
     model = Supplier
     form_class = SupplierForm
-    success_url = '/transactions/suppliers'
+    success_url = '/transacciones/proveedores'
     success_message = "Proveedor creado correctamente"
     template_name = "suppliers/edit_supplier.html"
     
@@ -59,7 +59,7 @@ class SupplierCreateView(SuccessMessageMixin, CreateView):
 class SupplierUpdateView(SuccessMessageMixin, UpdateView):
     model = Supplier
     form_class = SupplierForm
-    success_url = '/transactions/suppliers'
+    success_url = '/transacciones/proveedores'
     success_message = "Detalles del provedor actualizados currectamente"
     template_name = "suppliers/edit_supplier.html"
     
@@ -187,7 +187,7 @@ class PurchaseCreateView(View):
 class PurchaseDeleteView(SuccessMessageMixin, DeleteView):
     model = PurchaseBill
     template_name = "purchases/delete_purchase.html"
-    success_url = '/transactions/purchases'
+    success_url = '/transacciones/compras'
     
     def delete(self, *args, **kwargs):
         self.object = self.get_object()
@@ -197,7 +197,7 @@ class PurchaseDeleteView(SuccessMessageMixin, DeleteView):
             if stock.is_deleted == False:
                 stock.quantity -= item.quantity
                 stock.save()
-        messages.success(self.request, "Factura de compra eliminada correctamente")
+        messages.success(self.request, "Detalle de compra eliminada correctamente")
         return super(PurchaseDeleteView, self).delete(*args, **kwargs)
 
 
@@ -265,7 +265,7 @@ class SaleCreateView(View):
 class SaleDeleteView(SuccessMessageMixin, DeleteView):
     model = SaleBill
     template_name = "sales/delete_sale.html"
-    success_url = '/transactions/sales'
+    success_url = '/transacciones/ventas'
     
     def delete(self, *args, **kwargs):
         self.object = self.get_object()
@@ -275,7 +275,7 @@ class SaleDeleteView(SuccessMessageMixin, DeleteView):
             if stock.is_deleted == False:
                 stock.quantity += item.quantity
                 stock.save()
-        messages.success(self.request, "Factura de venta eliminada correctamente")
+        messages.success(self.request, "Detalle de venta eliminada correctamente")
         return super(SaleDeleteView, self).delete(*args, **kwargs)
 
 

@@ -1,6 +1,9 @@
 from django import forms
 from .models import Category, Stock
 
+
+
+
 class StockForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):                                                        # used to set css classes to the various fields
         super().__init__(*args, **kwargs)
