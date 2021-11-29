@@ -7,7 +7,7 @@
 
 {% block content %}
 
-    <div style="color:#ea2088; font-style: bold; font-size: 3rem; border-bottom: 1px solid white;">Nueva venta</div>
+    <div style="color:#ffa821; font-style: bold; font-size: 3rem; border-bottom: 1px solid white;">Nueva venta</div>
     
     <br>
 
@@ -20,13 +20,11 @@
         <div class="panel-body">
             
             {{ form.name.errors }}
-            {{ form.phone.errors }}
-            {{ form.email.errors }}
-            {{ form.address.errors }}
+            
 
             <div class="form-group">
                 <label for="{{ form.name.id_for_label }}" class="panel-body-text">Mozo:</label>
-                {{ form.name }}                
+                {{ form.name }}   
             </div>
 
 
@@ -46,7 +44,7 @@
                         <div class="row form-row">
                             <div class="form-group col-md-6">
                                 {{ iform.stock.errors }}
-                                <label class="panel-body-text">Cantidad:</label>
+                                <label class="panel-body-text">Producto:</label>
                                 {{ iform.stock }}
                             </div>
                             <div class="form-group col-md-2">
@@ -131,6 +129,7 @@
         
         function deleteForm(prefix, btn) {
             //var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+            
             if (total > 1){
                 btn.closest('.form-row').remove();
                 var forms = $('.form-row');
@@ -142,7 +141,7 @@
                 }
                 total--;
             } else {
-                custom_alert.render('Campo no puede ser eliminado');
+                custom_alert.render('Campo no puede ser eliminado ');
             }
             return false;
         }
@@ -189,7 +188,7 @@
                         quantity = quantity - 1;
                         if(quantity <= 1){
                             //no stocks are available. Attempts to delete field
-                            custom_alert.render('Stocks are currently unavailable. Field will be removed;');
+                            custom_alert.render('Producto no disponible. El campo será eliminado;');
                             //Sets quantity to 0 as failsafe for when the total no of item forms are 1
                             element.parents('.form-row').find('.quantity').val(0);
                             deleteForm('form', element);

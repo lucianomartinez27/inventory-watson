@@ -7,7 +7,7 @@
 
 {% block content %}
     
-    <div style="color:#ea2088; font-style: bold; font-size: 3rem;  border-bottom: 1px solid white;">Detalle venta N° : {{ bill.billno }}</div>
+    <div style="color:#ffa821; font-style: bold; font-size: 3rem;  border-bottom: 1px solid white;">Detalle venta N° : {{ bill.billno }}</div>
 
     <br><br>
 
@@ -34,7 +34,7 @@
                                 <tbody>
                                    
                                     <tr>
-                                        <td class="inner-box" style="width: 50%; font-weight: bold;">&nbsp;COMPRADOR</td>
+                                        <td class="inner-box" style="width: 50%; font-weight: bold;">&nbsp;EMPLEADO</td>
                                         <td class="inner-box" style="width: 25%; font-weight: bold;">&nbsp;VENTA N°</td>
                                         <td class="inner-box" style="width: 25%;">&nbsp;{{ bill.billno }}</td>
                                     </tr>
@@ -77,15 +77,10 @@
                         </tr>
               
 
-                        <tr>
-                            <td style="text-align: right;">
-                                <span style="font-weight: bold;">FOR COMPANY <br><br><br><br> Signature</span>
-                            </td>
-                        </tr>
-
+                    
                         <tr>
                             <td style="text-align: center;">
-                                FINAL TEXT
+                                THE WATSON BAR
                             </td>
                         </tr>
 
@@ -101,9 +96,9 @@
         <br><br>
 
         <div class="wrapper">
-            <button class="center ghost-blue" onclick="printpage('printArea')">Print</button>
-            <button class="center ghost-green" type="submit">Save Draft</button>
-            <a href="{% url 'sales-list' %}" class="btn center ghost-button">Go Back</a>
+            <button class="center ghost-blue" onclick="printpage('printArea')">Imprimir</button>
+            <button class="center ghost-green" type="submit">Guardar borrador</button>
+            <a href="{% url 'sales-list' %}" class="btn center ghost-button">Atrás</a>
         </div>
     
     </form>

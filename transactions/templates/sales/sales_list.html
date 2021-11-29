@@ -8,10 +8,10 @@
 
 {% block content %}
     
-    <div class="row" style="color: #ea2088; font-style: bold; font-size: 3rem;">
+    <div class="row" style="color: #ffa821; font-style: bold; font-size: 3rem;">
         <div class="col-md-8">Lista de ventas</div>
         <div class="col-md-4">               
-            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-sale' %}">Despachar producto</a> </div>
+            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-sale' %}">Vender producto</a> </div>
         </div>
     </div>
     
@@ -21,7 +21,7 @@
             
         <thead class="thead-inverse align-middle">
             <tr>
-                <th width="10%">Factura N°</th>
+                <th width="10%">Detalle N°</th>
                 <th width="15%">Cliente</th>
                 <th width="15%">Producto vendido</th>
                 <th width="10%">Cantdad vendida</th>
@@ -79,7 +79,7 @@
     </table>
 
     <br><br><br><br><br><br><br><br>
-    <div style="color: #ea2088; font-style: bold; font-size: 1.5rem; text-align: center;">WOW, SUCH EMPTY</div>
+    <div style="color: #ffa821; font-style: bold; font-size: 1.5rem; text-align: center;">Ups, parece vacío</div>
 
 {% endif %}
 

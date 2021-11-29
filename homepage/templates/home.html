@@ -8,7 +8,7 @@
 
 {% block content %}
 
-    <div style="color:#ea2088; font-style: bold; font-size: 3rem; border-bottom: 1px solid #fff">Bienvenido, {{ request.user.username }}</div>
+    <div style="color:#ffa821; font-style: bold; font-size: 3rem; border-bottom: 1px solid #fff">Bienvenido, {{ request.user.username }}</div>
 
     <br>
 
@@ -33,7 +33,7 @@
         <div class="row">
 
             <div class="col-md-6">
-                <div style="color:#ea2088; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff">Ventas recientes</div><br>
+                <div style="color:#ffa821; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff">Ventas recientes</div><br>
                 {% for item in sales %}
                     {% if not forloop.first %}
                         <br><div style="border-bottom: 0.5px solid #fff"></div><br>
@@ -50,7 +50,7 @@
             </div>
 
             <div class="col-md-6">
-                <div style="color:#ea2088; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff">Compras recientes</div><br>
+                <div style="color:#ffa821; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff">Compras recientes</div><br>
                 {% for item in purchases %}
                     {% if not forloop.first %}
                         <br><div style="border-bottom: 0.5px solid #fff"></div><br>
@@ -79,7 +79,7 @@
             type: 'bar',
             data: {
                 datasets: [{
-                    backgroundColor: '#ea2088',
+                    backgroundColor: '#ffa821',
                     label: 'Stock en el inventario',
                     data: {{ data|safe }},
                 }],

@@ -216,19 +216,21 @@ class SaleView(ListView):
 class SaleCreateView(View):                                                      
     template_name = 'sales/new_sale.html'
 
+
     def get(self, request):
-        form = SaleForm(request.GET or None)
+       
+        form = SaleForm(request.GET or None, initial={'name':request.user.username},)
         formset = SaleItemFormset(request.GET or None)                          # renders an empty formset
         stocks = Stock.objects.filter(is_deleted=False)
         context = {
             'form'      : form,
             'formset'   : formset,
-            'stocks'    : stocks
+            'stocks'    : stocks,
         }
         return render(request, self.template_name, context)
 
     def post(self, request):
-        form = SaleForm(request.POST)
+        form = SaleForm(request.POST, initial={'name':request.user.username} )
         formset = SaleItemFormset(request.POST)                                 # recieves a post method for the formset
         if form.is_valid() and formset.is_valid():
             # saves bill

@@ -16,4 +16,3 @@ class StockFilter(django_filters.FilterSet):                            # Stockf
         model = Stock
         fields = ['name', 'o']
 
-print(vars(StockFilter().form['o']))

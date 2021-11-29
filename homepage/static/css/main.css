@@ -36,7 +36,7 @@ label{
 }
 
 .breadcrumb{
-  background-color: #ea2088;
+  background-color: #ffa821;
   color:#ff9df0;
 }
 
@@ -153,20 +153,20 @@ ul {
 }
 
 .site-header .navbar-nav .nav-link:hover {
-  color: #ea2088;
+  color: #ffa821;
 }
 
 .navbar-colapse{
   background-color:black;
   color:white;
-  box-shadow: 0 2px 7px #ea2088;
+  box-shadow: 0 2px 7px #ffa821;
 }
 
 
 .dropdown-menu{
   background-color:black;
   color:white;
-  box-shadow: 0 2px 7px #ea2088;
+  box-shadow: 0 2px 7px #ffa821;
 }
 .dropdown-item{
   color:white;
@@ -174,7 +174,7 @@ ul {
 
 .dropdown-item:hover{
   background-color:black;
-  color: #ea2088;
+  color: #ffa821;
 }
 
 .site-header .navbar-nav .nav-link.active {
@@ -183,7 +183,7 @@ ul {
 
 .content-section {
   background: transparent;
-  box-shadow: 0 4px 10px #ea2088;
+  box-shadow: 0 4px 10px #ffa821;
   color:white;
   padding: 10px 20px;
   border: 1px solid #dddddd;
@@ -354,9 +354,9 @@ html { width: 100%; height:100%; overflow:hidden; }
  
 
 .ghost-pink {
-  color: #ea2088;
+  color: #ffa821;
   background-color: transparent;
-  border: 1px solid #ea2088;
+  border: 1px solid #ffa821;
   font-size: 17px;
   margin: 3px;
   transition-duration: 0.2s;
@@ -371,7 +371,7 @@ html { width: 100%; height:100%; overflow:hidden; }
 .ghost-pink:hover, .ghost-pink:active {
   color:#fff;
   background-color:transparent;
-  box-shadow: 0 2px 7px #ea2088;
+  box-shadow: 0 2px 7px #ffa821;
 }
 
 
@@ -405,14 +405,14 @@ html { width: 100%; height:100%; overflow:hidden; }
 .glow:hover {
   background-color: #014c8f;
   color: white;
-  box-shadow: 0 2px 7px #ea2088;
+  box-shadow: 0 2px 7px #ffa821;
 }
 
 .btn-pink{
   color:#fff;
-  background-color:#ea2088;
+  background-color:#ffa821;
   border-color: #fff;
-  border-left-color: #ea2088;
+  border-left-color: #ffa821;
 }
 
 .btn-pink:hover{
