@@ -141,7 +141,7 @@
                 }
                 total--;
             } else {
-                custom_alert.render('Campo no puede ser eliminado ');
+                custom_alert.render('Campo no puede ser eliminado o no hay suficiente stock');
             }
             return false;
         }
@@ -187,13 +187,14 @@
                     if(quantity > squantity){
                         quantity = quantity - 1;
                         if(quantity <= 1){
-                            //no stocks are available. Attempts to delete field
-                            custom_alert.render('Producto no disponible. El campo será eliminado;');
+                            
                             //Sets quantity to 0 as failsafe for when the total no of item forms are 1
                             element.parents('.form-row').find('.quantity').val(0);
                             deleteForm('form', element);
+                            //no stocks are available. Attempts to delete field
+                            custom_alert.render('No hay suficiente stock de este producto');
                         } else {
-                            element.parents('.form-row').find('.quantity').val(squantity-1);
+                            element.parents('.form-row').find('.quantity').val(squantity);
                             quantity = squantity - 1;
                             custom_alert.render('No hay suficiente stock para esta venta');
                         }

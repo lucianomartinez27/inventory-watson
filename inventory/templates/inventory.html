@@ -23,12 +23,23 @@
 <table class="table table-css">
 
     <form method="get">
-        <div class="input-group search">
-            {% render_field filter.form.name class="form-control textinput" placeholder="Buscar por producto" %}
-            <div class="input-group-append">
-                <button type="submit" class="btn btn-pink"> Buscar </button>
+        <div class="row">
+            <div class="input-group col">
+                {% render_field filter.form.name class="textinput" placeholder="Buscar por nombre" %}
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-pink"> Buscar </button>
+                </div>
+            </div>
+            <div class="input-group col">
+                <label for="category">Buscar por categoria&nbsp;</label>
+                {% render_field filter.form.category class="form-select" placeholder="Buscar por categoria" %}
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-pink"> Buscar </button>
+                </div>
             </div>
         </div>
+      
+
     </form>
 
     <br>

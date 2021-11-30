@@ -72,19 +72,13 @@ class SaleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        self.fields['name'].widget.attrs.update({'class': 'textinput form-control', 'pattern' : '[a-zA-Z\s]{1,50}', 'title' : 'Alphabets and Spaces only', 'readonly':'true', 'required': 'true'})
-    
+        self.fields['name'].widget.attrs.update({'class': 'textinput form-control', 'pattern' : '[a-zA-Z\s]{1,50}', 'title' : 'Alphabets and Spaces only',  'readonly':'true', 'required': 'true'})
+        self.fields['name'].disabled = True
+
     class Meta:
         model = SaleBill
         fields = ['name']
-        widgets = {
-            'address' : forms.Textarea(
-                attrs = {
-                    'class' : 'textinput form-control',
-                    'rows'  : '4'
-                }
-            )
-        }
+
 
 # form used to render a single stock item form
 class SaleItemForm(forms.ModelForm):

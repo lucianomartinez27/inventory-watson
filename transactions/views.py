@@ -227,6 +227,7 @@ class SaleCreateView(View):
             'formset'   : formset,
             'stocks'    : stocks,
         }
+    
         return render(request, self.template_name, context)
 
     def post(self, request):
