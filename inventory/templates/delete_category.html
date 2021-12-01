@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+
+{% block title %} {{title}} {% endblock title %}
+
+
+{% block content %}
+
+    <div style="color:#ffa821; font-style: bold; font-size: 3rem; border-bottom: 1px solid white;">{{title}}</div> 
+    
+    <br>
+    
+    <form method="post">
+        
+        {% csrf_token %}
+        
+        <fieldset class="form-group">
+            <div style="color:#ffa821; font-style: bold; font-size: 3rem; border-bottom: 1px solid white;">Eliminar Categoria</div> <br>
+            <h2>¿Estás seguro de eliminar "{{ object.name }}"?</h2>
+        </fieldset>
+
+        <div class="form-group">  
+            <button type="submit" class="btn ghost-red">Si, eliminar</button>
+            <a href="{% url 'inventory' %}" class="btn ghost-button">Cancelar</a>
+        </div>
+        
+    </form>
+
+{% endblock content %}

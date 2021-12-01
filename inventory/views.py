@@ -20,18 +20,35 @@ class StockListView(FilterView):
     ordering = ['-quantity']
 
     
+class CategoryDeleteView(View):                                                            # view class to delete stock
+    template_name = "delete_category.html"                                                 # 'delete_stock.html' used as the template
+    success_message = "Categoria eliminada correctamente"                             # displays message when form is submitted
+    
+    def get(self, request, pk):
+        stock = get_object_or_404(Category, pk=pk)
+        return render(request, self.template_name, {'object' : stock})
 
-class CategoryCreateView(SuccessMessageMixin, CreateView):                                 # createview class to add new stock, mixin used to display message
-    model = Stock                                                                       # setting 'Stock' model as model
-    form_class = CategoryForm                                                              # setting 'StockForm' form as form
-    template_name = "add_category.html"                                                   # 'edit_stock.html' used as the template
-    success_url = '/inventario'                                                          # redirects to 'inventory' page in the url after submitting the form
-    success_message = "Categoria creada correctamente"                             # displays message when form is submitted
+    def post(self, request, pk):  
+        stock = get_object_or_404(Category, pk=pk)
+        stock.delete()                                              
+        messages.success(request, self.success_message)
+        return redirect('inventory')
+        
 
-    def get_context_data(self, **kwargs):                                               # used to send additional context
+        return context    
+
+class CategoryCreateView(SuccessMessageMixin, CreateView):                                
+    model = Stock                                                                       
+    form_class = CategoryForm                                                              
+    template_name = "add_category.html"                                                  
+    success_url = '/inventario/agregar-categoria'                                                         
+    success_message = "Categoria creada correctamente"                            
+
+    def get_context_data(self, **kwargs):                                              
         context = super().get_context_data(**kwargs)
         context["title"] = 'Nueva categoria'
         context["savebtn"] = 'Agregar categoria'
+        context['categories'] = Category.objects.all()
         
 
         return context    
