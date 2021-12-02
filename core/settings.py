@@ -25,9 +25,9 @@ SECRET_KEY = 'qyu(9l9v%^+r(vt#ecf+36#lis516#3bo5@bo-rd*d%a=!%8#!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['warm-woodland-71021.herokuapp.com']
 
-
+a
 # Application definition
 
 INSTALLED_APPS = [
