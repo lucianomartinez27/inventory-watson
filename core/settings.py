@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['warm-woodland-71021.herokuapp.com']
 
-a
+
 # Application definition
 
 INSTALLED_APPS = [
