@@ -97,6 +97,7 @@ a.nav-button {
 ----------------------------------------------------- */
 
 #content {
+    width: 100%;
     margin: auto;
     min-height: 100vh;
     transition: all 0.3s;
@@ -170,7 +171,9 @@ a.nav-button {
     color:#ddd;
   }
   
-
+  #wrapper.menuDisplayed #menu-toggle{
+    padding-left: 250px;
+  }
  
   @media (max-width: 400px){
     #wrapper.menuDisplayed #content{
@@ -181,7 +184,5 @@ a.nav-button {
         opacity:0.99;
 
       }
-      #wrapper.menuDisplayed #menu-toggle{
-        padding-left: 250px;
-      }
+      
   }
