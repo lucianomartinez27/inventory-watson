@@ -3,7 +3,7 @@
 {% load widget_tweaks %}
 
 
-{% block title %} Inventory List {% endblock title %}
+{% block title %} Listado de inventario {% endblock title %}
 
 
 {% block content %}
@@ -20,66 +20,77 @@
 
 <br>
 
-<table class="table table-css">
+<div class="row">
+    <div class="col mx-auto">
 
-    <form method="get">
+        <form method="get">
+            <div class="row">
+                <div class="input-group mb-3 col-12 col-lg-6" style="flex-wrap:nowrap;">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="id_name">Nombre</label>
+                    </div>
+                    {% render_field filter.form.name class="textinput" placeholder="Buscar por nombre" %}
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-pink"> Buscar </button>
+                    </div>
+                </div>
+
+                <div class="input-group mb-3 col-12 col-lg-6" style="flex-wrap:nowrap;">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="selectCategory">Categorias</label>
+                    </div>
+                    {% render_field filter.form.category class="textinput" %}
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-pink"> Buscar </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
         <div class="row">
-            <div class="input-group mb-3 col" style="flex-wrap:nowrap;">
-                <div class="input-group-prepend">
-                    <label class="input-group-text" for="id_name">Nombre</label>
-                </div>
-                {% render_field filter.form.name class="textinput" placeholder="Buscar por nombre" %}
-                <div class="input-group-append">
-                    <button type="submit" class="btn btn-pink"> Buscar </button>
-                </div>
-            </div>
- 
-        <div class="input-group mb-3 col"  style="flex-wrap:nowrap;">
-            <div class="input-group-prepend">
-                <label class="input-group-text" for="selectCategory">Categorias</label>
-            </div>
-            {% render_field filter.form.category class="form-select textinput" %}
-            <div class="input-group-append">
-                <button type="submit" class="btn btn-pink"> Buscar </button>
+            <div class="col mx-auto">
+
+                <table class="table table-css">
+
+
+                    <br>
+
+                    <thead class="thead-inverse align-middle">
+                        <tr>
+                            <th width="40%">Nombre de producto</th>
+                            {% if request.GET.o == "o" %}
+                            <th width="20%"> <a href="?o=-o">
+
+                                    {% else %}
+                            <th width="20%"> <a href="?o=o">
+                                    {% endif %}Stock en el inventario</a></th>
+                            <th width="40%">Opciones</th>
+                        </tr>
+                    </thead>
+
+                    {% if object_list %}
+
+                    <tbody>
+                        {% for stock in object_list %}
+                        <tr>
+                            <td>
+                                <h4>{{ stock.name }}</h4>
+                            </td>
+                            <td class="align-middle">{{ stock.quantity }}</td>
+                            <td class="align-middle">
+                                <a href="{% url 'edit-stock' stock.pk %}" class="btn ghost-button">Editar detalles</a>
+                                <a href="{% url 'delete-stock' stock.pk %}" class="btn ghost-red"> Eliminar producto
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
             </div>
         </div>
-      </div>
-
-    </form>
-
-    <br>
-
-    <thead class="thead-inverse align-middle">
-        <tr>
-            <th width="50%">Nombre de producto</th>
-            {% if request.GET.o == "o" %}
-            <th width="20%"> <a href="?o=-o">
-
-                    {% else %}
-            <th width="20%"> <a href="?o=o">
-                    {% endif %}Stock en el inventario</a></th>
-            <th width="30%">Opciones</th>
-        </tr>
-    </thead>
-
-    {% if object_list %}
-
-    <tbody>
-        {% for stock in object_list %}
-        <tr>
-            <td>
-                <h4>{{ stock.name }}</h4>
-            </td>
-            <td class="align-middle">{{ stock.quantity }}</td>
-            <td class="align-middle">
-                <a href="{% url 'edit-stock' stock.pk %}" class="btn ghost-button">Editar detalles</a>
-                <a href="{% url 'delete-stock' stock.pk %}" class="btn ghost-red"> Eliminar producto </a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-
-</table>
+    </div>
+</div>
 
 <div class="align-middle">
     {% if is_paginated %}

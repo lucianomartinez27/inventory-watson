@@ -97,8 +97,7 @@ a.nav-button {
 ----------------------------------------------------- */
 
 #content {
-    width: 100%;
-    padding: 20px;
+    margin: auto;
     min-height: 100vh;
     transition: all 0.3s;
 }
@@ -134,13 +133,6 @@ a.nav-button {
 
   }
   
-  /* Main Content */
-  #content{
-    width: 100%;	
-    position: absolute;
-    padding:15px;
-      transition:all .5s;
-  }
   
   #menu-toggle{
       transition:all .3s;
@@ -152,9 +144,7 @@ a.nav-button {
     position: fixed;
   }
   
-  #wrapper.menuDisplayed #content{
-    padding-left:250px;
-  }
+ 
 
 
   
@@ -192,6 +182,6 @@ a.nav-button {
 
       }
       #wrapper.menuDisplayed #menu-toggle{
-        padding-left: 260px;
+        padding-left: 250px;
       }
   }
