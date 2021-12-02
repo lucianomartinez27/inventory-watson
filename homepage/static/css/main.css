@@ -291,7 +291,6 @@ html { width: 100%; height:100%; overflow:hidden; }
   color: rgb(255, 255, 255);
   background-color: transparent;
   border: 1px solid rgb(255, 255, 255);
-  font-size: 17px;
   margin: 3px;
   font-weight: bolder;
   transition-duration: 0.2s;
@@ -313,7 +312,6 @@ html { width: 100%; height:100%; overflow:hidden; }
   color: #228DFF;
   background-color: transparent;
   border: 1px solid #228DFF;
-  font-size: 17px;
   margin: 2px;
   font-weight: bolder;
   transition-duration: 0.2s;
@@ -336,7 +334,6 @@ html { width: 100%; height:100%; overflow:hidden; }
   background-color: transparent;
   border: 1px solid #27ff34;
   margin: 3px;
-  font-size: 17px;
   font-weight: bolder;
   transition-duration: 0.2s;
   display: inline-block;
@@ -357,7 +354,6 @@ html { width: 100%; height:100%; overflow:hidden; }
   color: #ffa821;
   background-color: transparent;
   border: 1px solid #ffa821;
-  font-size: 17px;
   margin: 3px;
   transition-duration: 0.2s;
   font-weight: bolder;
@@ -379,7 +375,6 @@ html { width: 100%; height:100%; overflow:hidden; }
   color:#ff3c16;
   background-color: transparent;
   border: 1px solid #ff3c16;
-  font-size: 17px;
   margin: 3px;
 
   font-weight: bolder;

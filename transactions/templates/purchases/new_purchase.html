@@ -7,7 +7,7 @@
 
 {% block content %}
 
-    <div style="color:#ffa821; font-style: bold; font-size: 3rem; border-bottom: 1px solid white;">Nueva compra</div>
+    <div style="color:#ffa821; font-style: bold; font-size: 2rem; border-bottom: 1px solid white;">Nueva compra</div>
     
         <br>
 
@@ -20,10 +20,11 @@
                     <input type="text" class="form-control textinput" id="id_name" value="{{ supplier.name }}" disabled>
                 </div>
 
+                
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="id_phone" class="panel-body-text">N° teléfono:</label>
-                        <input type="text" class="form-control textinput" id="id_phone" value="{{ supplier.phone }}" disabled>
+                        <label for="id_buyer" class="panel-body-text">Empleado:</label>
+                        <input type="text" class="form-control textinput" id="id_buyer" value="{{ request.user.username }}" disabled>
                     </div>
                     
                 </div>
@@ -147,6 +148,8 @@
             }
             return false;
         }
+
+     
         
         $(document).on('click', '.add-form-row', function(e){
             e.preventDefault();

@@ -8,7 +8,7 @@
 
 {% block content %}
 
-<div class="row" style="color: #ffa821; font-style: bold; font-size: 3rem; ">
+<div class="row" style="color: #ffa821; font-style: bold; font-size: 2rem; ">
     <div class="col-md-8">Listado de inventario</div>
     <div class="col-md-4">
         <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-stock' %}">Agregar nuevo producto</a>
@@ -24,21 +24,26 @@
 
     <form method="get">
         <div class="row">
-            <div class="input-group col">
+            <div class="input-group mb-3 col" style="flex-wrap:nowrap;">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="id_name">Nombre</label>
+                </div>
                 {% render_field filter.form.name class="textinput" placeholder="Buscar por nombre" %}
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-pink"> Buscar </button>
                 </div>
             </div>
-            <div class="input-group col">
-                <label for="category">Buscar por categoria&nbsp;</label>
-                {% render_field filter.form.category class="form-select" placeholder="Buscar por categoria" %}
-                <div class="input-group-append">
-                    <button type="submit" class="btn btn-pink"> Buscar </button>
-                </div>
+ 
+        <div class="input-group mb-3 col"  style="flex-wrap:nowrap;">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="selectCategory">Categorias</label>
+            </div>
+            {% render_field filter.form.category class="form-select textinput" %}
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-pink"> Buscar </button>
             </div>
         </div>
-      
+      </div>
 
     </form>
 

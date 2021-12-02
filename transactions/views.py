@@ -155,7 +155,7 @@ class PurchaseCreateView(View):
         supplierobj = get_object_or_404(Supplier, pk=pk)                        # gets the supplier object
         if formset.is_valid():
             # saves bill
-            billobj = PurchaseBill(supplier=supplierobj)                        # a new object of class 'PurchaseBill' is created with supplier field set to 'supplierobj'
+            billobj = PurchaseBill(supplier=supplierobj, buyer=request.user)                        # a new object of class 'PurchaseBill' is created with supplier field set to 'supplierobj'
             billobj.save()                                                      # saves object into the db
             # create bill details object
             billdetailsobj = PurchaseBillDetails(billno=billobj)
