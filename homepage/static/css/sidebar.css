@@ -87,7 +87,6 @@ a.nav-button {
 }
 
 .bottomleft {
-    bottom: 0;
     position: absolute;
     min-width: 250px;
     max-width: 250px;
@@ -125,12 +124,14 @@ a.nav-button {
     z-index:1;
     position: absolute;
     width:0;
-    height:100%;
+    height:100vh;
     overflow-y:hidden;
+    
     opacity:0.9;
       transition:all .5s;
       display:flex;
       align-items:center;
+
   }
   
   /* Main Content */
@@ -148,11 +149,14 @@ a.nav-button {
   /* Change the width of the sidebar to display it*/
   #wrapper.menuDisplayed #sidebar-wrapper{
     width:250px;
+    position: fixed;
   }
   
   #wrapper.menuDisplayed #content{
     padding-left:250px;
   }
+
+
   
   /* Sidebar styling */
   .sidebar-nav{
@@ -178,4 +182,16 @@ a.nav-button {
   
 
  
-  
+  @media (max-width: 400px){
+    #wrapper.menuDisplayed #content{
+        padding-left:0;
+      }
+
+      #sidebar-wrapper {
+        opacity:0.99;
+
+      }
+      #wrapper.menuDisplayed #menu-toggle{
+        padding-left: 260px;
+      }
+  }
