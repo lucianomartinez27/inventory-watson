@@ -15,10 +15,14 @@ class StockForm(forms.ModelForm):
         self.fields['category'].label = 'Categoria'
         self.fields['name'].label = 'Nombre'
         self.fields['quantity'].label = 'Cantidad'
+        self.fields['buy_price'].widget.attrs.update({'class': 'textinput form-control', 'min': '0'})
+        self.fields['sell_price'].widget.attrs.update({'class': 'textinput form-control', 'min': '0'})
+        self.fields['buy_price'].label = 'Precio compra'
+        self.fields['sell_price'].label = 'Precio venta'
 
     class Meta:
         model = Stock
-        fields = ['name', 'quantity', 'category']
+        fields = ['name', 'quantity', 'category', 'buy_price', 'sell_price']
 
 class CategoryForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):                                                        # used to set css classes to the various fields

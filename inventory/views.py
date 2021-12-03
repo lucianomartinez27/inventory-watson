@@ -77,16 +77,17 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
         form = StockForm(request.POST)
         
         formset = IngredientQuantityItemFormset(request.POST)
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid():
             stock = form.save(commit=False)
-            stock.save()     
-            for form in formset:
-                print(form.cleaned_data)
-                # false saves the item and links bill to the item
-                ingredient = IngredientQuantity(stock=stock,
-                ingredient=form.cleaned_data['ingredient'],
-                quantity=form.cleaned_data['quantity'])
-                ingredient.save()
+            stock.save()
+            if formset.is_valid():
+                for form in formset:
+                    print(form.cleaned_data)
+                    # false saves the item and links bill to the item
+                    ingredient = IngredientQuantity(stock=stock,
+                    ingredient=form.cleaned_data['ingredient'],
+                    quantity=form.cleaned_data['quantity'])
+                    ingredient.save()
             messages.success(request, "Producto agregado correctamente")
             return redirect('inventory')
 

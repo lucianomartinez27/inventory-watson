@@ -31,15 +31,16 @@ class Stock(models.Model):
     quantity = models.IntegerField(default=1)
     is_deleted = models.BooleanField(default=False)
     category = models.ForeignKey(Category, on_delete=models.CASCADE,  null=True)
-    price = models.FloatField(default=0)
+    buy_price = models.FloatField(default=0)
+    sell_price = models.FloatField(default=0)
 
     def get_ingredients(self):
         return IngredientQuantity.objects.filter(stock=self)
 
     def get_total_cost(self):
-        total = 0
+        total = self.buy_price
         for quantity in self.get_ingredients():
-            total += quantity.ingredient.price * quantity.quantity
+            total += quantity.ingredient.get_total_cost() * quantity.quantity
         return total
 
     class Meta:

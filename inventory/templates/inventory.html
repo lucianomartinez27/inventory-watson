@@ -57,16 +57,17 @@
 
                     <thead class="thead-inverse align-middle">
                         <tr>
-                            <th width="20%">Nombre de producto</th>
-                            <th width="20%">Precio</th>
-                            <th width="20%">Costo</th>
+                            <th >Nombre de producto</th>
+                            <th >Precio compra</th>
+                            <th >Precio venta</th>
+                            <th >Costo</th>
                             {% if request.GET.o == "o" %}
-                            <th width="20%"> <a href="?o=-o">
+                            <th > <a href="?o=-o">
 
                                     {% else %}
-                            <th width="20%"> <a href="?o=o">
+                            <th > <a href="?o=o">
                                     {% endif %}Stock en el inventario</a></th>
-                            <th width="20%">Opciones</th>
+                            <th >Opciones</th>
                         </tr>
                     </thead>
 
@@ -78,7 +79,8 @@
                             <td>
                                 <h4>{{ stock.name }}</h4>
                             </td>
-                            <td class="align-middle">{{ stock.price }}</td>
+                            <td class="align-middle">{{ stock.buy_price }}</td>
+                            <td class="align-middle">{{ stock.sell_price }}</td>
 
                             <td class="align-middle">{{ stock.get_total_cost }}</td>
                             <td class="align-middle">{{ stock.quantity }}</td>
