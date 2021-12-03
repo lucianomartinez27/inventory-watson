@@ -4,10 +4,8 @@ from .models import (
     Supplier, 
     PurchaseBill, 
     PurchaseItem,
-    PurchaseBillDetails, 
     SaleBill, 
     SaleItem,
-    SaleBillDetails
 )
 from inventory.models import Stock
 
@@ -40,11 +38,6 @@ class PurchaseItemForm(forms.ModelForm):
 # formset used to render multiple 'PurchaseItemForm'
 PurchaseItemFormset = formset_factory(PurchaseItemForm, extra=1)
 
-# form used to accept the other details for purchase bill
-class PurchaseDetailsForm(forms.ModelForm):
-    class Meta:
-        model = PurchaseBillDetails
-        fields = [ 'total']
 
 
 # form used for supplier
@@ -95,8 +88,3 @@ class SaleItemForm(forms.ModelForm):
 # formset used to render multiple 'SaleItemForm'
 SaleItemFormset = formset_factory(SaleItemForm, extra=1)
 
-# form used to accept the other details for sales bill
-class SaleDetailsForm(forms.ModelForm):
-    class Meta:
-        model = SaleBillDetails
-        fields = ['eway','veh', 'destination', 'po', 'cgst', 'sgst', 'igst', 'cess', 'tcs', 'total']

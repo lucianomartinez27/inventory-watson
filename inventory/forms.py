@@ -1,5 +1,6 @@
 from django import forms
-from .models import Category, Stock
+from django.forms.formsets import formset_factory
+from .models import Category, IngredientQuantity, Stock
 
 
 
@@ -29,3 +30,15 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['name']
+
+
+class IngredientQuantityItemForm(forms.Form):
+    ingredient = forms.ModelChoiceField(label=('Stock'),queryset=Stock.objects.all(),
+    widget=forms.Select(attrs={'class': 'custom-select','id':'selectCategory'}))
+    quantity = forms.IntegerField()
+    quantity.widget.attrs.update({'class': 'textinput form-control setprice quantity', 'min': '1', 'required': 'true'})
+    
+
+
+# formset used to render multiple 'SaleItemForm'
+IngredientQuantityItemFormset = formset_factory(IngredientQuantityItemForm, extra=1)

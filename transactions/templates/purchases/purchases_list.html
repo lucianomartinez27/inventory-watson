@@ -24,7 +24,6 @@
                         <th scope="col">Productos comprados</th>
                         <th scope="col">Precio total de compra</th>
                         <th scope="col">Fecha de compra</th>
-                        <th scope="col">Opciones</th>
                     </tr>
                 </thead>
         
@@ -37,7 +36,6 @@
                         <td class="align-middle">{% for item in purchase.get_items_list %} {{ item.stock.name }} <br> {% endfor %}</td>
                         <td class="align-middle">{{ purchase.get_total_price }}</td>
                         <td class="align-middle">{{ purchase.time.date }}</td>
-                        <td class="align-middle"> <a href="{% url 'purchase-bill' purchase.billno %}" class="btn ghost-pink">Ver Detalle</a> <a href="{% url 'delete-purchase' purchase.pk %}" class="btn ghost-red">Eliminar Detalle</a> </td>
                     </tr>
                     {% endfor %}
                 </tbody>
