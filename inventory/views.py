@@ -62,7 +62,8 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
 
     def get(self, request):
         form = StockForm(request.GET or None)
-        formset = IngredientQuantityItemFormset(request.GET or None)                                                 # used to send additional context
+        formset = IngredientQuantityItemFormset(request.GET or None)
+                                                     
         
         context = {
             'form'      : form,
@@ -82,7 +83,6 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
             stock.save()
             if formset.is_valid():
                 for form in formset:
-                    print(form.cleaned_data)
                     # false saves the item and links bill to the item
                     ingredient = IngredientQuantity(stock=stock,
                     ingredient=form.cleaned_data['ingredient'],
@@ -102,19 +102,43 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
     
 
 class StockUpdateView(SuccessMessageMixin, UpdateView):                                 # updateview class to edit stock, mixin used to display message
-    model = Stock                                                                       # setting 'Stock' model as model
-    form_class = StockForm                                                              # setting 'StockForm' form as form
     template_name = "edit_stock.html"                                                   # 'edit_stock.html' used as the template
     success_url = '/inventario'                                                          # redirects to 'inventory' page in the url after submitting the form
     success_message = "Producto actualizado correctamente"                             # displays message when form is submitted
 
-    def get_context_data(self, **kwargs):                                               # used to send additional context
-        context = super().get_context_data(**kwargs)
+    def get(self, request, pk):                                               # used to send additional context
+        context = {}
+        context['object'] = Stock.objects.get(id=pk)
+        form = StockForm(instance=context['object'])
+
+        
+        context['form'] = form
         context["title"] = 'Editar producto'
         context["savebtn"] = 'Actualizar producto'
         context["delbtn"] = 'Vender producto'
-        context["formset"] = IngredientQuantityItemFormset()
-        return context
+        ingredients = IngredientQuantity.objects.filter(stock=context['object'])
+        context["formset"] = IngredientQuantityItemFormset(initial=[{'ingredient': ingredient.ingredient, 'quantity': ingredient.quantity} for ingredient in ingredients])
+        return render(request, self.template_name, context)
+    
+    def post(self, request, pk):
+        stock = Stock.objects.get(id=pk)
+        form = StockForm(request.POST or None, instance =stock )
+        IngredientQuantity.objects.filter(stock=stock).delete()
+
+        formset = IngredientQuantityItemFormset(request.POST)
+        if form.is_valid():
+            form.save()
+            
+            for ingredient_form in formset:
+                print(ingredient_form.is_valid())
+                if ingredient_form.is_valid():
+                    ingredient = IngredientQuantity(stock=stock,
+                        ingredient=ingredient_form.cleaned_data['ingredient'],
+                        quantity=ingredient_form.cleaned_data['quantity'])
+                    ingredient.save()
+        messages.success(request, self.success_message)
+        return redirect('inventory')
+    
 
 
 class StockDeleteView(View):                                                            # view class to delete stock

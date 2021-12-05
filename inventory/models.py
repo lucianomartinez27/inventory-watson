@@ -25,6 +25,9 @@ class IngredientQuantity(models.Model):
     def __str__(self):
         return self.ingredient.name + " para " + self.stock.name
 
+    class Meta:
+        unique_together = ('ingredient', 'stock',)
+
 class Stock(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=30, unique=True,error_messages={'unique': u'El producto ya existe en el inventario'})
