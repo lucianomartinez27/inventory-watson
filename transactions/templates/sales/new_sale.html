@@ -37,13 +37,14 @@
         <br>
 
         <div class="panel panel-default">
+
             
-            {{ formset.management_form }}
 
             <div class="panel-heading panel-heading-text">Detalles de producto</div>
             
                 <div id="stockitem"> 
                     <div class="panel-body">
+                    {{ formset.management_form }}
                     {% for iform in formset %}
                         <div class="row form-row">
                             <div class="form-group col-md-6">
@@ -105,7 +106,7 @@
         }
         
         //stores the total no of item forms
-        var total = 1;
+        var total = {{ formset | length }};
 
         function cloneMore(selector, prefix) {
             var newElement = $(selector).clone(true);
@@ -151,6 +152,7 @@
         }
 
         function updatePriceOfItem(){
+            
             var stocksById = {
             {% for stock in stocks %}
                 {% if not forloop.first %},{% endif %}
@@ -160,15 +162,16 @@
                 }
             {% endfor %}
             };
-        
-
-            Array.prototype.forEach.call(document.getElementsByClassName('stock'), function(element, index){
-            element.onchange = function(e){
+           
+            Array.prototype.forEach.call(
+                document.getElementsByClassName('stock'), function(element, index){
+            element.addEventListener('change', function(e){
                 e.preventDefault();
-                document.getElementById('id_form-' + index + '-perprice').value = stocksById[element.value].price
-            }
-        });
-        }
+                document.getElementById('id_form-' + index + '-perprice').value = Number(stocksById[element.value].price);
+            })
+            
+    })
+}
 
 
        

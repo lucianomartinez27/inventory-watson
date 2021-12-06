@@ -249,7 +249,6 @@ class SaleCreateView(View):
         form = SaleForm(request.POST, initial={'name': request.user.username})
         # recieves a post method for the formset
         formset = SaleItemFormset(request.POST)
-        
         if form.is_valid() and formset.is_valid():
             # saves bill
             billobj = form.save(commit=False)
@@ -258,9 +257,11 @@ class SaleCreateView(View):
             table.is_free = False
             table.save()
             # for loop to save each individual form as its own object
-            for form in formset:
+            for sold_item in formset:
+               
+               
                 # false saves the item and links bill to the item
-                billitem = form.save(commit=False)
+                billitem = sold_item.save(commit=False)
                 # links the bill object to the items
                 billitem.billno = billobj
                 # gets the stock item
@@ -275,11 +276,12 @@ class SaleCreateView(View):
             messages.success(
                 request, "Items vendidos registrados correctamente")
             return redirect('inventory')
-        form = SaleForm(request.GET or None)
+        sold_item = SaleForm(request.GET or None)
         formset = SaleItemFormset(request.GET or None)
         context = {
             'form': form,
             'formset': formset,
+            'stocks': Stock.objects.filter(is_deleted=False)
         }
         return render(request, self.template_name, context)
 
@@ -289,42 +291,37 @@ class SaleUpdateView(SuccessMessageMixin, View):
 
     def get(self, request, pk):
 
-
-        
-
         form = SaleForm(request.GET or None, initial={
-                        'name': request.user.username, 'table': Table.objects.all() })
+                        'name': request.user.username, 'table': Table.objects.filter(number=pk)})
 
         formset = SaleItemFormset(initial=[{'stock': product.stock, 'perprice': product.stock.sell_price,
-                                            'quantity': product.quantity} for product in SaleItem.objects.filter(billno=TableSaleBill.objects.get(table=Table.objects.get(number=pk)))])
-        form.fields['table'].choices = [(table.pk, str(table)) for table in Table.objects.filter(number=pk)]
-        form.fields['table'].disabled = True
-        
+                                            'quantity': product.quantity} for product in self.get_items_for_sale(pk)])
+        form.fields['table'].choices = [
+            (table.pk, str(table)) for table in Table.objects.filter(number=pk)]
+        form.fields['table'].readonly = True
 
         context = {
             'form': form,
-            'formset': formset[0:-1],
+            'formset': formset,
             'stocks': self.get_total_stock(pk),
-            'title' : 'Editar venta'
+            'title': 'Editar venta'
         }
 
         return render(request, self.template_name, context)
 
     def post(self, request, pk):
-        
         # recieves a post method for the formset
         formset = SaleItemFormset(request.POST)
+        
         self.restore_stock(pk)
-     
         for sold_item in formset:
-            print(sold_item.is_valid())
             # for loop to save each individual form as its own object
             if sold_item.is_valid():
                 # false saves the item and links bill to the item
                 billitem = sold_item.save(commit=False)
                 # links the bill object to the items
                 billitem.billno = TableSaleBill.objects.get(table=Table.objects.get(
-            pk=pk), closed=False)
+                    pk=pk), closed=False)
                 # gets the stock item
                 stock = get_object_or_404(Stock, name=billitem.stock.name)
                 # calculates the total price
@@ -335,9 +332,9 @@ class SaleUpdateView(SuccessMessageMixin, View):
                 stock.save()
                 billitem.save()
         messages.success(
-                request, "Items vendidos registrados correctamente")
+            request, "Items vendidos registrados correctamente")
+        
         return redirect('open-tables')
-       
 
     def restore_stock(self, pk):
         items_for_sale = self.get_items_for_sale(pk)
@@ -350,17 +347,18 @@ class SaleUpdateView(SuccessMessageMixin, View):
 
     def get_items_for_sale(self, pk):
         return SaleItem.objects.filter(
-            billno=TableSaleBill.objects.get(table=Table.objects.get(
-                pk=pk)))
+            billno=TableSaleBill.objects.filter(
+                table=Table.objects.get(
+                    number=pk)
+            ).get(closed=False))
 
-    def get_total_stock(self, pk):
+    def get_total_stock(self, pk): # get total quantity of stock to update sales
         items_for_sale = self.get_items_for_sale(pk)
-        queryset = []
+        queryset = [stock for stock in Stock.objects.all()]
         for item in items_for_sale:
-            stock = get_object_or_404(Stock, name=item.stock.name)
+            stock = next(filter(lambda stock: stock.name == item.stock.name, queryset )) # get the first item that matches condition
             stock.quantity += item.quantity
-            queryset.append(stock)
-        return queryset  
+        return queryset
 
 
 class SaleDeleteView(SuccessMessageMixin, DeleteView):

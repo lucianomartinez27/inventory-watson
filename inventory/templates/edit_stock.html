@@ -93,7 +93,7 @@ function updateElementIndex(el, prefix, ndx) {
 }
 
 //stores the total no of item forms
-var total = 1;
+var total = {{ formset | length }};
 
 function cloneMore(selector, prefix) {
     var newElement = $(selector).clone(true);
