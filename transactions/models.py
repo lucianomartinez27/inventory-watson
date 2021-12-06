@@ -47,36 +47,46 @@ class PurchaseItem(models.Model):
     def __str__(self):
 	    return "Venta N°: " + str(self.billno.billno) + ", Item = " + self.stock.name
 
-
-
-#contains the sale bills made
-class SaleBill(models.Model):
-    billno = models.AutoField(primary_key=True)
-    time = models.DateTimeField(auto_now=True)
-
-    name = models.CharField(max_length=150)
+class Waiter(models.Model):
+    name = models.CharField(max_length=15)
 
     def __str__(self):
-	    return "Venta N°: " + str(self.billno)
+        return self.name
+
+class Table(models.Model):
+    number = models.AutoField(primary_key=True)
+    waiter = models.ForeignKey(Waiter,  on_delete= models.CASCADE, default=1)
+
+    def __str__(self):
+        return 'Mesa N°' + str(self.number) + " atendida por " + str(self.waiter.name)
+
+class TableSaleBill(models.Model):
+    billno = models.AutoField(primary_key=True)
+    time = models.DateTimeField(auto_now=True)
+    name = models.CharField(max_length=150)
+    table = models.ForeignKey(Table, on_delete=models.CASCADE, default=1)
+    closed = models.BooleanField(default=False)
+    def __str__(self):
+	    return "Venta N°: " + str(self.billno) + " en mesa " + str(self.table.number)
 
     def get_items_list(self):
         return SaleItem.objects.filter(billno=self)
         
     def get_total_price(self):
-        saleitems = SaleItem.objects.filter(billno=self)
+        saleitems = self.get_items_list()
         total = 0
         for item in saleitems:
             total += item.totalprice
         return total
 
+
 #contains the sale stocks made
 class SaleItem(models.Model):
-    billno = models.ForeignKey(SaleBill, on_delete = models.CASCADE, related_name='salebillno')
+    billno = models.ForeignKey(TableSaleBill, on_delete = models.CASCADE, related_name='salebillno')
     stock = models.ForeignKey(Stock, on_delete = models.CASCADE, related_name='saleitem')
     quantity = models.IntegerField(default=1)
     perprice = models.FloatField(default=1)
     totalprice = models.FloatField(default=1)
-
     def __str__(self):
 	    return "Venta N°: " + str(self.billno.billno) + ", Item = " + self.stock.name
 

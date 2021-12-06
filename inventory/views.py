@@ -128,15 +128,13 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):                         
         formset = IngredientQuantityItemFormset(request.POST)
         if form.is_valid():
             form.save()
-            
             for ingredient_form in formset:
-                print(ingredient_form.is_valid())
                 if ingredient_form.is_valid():
                     ingredient = IngredientQuantity(stock=stock,
                         ingredient=ingredient_form.cleaned_data['ingredient'],
                         quantity=ingredient_form.cleaned_data['quantity'])
                     ingredient.save()
-        messages.success(request, self.success_message)
+            messages.success(request, self.success_message)
         return redirect('inventory')
     
 

@@ -15,7 +15,9 @@ urlpatterns = [
     path('compras/<pk>/eliminar', views.PurchaseDeleteView.as_view(), name='delete-purchase'),
     
     path('ventas/', views.SaleView.as_view(), name='sales-list'),
+    path('ventas/mesas', views.OpenTablesSaleView.as_view(), name='open-tables'),
     path('ventas/nuevo', views.SaleCreateView.as_view(), name='new-sale'),
+    path('ventas/<pk>/editar', views.SaleUpdateView.as_view(), name='edit-sale'),
     path('ventas/<pk>/eliminar', views.SaleDeleteView.as_view(), name='delete-sale'),
 
 ]

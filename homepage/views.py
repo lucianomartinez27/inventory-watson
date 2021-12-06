@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic import View, TemplateView
 from .forms import CategoryForm
 from inventory.models import Stock
-from transactions.models import SaleBill, PurchaseBill
+from transactions.models import TableSaleBill, PurchaseBill
 
 
 class HomeView(View):
@@ -22,7 +22,7 @@ class HomeView(View):
             data[item.category]['labels'].append(item.name)
             quantities.append(item.quantity)
             labels.append(item.name)
-        sales = SaleBill.objects.order_by('-time')[:3]
+        sales = TableSaleBill.objects.order_by('-time')[:3]
         purchases = PurchaseBill.objects.order_by('-time')[:3]
         context = {
             'labels'    : labels,

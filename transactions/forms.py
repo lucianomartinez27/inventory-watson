@@ -4,7 +4,8 @@ from .models import (
     Supplier, 
     PurchaseBill, 
     PurchaseItem,
-    SaleBill, 
+    Table,
+    TableSaleBill, 
     SaleItem,
 )
 from inventory.models import Stock
@@ -66,11 +67,14 @@ class SaleForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         
         self.fields['name'].widget.attrs.update({'class': 'textinput form-control', 'pattern' : '[a-zA-Z\s]{1,50}', 'title' : 'Alphabets and Spaces only',  'readonly':'true', 'required': 'true'})
+        self.fields['table'].widget  = forms.Select(attrs={'class': 'custom-select','id':'selectCategory'})
+        self.fields['table'].queryset = Table.objects.all()
+
         self.fields['name'].disabled = True
 
     class Meta:
-        model = SaleBill
-        fields = ['name']
+        model = TableSaleBill
+        fields = ['name', 'table']
 
 
 # form used to render a single stock item form
