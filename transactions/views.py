@@ -208,7 +208,7 @@ class PurchaseDeleteView(SuccessMessageMixin, DeleteView):
 # shows the list of bills of all sales
 class SaleView(ListView):
     model = TableSaleBill
-    queryset = TableSaleBill.objects.filter(closed=False)
+    queryset = TableSaleBill.objects.filter(closed=True)
     template_name = "sales/sales_list.html"
     context_object_name = 'bills'
     ordering = ['-time']
@@ -217,6 +217,7 @@ class SaleView(ListView):
 
 class OpenTablesSaleView(ListView):
     model = TableSaleBill
+    queryset = TableSaleBill.objects.filter(closed=False)
     template_name = "sales/tables_list.html"
     context_object_name = 'tables'
     ordering = ['-time']
@@ -239,6 +240,7 @@ class SaleCreateView(View):
             'form': form,
             'formset': formset,
             'stocks': stocks,
+            'title': 'Nueva venta'
         }
 
         return render(request, self.template_name, context)
@@ -247,10 +249,14 @@ class SaleCreateView(View):
         form = SaleForm(request.POST, initial={'name': request.user.username})
         # recieves a post method for the formset
         formset = SaleItemFormset(request.POST)
+        
         if form.is_valid() and formset.is_valid():
             # saves bill
             billobj = form.save(commit=False)
             billobj.save()
+            table = Table.objects.get(number=request.POST['table'])
+            table.is_free = False
+            table.save()
             # for loop to save each individual form as its own object
             for form in formset:
                 # false saves the item and links bill to the item
@@ -283,53 +289,55 @@ class SaleUpdateView(SuccessMessageMixin, View):
 
     def get(self, request, pk):
 
-        form = SaleForm(request.GET or None, initial={
-                        'name': request.user.username, 'table': Table.objects.get(number=pk)})
 
-        formset = SaleItemFormset(initial=[{'stock': product.stock, 'perprice': product.perprice,
-                                            'quantity': product.quantity} for product in SaleItem.objects.filter(billno=TableSaleBill.objects.get(table=Table.objects.get(number=pk)))])                         # renders an empty formset
-        stocks = Stock.objects.filter(is_deleted=False)
+        
+
+        form = SaleForm(request.GET or None, initial={
+                        'name': request.user.username, 'table': Table.objects.all() })
+
+        formset = SaleItemFormset(initial=[{'stock': product.stock, 'perprice': product.stock.sell_price,
+                                            'quantity': product.quantity} for product in SaleItem.objects.filter(billno=TableSaleBill.objects.get(table=Table.objects.get(number=pk)))])
+        form.fields['table'].choices = [(table.pk, str(table)) for table in Table.objects.filter(number=pk)]
+        form.fields['table'].disabled = True
+        
+
         context = {
             'form': form,
-            'formset': formset,
+            'formset': formset[0:-1],
             'stocks': self.get_total_stock(pk),
+            'title' : 'Editar venta'
         }
 
         return render(request, self.template_name, context)
 
     def post(self, request, pk):
-        form = SaleForm(request.POST, initial={'name': request.user.username, 'table': Table.objects.get(
-            pk=pk)})
+        
         # recieves a post method for the formset
         formset = SaleItemFormset(request.POST)
         self.restore_stock(pk)
-        if form.is_valid():
-            # saves bill
-            billobj = form.save(commit=False)
-            billobj.save()
-            for sold_item in formset:
-                print(sold_item.is_valid())
-                # for loop to save each individual form as its own object
-                if sold_item.is_valid():
-                    # false saves the item and links bill to the item
-                    billitem = sold_item.save(commit=False)
-                    # links the bill object to the items
-                    billitem.billno = billobj
-                    # gets the stock item
-                    stock = get_object_or_404(Stock, name=billitem.stock.name)
-                    # calculates the total price
-                    billitem.totalprice = billitem.perprice * billitem.quantity
-                    # updates quantity in stock db
-                    stock.quantity -= billitem.quantity
-                    # saves bill item and stock
-                    stock.save()
-                    billitem.save()
-            messages.success(
+     
+        for sold_item in formset:
+            print(sold_item.is_valid())
+            # for loop to save each individual form as its own object
+            if sold_item.is_valid():
+                # false saves the item and links bill to the item
+                billitem = sold_item.save(commit=False)
+                # links the bill object to the items
+                billitem.billno = TableSaleBill.objects.get(table=Table.objects.get(
+            pk=pk), closed=False)
+                # gets the stock item
+                stock = get_object_or_404(Stock, name=billitem.stock.name)
+                # calculates the total price
+                billitem.totalprice = billitem.perprice * billitem.quantity
+                # updates quantity in stock db
+                stock.quantity -= billitem.quantity
+                # saves bill item and stock
+                stock.save()
+                billitem.save()
+        messages.success(
                 request, "Items vendidos registrados correctamente")
-            return redirect('open-tables')
-        form = SaleForm(request.GET or None)
-        formset = SaleItemFormset(request.GET or None)
         return redirect('open-tables')
+       
 
     def restore_stock(self, pk):
         items_for_sale = self.get_items_for_sale(pk)
@@ -338,8 +346,7 @@ class SaleUpdateView(SuccessMessageMixin, View):
             stock.quantity += item.quantity
             stock.save()
         items_for_sale.delete()
-        TableSaleBill.objects.get(table=Table.objects.get(
-                pk=pk)).delete()
+        
 
     def get_items_for_sale(self, pk):
         return SaleItem.objects.filter(

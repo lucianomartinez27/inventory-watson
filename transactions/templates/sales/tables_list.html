@@ -11,7 +11,7 @@
     <div class="row" style="color: #ffa821; font-style: bold; font-size: 2rem;">
         <div class="col-md-8">Lista de ventas</div>
         <div class="col-md-4">               
-            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-sale' %}">Mesas</a> </div>
+            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-sale' %}">Nueva venta</a> </div>
         </div>
     </div>
     
@@ -38,15 +38,15 @@
             {% for sale in tables %}
             <tr>
                 <td class="align-middle"> <h3>{{ sale.table.number }}</h3> </td>
-                <td class=""> {{ sale.name }} <br> <small style="color: #909494">Tel : {{ sale.phone }}</small> </td>
+                <td class="align-middle"> {{ sale.table.waiter }} <br> </td>
                 <td class="align-middle">{% for item in sale.get_items_list %} {{ item.stock.name }} <br> {% endfor %}</td>
                 <td class="align-middle">{% for item in sale.get_items_list %} {{ item.quantity }} <br> {% endfor %}</td>     
-                <td class="align-middle">{{ sale.get_total_price }}</td>
+                <td class="align-middle">$ {{ sale.get_total_price }}</td>
                 <td class="align-middle">{{ sale.time.date }}</td>
                 <td class="align-middle">{{ sale.table.number }}</td>
                 <td class="align-middle">
-                    <a href="{% url 'edit-sale' sale.table.number %}" class="btn ghost-button">Editar mesa</a>
-                    <a href="{% url 'delete-sale' sale.pk %}" class="btn ghost-red"> Eliminar mesa
+                    <a href="{% url 'edit-sale' sale.table.number %}" class="btn ghost-button">Editar venta</a>
+                    <a href="{% url 'delete-sale' sale.pk %}" class="btn ghost-red"> Cerrar venta
                     </a>
                 </td>
             </tr>

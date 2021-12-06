@@ -2,12 +2,12 @@
 {% load static %}
 
 
-{% block title %} Nueva Venta {% endblock title %}
+{% block title %}  {{ title }} {% endblock title %}
 
 
 {% block content %}
 
-    <div style="color:#ffa821; font-style: bold; font-size: 2rem; border-bottom: 1px solid white;">Nueva venta</div>
+    <div style="color:#ffa821; font-style: bold; font-size: 2rem; border-bottom: 1px solid white;">{{ title }}</div>
     
     <br>
 
@@ -149,7 +149,33 @@
             }
             return false;
         }
+
+        function updatePriceOfItem(){
+            var stocksById = {
+            {% for stock in stocks %}
+                {% if not forloop.first %},{% endif %}
+               {{ stock.pk }} : {
+                    price          : {{ stock.sell_price | safe }},
+                    quantity    : {{ stock.quantity }}
+                }
+            {% endfor %}
+            };
         
+
+            Array.prototype.forEach.call(document.getElementsByClassName('stock'), function(element, index){
+            element.onchange = function(e){
+                e.preventDefault();
+                document.getElementById('id_form-' + index + '-perprice').value = stocksById[element.value].price
+            }
+        });
+        }
+
+
+       
+
+
+
+
         $(document).on('click', '.add-form-row', function(e){
             e.preventDefault();
             cloneMore('.form-row:last', 'form');
@@ -162,6 +188,7 @@
             return false;
         });
 
+        window.onload = updatePriceOfItem;
 
         //stores pk and quantity of all stocks into a js object 'stocks'
         var stocks = [
@@ -173,7 +200,9 @@
                 }
             {% endfor %}
         ];
+
         
+
         //updates the total price by multiplying 'price per item' and 'quantity' 
         $(document).on('change', '.setprice', function(e){
             e.preventDefault();

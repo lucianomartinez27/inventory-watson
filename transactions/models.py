@@ -56,7 +56,7 @@ class Waiter(models.Model):
 class Table(models.Model):
     number = models.AutoField(primary_key=True)
     waiter = models.ForeignKey(Waiter,  on_delete= models.CASCADE, default=1)
-
+    is_free = models.BooleanField(default=True)
     def __str__(self):
         return 'Mesa N°' + str(self.number) + " atendida por " + str(self.waiter.name)
 

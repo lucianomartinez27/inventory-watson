@@ -67,14 +67,17 @@ class SaleForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         
         self.fields['name'].widget.attrs.update({'class': 'textinput form-control', 'pattern' : '[a-zA-Z\s]{1,50}', 'title' : 'Alphabets and Spaces only',  'readonly':'true', 'required': 'true'})
-        self.fields['table'].widget  = forms.Select(attrs={'class': 'custom-select','id':'selectCategory'})
-        self.fields['table'].queryset = Table.objects.all()
+        self.fields['table'].widget  = forms.Select(attrs={'class': 'custom-select','id':'selectTable','required': 'true'})
+        self.fields['table'].queryset = Table.objects.filter(is_free=True)
 
         self.fields['name'].disabled = True
 
     class Meta:
         model = TableSaleBill
         fields = ['name', 'table']
+
+
+
 
 
 # form used to render a single stock item form
@@ -84,7 +87,7 @@ class SaleItemForm(forms.ModelForm):
         self.fields['stock'].queryset = Stock.objects.filter(is_deleted=False)
         self.fields['stock'].widget.attrs.update({'class': 'textinput form-control setprice stock', 'required': 'true'})
         self.fields['quantity'].widget.attrs.update({'class': 'textinput form-control setprice quantity', 'min': '1', 'required': 'true'})
-        self.fields['perprice'].widget.attrs.update({'class': 'textinput form-control setprice price', 'min': '0', 'required': 'true'})
+        self.fields['perprice'].widget.attrs.update({'class': 'textinput form-control setprice price', 'min': '0', 'readonly': 'true', 'disabled': 'true', 'required': 'true'})
     class Meta:
         model = SaleItem
         fields = ['stock', 'quantity', 'perprice']
