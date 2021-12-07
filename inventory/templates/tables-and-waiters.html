@@ -10,9 +10,9 @@
 
 
 
-    <div class="align-middle">
+    <div class="d-flex justify-content-around">
 
-        <a href="{% url 'new-table' %}" class="btn ghost-red"> Agregar mesa </a>
+        <a href="{% url 'new-table' %}" class="btn ghost-green"> Agregar mesa </a>
         <a href="{% url 'new-waiter' %}" class="btn ghost-button">Agregar mozo</a>
     </div>
 
@@ -27,9 +27,13 @@
                 <div style="border-bottom: 0.5px solid #fff"></div><br>
                 {% endif %}
                 <div class="row">
-                    <div class="col-md-9">
+                    <div class="col-md-8">
                         Mesa N°: {{ table.number }} <br>
                         Atendido por {{ table.waiter.name }} <br>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{% url 'edit-table' table.pk %}" class="btn ghost-button">Editar mesa</a>
+                        <a href="{% url 'delete-table' table.pk %}" class="btn ghost-red"> Eliminar mesa</a>
                     </div>
                 </div>
                 {% endfor %}
@@ -43,9 +47,14 @@
                 <div style="border-bottom: 0.5px solid #fff"></div><br>
                 {% endif %}
                 <div class="row">
-                    <div class="col-md-9">
+                    <div class="col-md-8">
                         Mozo: {{ waiter.name }} <br>
-                       
+                    </div>
+                    <div class="col-md-4">
+                        {% comment %}
+                        <a href="{% url 'edit-waiter' waiter.pk %}" class="btn ghost-button">Editar mesa</a>
+                        <a href="{% url 'delete-waiter' waiter.pk %}" class="btn ghost-red"> Eliminar mesa</a>
+                        {% endcomment %}
                     </div>
                     
                 </div>

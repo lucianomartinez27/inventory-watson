@@ -7,6 +7,7 @@ from django.views.generic import (
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.views.generic.base import TemplateView
+from django.views.generic.edit import DeleteView
 from .models import Category, IngredientQuantity, Stock, Table, Waiter
 from .forms import CategoryForm, IngredientQuantityItemFormset, StockForm, TableForm, WaiterForm
 from django_filters.views import FilterView
@@ -191,3 +192,23 @@ class TablesAndWaitersView(TemplateView):
         context['tables'] = Table.objects.all()
         context['waiters'] = Waiter.objects.all()
         return context
+
+class TableDeleteView(SuccessMessageMixin, DeleteView):
+    model = Table
+    template_name = "delete_table.html"
+    success_url = '/inventario/mesas-y-mozos'
+    success_message = 'Mesa eliminada correctamente'
+
+class TableUpdateView(SuccessMessageMixin, UpdateView):
+    model = Table
+    template_name = "edit_table.html"
+    success_url = '/inventario/mesas-y-mozos'
+    success_message = 'Mesa actualizada correctamente'
+    form_class = TableForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Editar Mesa'
+        context["savebtn"] = 'Guardar cambios'
+        return context
+     
