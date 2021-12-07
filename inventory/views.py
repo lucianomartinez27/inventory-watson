@@ -22,13 +22,13 @@ class StockListView(FilterView):
     ordering = ['-quantity']
 
     
-class CategoryDeleteView(View):                                                            # view class to delete stock
-    template_name = "delete_category.html"                                                 # 'delete_stock.html' used as the template
-    success_message = "Categoria eliminada correctamente"                             # displays message when form is submitted
+class CategoryDeleteView(View): 
+    template_name = "delete_item.html"
+    success_message = "Categoria eliminada correctamente"
     
     def get(self, request, pk):
         stock = get_object_or_404(Category, pk=pk)
-        return render(request, self.template_name, {'object' : stock})
+        return render(request, self.template_name, {'object' : stock, 'cancel_url': 'new-category'})
 
     def post(self, request, pk):  
         stock = get_object_or_404(Category, pk=pk)
@@ -141,13 +141,13 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):                         
     
 
 
-class StockDeleteView(View):                                                            # view class to delete stock
-    template_name = "delete_stock.html"                                                 # 'delete_stock.html' used as the template
-    success_message = "Producto eliminado correctamente"                             # displays message when form is submitted
+class StockDeleteView(View):
+    template_name = "delete_item.html"
+    success_message = "Producto eliminado correctamente"
     
     def get(self, request, pk):
         stock = get_object_or_404(Stock, pk=pk)
-        return render(request, self.template_name, {'object' : stock})
+        return render(request, self.template_name, {'object' : stock,'cancel_url': 'inventory'})
 
     def post(self, request, pk):  
         stock = get_object_or_404(Stock, pk=pk)
@@ -195,9 +195,14 @@ class TablesAndWaitersView(TemplateView):
 
 class TableDeleteView(SuccessMessageMixin, DeleteView):
     model = Table
-    template_name = "delete_table.html"
+    template_name = "delete_item.html"
     success_url = '/inventario/mesas-y-mozos'
     success_message = 'Mesa eliminada correctamente'
+
+    def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            context["cancel_url"] = 'tables-and-waiters'
+            return context
 
 class TableUpdateView(SuccessMessageMixin, UpdateView):
     model = Table
@@ -215,13 +220,14 @@ class TableUpdateView(SuccessMessageMixin, UpdateView):
 
 class WaiterDeleteView(SuccessMessageMixin, DeleteView):
     model = Waiter
-    template_name = "delete_waiter.html"
+    template_name = "delete_item.html"
     success_url = '/inventario/mesas-y-mozos'
     success_message = 'Mozo eliminado correctamente'
 
     def get_context_data(self, **kwargs):
             context = super().get_context_data(**kwargs)
-            context["title"] = 'Eliminar Mozo'
+            context["cancel_url"] = 'tables-and-waiters'
+
             return context
 
 
@@ -237,3 +243,6 @@ class WaiterUpdateView(SuccessMessageMixin, UpdateView):
         context["title"] = 'Editar Mozo'
         context["savebtn"] = 'Guardar cambios'
         return context
+
+def get_verbose_name(object): 
+    return object._meta.verbose_name

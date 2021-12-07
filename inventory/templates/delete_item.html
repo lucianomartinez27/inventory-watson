@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load inventory_extras %}
+
+{% block title %} {{ title }}{% endblock title %}
+
+
+{% block content %}
+                
+    <form method="post">
+        
+        {% csrf_token %}
+        
+        <fieldset class="form-group">
+            <div style="color:#ffa821; font-style: bold; font-size: 2rem; border-bottom: 1px solid white;">Eliminar {{ object|get_verbose_name }}</div> <br>
+            <h2>¿Estás seguro de eliminar "{{  object|get_string_name  }}"?</h2>
+        </fieldset>
+
+        <div class="form-group">  
+            <button type="submit" class="btn ghost-red">Si, eliminar</button>
+            <a href="{% url cancel_url %}" class="btn ghost-button">Cancelar</a>
+        </div>
+        
+    </form>
+
+{% endblock content %}
