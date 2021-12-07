@@ -18,7 +18,6 @@ from .models import (
     SaleItem,
 )
 from .forms import (
-    SaleItemForm,
     SelectSupplierForm,
     PurchaseItemFormset,
     SupplierForm,
@@ -231,8 +230,7 @@ class SaleCreateView(View):
 
     def get(self, request):
 
-        form = SaleForm(request.GET or None, initial={
-                        'name': request.user.username},)
+        form = SaleForm(request.GET or None)
         # renders an empty formset
         formset = SaleItemFormset(request.GET or None)
         stocks = Stock.objects.filter(is_deleted=False)
@@ -246,7 +244,7 @@ class SaleCreateView(View):
         return render(request, self.template_name, context)
 
     def post(self, request):
-        form = SaleForm(request.POST, initial={'name': request.user.username})
+        form = SaleForm(request.POST)
         # recieves a post method for the formset
         formset = SaleItemFormset(request.POST)
         if form.is_valid() and formset.is_valid():
@@ -274,8 +272,8 @@ class SaleCreateView(View):
                 stock.save()
                 billitem.save()
             messages.success(
-                request, "Items vendidos registrados correctamente")
-            return redirect('inventory')
+                request, "Mesa iniciada correctamente")
+            return redirect('open-tables')
         sold_item = SaleForm(request.GET or None)
         formset = SaleItemFormset(request.GET or None)
         context = {
@@ -292,7 +290,7 @@ class SaleUpdateView(SuccessMessageMixin, View):
     def get(self, request, pk):
 
         form = SaleForm(request.GET or None, initial={
-                        'name': request.user.username, 'table': Table.objects.filter(number=pk)})
+                        'waiter' : Table.objects.get(number=pk).waiter, 'table': Table.objects.filter(number=pk)})
 
         formset = SaleItemFormset(initial=[{'stock': product.stock, 'perprice': product.stock.sell_price,
                                             'quantity': product.quantity} for product in self.get_items_for_sale(pk)])
@@ -332,7 +330,7 @@ class SaleUpdateView(SuccessMessageMixin, View):
                 stock.save()
                 billitem.save()
         messages.success(
-            request, "Items vendidos registrados correctamente")
+            request, "Mesa actualizada correctamente")
         
         return redirect('open-tables')
 
@@ -368,12 +366,10 @@ class SaleDeleteView(SuccessMessageMixin, DeleteView):
 
     def delete(self, *args, **kwargs):
         self.object = self.get_object()
-        items = SaleItem.objects.filter(billno=self.object.billno)
-        for item in items:
-            stock = get_object_or_404(Stock, name=item.stock.name)
-            if stock.is_deleted == False:
-                stock.quantity += item.quantity
-                stock.save()
+        self.object.table.is_free = True
+        self.object.table.save()
+        self.object.closed = True
+        self.object.save()
         messages.success(
             self.request, "Detalle de venta eliminada correctamente")
-        return super(SaleDeleteView, self).delete(*args, **kwargs)
+        return redirect('/transacciones/ventas')

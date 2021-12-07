@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.formsets import formset_factory
-from .models import Category, IngredientQuantity, Stock
+from .models import Category, IngredientQuantity, Stock, Table, Waiter
 
 
 
@@ -35,6 +35,16 @@ class CategoryForm(forms.ModelForm):
         model = Category
         fields = ['name']
 
+class WaiterForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):                                                        # used to set css classes to the various fields
+        super().__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs.update({'class': 'textinput form-control'})
+        self.fields['name'].label = 'Nombre'
+
+
+    class Meta:
+        model = Waiter
+        fields = ['name']
 
 class IngredientQuantityItemForm(forms.Form):
     ingredient = forms.ModelChoiceField(label=('Stock'),queryset=Stock.objects.all(),
@@ -42,6 +52,19 @@ class IngredientQuantityItemForm(forms.Form):
     quantity = forms.IntegerField()
     quantity.widget.attrs.update({'class': 'textinput form-control setprice quantity', 'min': '1', 'required': 'true'})
     
+
+
+class TableForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['number'].widget.attrs.update({'class': 'textinput form-control', 'maxlength': '10', 'pattern' : '[0-9]{10}', 'title' : 'Numbers only'})
+        self.fields['waiter'].widget  = forms.Select(attrs={'class': 'custom-select','id':'selectWaiter','required': 'true'})
+        self.fields['waiter'].queryset = Waiter.objects.all()
+
+    class Meta:
+        model = Table
+        fields = ['number', 'waiter']
+
 
 
 # formset used to render multiple 'SaleItemForm'

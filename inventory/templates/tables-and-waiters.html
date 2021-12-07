@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+
+{% block title %} Mesas y mozos {% endblock title %}
+
+
+{% block content %}
+
+<div style="color:#ffa821; font-style: bold; font-size: 2rem; border-bottom: 1px solid white;">Agregar mesa o mozo</div> <br>
+
+
+
+    <div class="align-middle">
+
+        <a href="{% url 'new-table' %}" class="btn ghost-red"> Agregar mesa </a>
+        <a href="{% url 'new-waiter' %}" class="btn ghost-button">Agregar mozo</a>
+    </div>
+
+    <div class="content-section">
+        <div class="row">
+    
+            <div class="col-md-6">
+                <div style="color:#ffa821; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff">Mesas</div><br>
+                {% for table in tables %}
+                {% if not forloop.first %}
+                <br>
+                <div style="border-bottom: 0.5px solid #fff"></div><br>
+                {% endif %}
+                <div class="row">
+                    <div class="col-md-9">
+                        Mesa N°: {{ table.number }} <br>
+                        Atendido por {{ table.waiter.name }} <br>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+    
+            <div class="col-md-6">
+                <div style="color:#ffa821; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff">Mozos</div><br>
+                {% for waiter in waiters %}
+                {% if not forloop.first %}
+                <br>
+                <div style="border-bottom: 0.5px solid #fff"></div><br>
+                {% endif %}
+                <div class="row">
+                    <div class="col-md-9">
+                        Mozo: {{ waiter.name }} <br>
+                       
+                    </div>
+                    
+                </div>
+                {% endfor %}
+            </div>
+    
+        </div>
+    </div>
+
+
+{% endblock content %}

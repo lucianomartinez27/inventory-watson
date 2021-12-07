@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 
-{% block title %} Eliminar venta {% endblock title %}
+{% block title %} Cerrar venta mesa {% endblock title %}
 
 
 {% block content %}
@@ -11,12 +11,12 @@
         {% csrf_token %}
         
         <fieldset class="form-group">
-            <div style="color:#ffa821; font-style: bold; font-size: 2rem; border-bottom: 1px solid white;">Eliminar venta</div> <br>
-            <h2>¿Seguro quieres eliminar la venta N°: {{ object.billno }}?</h2>
+            <div style="color:#ffa821; font-style: bold; font-size: 2rem; border-bottom: 1px solid white;">Cerrar venta mesa</div> <br>
+            <h2>¿Seguro quieres cerrar venta en la mesa N°: {{ object.table.number }}?</h2>
         </fieldset>
 
         <div class="form-group">  
-            <button type="submit" class="btn ghost-red">Si, eliminar</button>
+            <button type="submit" class="btn ghost-red">Si, cerrar</button>
             <a href="{% url 'sales-list' %}" class="btn ghost-button">Cancelar</a>
         </div>
         

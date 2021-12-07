@@ -6,8 +6,9 @@ from django.views.generic import (
 )
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-from .models import Category, IngredientQuantity, Stock
-from .forms import CategoryForm, IngredientQuantityItemFormset, StockForm
+from django.views.generic.base import TemplateView
+from .models import Category, IngredientQuantity, Stock, Table, Waiter
+from .forms import CategoryForm, IngredientQuantityItemFormset, StockForm, TableForm, WaiterForm
 from django_filters.views import FilterView
 from .filters import StockFilter
 
@@ -152,3 +153,41 @@ class StockDeleteView(View):                                                    
         stock.delete()                                              
         messages.success(request, self.success_message)
         return redirect('inventory')
+
+
+class TableCreateView(SuccessMessageMixin, CreateView):
+    model = Table
+    form_class = TableForm
+    success_url = '/'
+    success_message = "Mesa creada correctamente"
+    template_name = "edit_table.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Nueva mesa'
+        context["savebtn"] = 'Agregar mesa'
+        return context
+
+
+class WaiterCreateView(SuccessMessageMixin, CreateView):
+    model = Waiter
+    form_class = WaiterForm
+    success_url = '/'
+    success_message = "Mozo creado correctamente"
+    template_name = "edit_waiter.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Nuevo mozo'
+        context["savebtn"] = 'Agregar mozo'
+        return context
+
+
+class TablesAndWaitersView(TemplateView):
+    template_name = "tables-and-waiters.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tables'] = Table.objects.all()
+        context['waiters'] = Waiter.objects.all()
+        return context

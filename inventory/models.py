@@ -10,7 +10,8 @@ class Category(models.Model):
 	    return self.name
 
     class Meta:
-        verbose_name_plural = "categories"
+        verbose_name = 'Categoria'
+        verbose_name_plural = "Categorias"
 
 
 
@@ -27,6 +28,8 @@ class IngredientQuantity(models.Model):
 
     class Meta:
         unique_together = ('ingredient', 'stock',)
+        verbose_name = 'Ingrediente'
+        verbose_name_plural = 'Ingredientes'
 
 class Stock(models.Model):
     id = models.AutoField(primary_key=True)
@@ -48,13 +51,31 @@ class Stock(models.Model):
 
     class Meta:
         ordering = ['quantity']
+        verbose_name = 'Producto'
+        verbose_name_plural = 'Productos'
   
     def __str__(self):
 	    return self.name
 
 
+class Waiter(models.Model):
+    name = models.CharField('Nombre', max_length=15, unique=True)
 
+    def __str__(self):
+        return self.name
+    class Meta:
+        verbose_name = 'Mozo'
+        verbose_name_plural = 'Mozos'
+
+class Table(models.Model):
+    number = models.IntegerField(primary_key=True,verbose_name='Numero')
+    waiter = models.ForeignKey(Waiter,  on_delete= models.CASCADE, default=1)
+    is_free = models.BooleanField(default=True)
+    def __str__(self):
+        return 'Mesa N°' + str(self.number) + " atendida por " + str(self.waiter.name)
     
 
-
+    class Meta:
+        verbose_name = 'Mesa'
+        verbose_name_plural = 'Mesas'
 

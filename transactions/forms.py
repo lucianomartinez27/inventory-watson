@@ -4,11 +4,10 @@ from .models import (
     Supplier, 
     PurchaseBill, 
     PurchaseItem,
-    Table,
     TableSaleBill, 
     SaleItem,
 )
-from inventory.models import Stock
+from inventory.models import Stock, Table, Waiter
 
 
 # form used to select a supplier
@@ -65,16 +64,13 @@ class SupplierForm(forms.ModelForm):
 class SaleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        self.fields['name'].widget.attrs.update({'class': 'textinput form-control', 'pattern' : '[a-zA-Z\s]{1,50}', 'title' : 'Alphabets and Spaces only',  'readonly':'true', 'required': 'true'})
         self.fields['table'].widget  = forms.Select(attrs={'class': 'custom-select','id':'selectTable','required': 'true'})
         self.fields['table'].queryset = Table.objects.filter(is_free=True)
 
-        self.fields['name'].readonly = True
 
     class Meta:
         model = TableSaleBill
-        fields = ['name', 'table']
+        fields = ['table']
 
 
 

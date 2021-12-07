@@ -1,5 +1,5 @@
 from django.db import models
-from inventory.models import Stock
+from inventory.models import Stock, Table
 from django.contrib.auth.models import User
 
 
@@ -14,6 +14,10 @@ class Supplier(models.Model):
 
     def __str__(self):
 	    return self.name
+    
+    class Meta:
+        verbose_name = 'Proveedor'
+        verbose_name_plural ='Proveedores'
 
 
 #contains the purchase bills made
@@ -23,7 +27,7 @@ class PurchaseBill(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete = models.CASCADE, related_name='purchasesupplier')
     buyer = models.ForeignKey(User, on_delete = models.CASCADE, default=1)
     def __str__(self):
-	    return "Venta N°: " + str(self.billno) + "realizada por " + self.buyer.username
+	    return "Compra N°: " + str(self.billno) + " realizada por " + self.buyer.username
 
     def get_items_list(self):
         return PurchaseItem.objects.filter(billno=self)
@@ -34,6 +38,10 @@ class PurchaseBill(models.Model):
         for item in purchaseitems:
             total += item.totalprice
         return total
+    
+    class Meta:
+        verbose_name = 'Factura de compra'
+        verbose_name_plural = 'Facturas de compra'
 
 #contains the purchase stocks made
 class PurchaseItem(models.Model):
@@ -47,23 +55,13 @@ class PurchaseItem(models.Model):
     def __str__(self):
 	    return "Venta N°: " + str(self.billno.billno) + ", Item = " + self.stock.name
 
-class Waiter(models.Model):
-    name = models.CharField(max_length=15)
-
-    def __str__(self):
-        return self.name
-
-class Table(models.Model):
-    number = models.AutoField(primary_key=True)
-    waiter = models.ForeignKey(Waiter,  on_delete= models.CASCADE, default=1)
-    is_free = models.BooleanField(default=True)
-    def __str__(self):
-        return 'Mesa N°' + str(self.number) + " atendida por " + str(self.waiter.name)
+    class Meta:
+        verbose_name = 'Item de compra'
+        verbose_name_plural = 'Items de compra'
 
 class TableSaleBill(models.Model):
     billno = models.AutoField(primary_key=True)
     time = models.DateTimeField(auto_now=True)
-    name = models.CharField(max_length=150)
     table = models.ForeignKey(Table, on_delete=models.CASCADE, default=1)
     closed = models.BooleanField(default=False)
     def __str__(self):
@@ -79,6 +77,9 @@ class TableSaleBill(models.Model):
             total += item.totalprice
         return total
 
+    class Meta:
+        verbose_name = 'Venta en mesa'
+        verbose_name_plural = 'Ventas en mesa'
 
 #contains the sale stocks made
 class SaleItem(models.Model):
@@ -90,3 +91,6 @@ class SaleItem(models.Model):
     def __str__(self):
 	    return "Venta N°: " + str(self.billno.billno) + ", Item = " + self.stock.name
 
+    class Meta:
+        verbose_name = 'Item de venta'
+        verbose_name_plural = 'Items de venta'

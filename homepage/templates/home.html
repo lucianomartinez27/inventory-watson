@@ -52,8 +52,8 @@
             {% endif %}
             <div class="row">
                 <div class="col-md-9">
-                    Venta N°: {{ item.billno }} <br>
-                    Vendido por {{ item.name }} <br>
+                    Venta N°: {{ item.billno }} en mesa {{ item.table.number }} <br>
+                    Atendido por {{ item.table.waiter.name }} <br>
                     <small>{{ item.time.date }}</small>
                 </div>
                 <div class="col-md-2"> {{ item.get_total_price }} <br> <br>  </div>

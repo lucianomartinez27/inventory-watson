@@ -69,8 +69,9 @@
                     <li>
                         <a href="#saleSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Mesas</a>
                         <ul class="collapse list-unstyled" id="saleSubmenu">
-                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-sale' %}">Abrir mesa</a> </li>
-                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'open-tables' %}">Mesas abiertas</a> </li>
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'tables-and-waiters' %}">Mesas y mozos</a> </li>
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-sale' %}">Ocupar mesa</a> </li>
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'open-tables' %}">Mesas ocupadas</a> </li>
                             <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'sales-list' %}">Historial de ventas</a> </li>
                         </ul>
                     </li>
