@@ -212,3 +212,28 @@ class TableUpdateView(SuccessMessageMixin, UpdateView):
         context["savebtn"] = 'Guardar cambios'
         return context
      
+
+class WaiterDeleteView(SuccessMessageMixin, DeleteView):
+    model = Waiter
+    template_name = "delete_waiter.html"
+    success_url = '/inventario/mesas-y-mozos'
+    success_message = 'Mozo eliminado correctamente'
+
+    def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            context["title"] = 'Eliminar Mozo'
+            return context
+
+
+class WaiterUpdateView(SuccessMessageMixin, UpdateView):
+    model = Waiter
+    template_name = "edit_waiter.html"
+    success_url = '/inventario/mesas-y-mozos'
+    success_message = 'Mozo actualizado correctamente'
+    form_class = WaiterForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Editar Mozo'
+        context["savebtn"] = 'Guardar cambios'
+        return context
