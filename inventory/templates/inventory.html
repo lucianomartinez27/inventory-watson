@@ -59,7 +59,6 @@
                         <tr>
                             <th >Nombre de producto</th>
                             <th >Precio compra</th>
-                            <th >Precio venta</th>
                             <th >Costo</th>
                             {% if request.GET.o == "o" %}
                             <th > <a href="?o=-o">
@@ -79,7 +78,7 @@
                             <td>
                                 <h4>{{ stock.name }}</h4>
                             </td>
-                            <td class="align-middle">{{ stock.buy_price }}</td>
+                            
                             <td class="align-middle">{{ stock.sell_price }}</td>
 
                             <td class="align-middle">{{ stock.get_total_cost }}</td>

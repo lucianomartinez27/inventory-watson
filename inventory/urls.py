@@ -14,7 +14,7 @@ urlpatterns = [
     path('mesa/<pk>/editar', views.TableUpdateView.as_view(), name='edit-table'),
     path('mozo/<pk>/eliminar', views.WaiterDeleteView.as_view(), name='delete-waiter'),
     path('mozo/<pk>/editar', views.WaiterUpdateView.as_view(), name='edit-waiter'),
-
+    path('ingrediente', views.IngredientCreateView.as_view(), name='add-ingredient'),
 
     path('nueva-mesa', views.TableCreateView.as_view(), name='new-table'),
     path('nuevo-mozo', views.WaiterCreateView.as_view(), name='new-waiter'),

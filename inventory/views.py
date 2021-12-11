@@ -8,8 +8,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import DeleteView
-from .models import Category, IngredientQuantity, Stock, Table, Waiter
-from .forms import CategoryForm, IngredientQuantityItemFormset, StockForm, TableForm, WaiterForm
+from .models import Category, Ingredient, IngredientQuantity, Stock, Table, Waiter
+from .forms import CategoryForm, IngedientForm, IngredientQuantityItemFormset, StockForm, TableForm, WaiterForm
 from django_filters.views import FilterView
 from .filters import StockFilter
 
@@ -19,7 +19,10 @@ class StockListView(FilterView):
     filterset_class = StockFilter
     template_name = 'inventory.html'
     paginate_by = 10
-    ordering = ['-quantity']
+    ordering = ['name']
+
+    def get_queryset(self):
+        return Stock.objects.filter()
 
     
 class CategoryDeleteView(View): 
@@ -101,8 +104,29 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
         }
         return render(request, self.template_name, context)
 
-    
+class IngredientCreateView(SuccessMessageMixin, CreateView):
+    model = Ingredient
+    template_name = "edit_stock.html"
+    success_url = '/inventario'
+    success_message = "Ingrediente creado correctamente"
 
+    def get(self, request):
+                                      
+        context = {
+            'form' : IngedientForm(request.GET or None),
+            'title'    : "Nuevo ingrediente",
+            'savebtn' : 'Agregar al inventario',
+        }
+
+        return render(request, self.template_name, context)
+    def post(self, request):
+            form = IngedientForm(request.POST)
+            print(form.errors)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Producto agregado correctamente")
+            return redirect('inventory')
+    
 class StockUpdateView(SuccessMessageMixin, UpdateView):                                 # updateview class to edit stock, mixin used to display message
     template_name = "edit_stock.html"                                                   # 'edit_stock.html' used as the template
     success_url = '/inventario'                                                          # redirects to 'inventory' page in the url after submitting the form

@@ -50,13 +50,17 @@
                     {# <p class="sidebar-paragraph">Dummy Heading</p> #}
                     <li>
                         <a class="sidebar-text sidebar-button" href="{% url 'home' %}">Inicio</a>
-                    </li>               
+                    </li>
+
+                        
                     <li>
                         <a href="#inventorySubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">Inventario</a>
                         <ul class="collapse list-unstyled" id="inventorySubmenu">
-                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'inventory' %}">Listado de productos</a> </li>
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'inventory' %}">Listado de inventario</a> </li>
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'add-ingredient' %}">Nuevo ingrediente</a> </li>
                             <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-stock' %}">Nuevo producto</a> </li>
                             <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-category' %}">Categorias</a> </li>
+
                         </ul>
                     </li>
                     <li>

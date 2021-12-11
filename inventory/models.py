@@ -17,10 +17,57 @@ class Category(models.Model):
 
 
 
+
+
+class Stock(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=30, unique=True,error_messages={'unique': u'El producto ya existe en el inventario'})
+    is_deleted = models.BooleanField(default=False)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,  null=True)
+    sell_price = models.FloatField(default=0)
+
+    def get_ingredients(self):
+        return IngredientQuantity.objects.filter(stock=self)
+
+    def get_total_cost(self):
+        total = 0
+        for quantity in self.get_ingredients():
+            total += quantity.ingredient.get_total_cost() * quantity.quantity
+        return total
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Producto'
+        verbose_name_plural = 'Productos'
+  
+    def __str__(self):
+	    return self.name
+
+
+class Ingredient(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=30, unique=True,error_messages={'unique': u'El producto ya existe en el inventario'})
+    quantity = models.IntegerField(default=1,null=True)
+    is_deleted = models.BooleanField(default=False)
+    category = models.CharField(choices=[('C', 'Cocina'), ('B', 'Barra')],default='C', max_length=1)
+    buy_price = models.FloatField(default=0)
+
+    
+    def get_total_cost(self):
+        return self.buy_price
+
+    class Meta:
+        ordering = ['quantity']
+        verbose_name = 'Ingrediente'
+        verbose_name_plural = 'Ingredientes'
+  
+    def __str__(self):
+	    return self.name
+
 class IngredientQuantity(models.Model):
     id = models.AutoField(primary_key=True)
-    stock = models.ForeignKey("Stock", on_delete=models.CASCADE)
-    ingredient = models.ForeignKey("Stock", on_delete=models.CASCADE, null=True, related_name="ingredient")
+    stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, null=True, related_name="ingredient")
     quantity = models.IntegerField(default=1)
     
     def __str__(self):
@@ -28,35 +75,8 @@ class IngredientQuantity(models.Model):
 
     class Meta:
         unique_together = ('ingredient', 'stock',)
-        verbose_name = 'Ingrediente'
-        verbose_name_plural = 'Ingredientes'
-
-class Stock(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=30, unique=True,error_messages={'unique': u'El producto ya existe en el inventario'})
-    quantity = models.IntegerField(default=1)
-    is_deleted = models.BooleanField(default=False)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE,  null=True)
-    buy_price = models.FloatField(default=0)
-    sell_price = models.FloatField(default=0)
-
-    def get_ingredients(self):
-        return IngredientQuantity.objects.filter(stock=self)
-
-    def get_total_cost(self):
-        total = self.buy_price
-        for quantity in self.get_ingredients():
-            total += quantity.ingredient.get_total_cost() * quantity.quantity
-        return total
-
-    class Meta:
-        ordering = ['quantity']
-        verbose_name = 'Producto'
-        verbose_name_plural = 'Productos'
-  
-    def __str__(self):
-	    return self.name
-
+        verbose_name = 'Ingrediente para producto'
+        verbose_name_plural = 'Ingredientes para producto'
 
 class Waiter(models.Model):
     name = models.CharField('Nombre', max_length=15, unique=True)

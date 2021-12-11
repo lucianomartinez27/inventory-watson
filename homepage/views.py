@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import View, TemplateView
 from .forms import CategoryForm
-from inventory.models import Stock
+from inventory.models import Ingredient, Stock
 from transactions.models import TableSaleBill, PurchaseBill
 
 
@@ -11,7 +11,7 @@ class HomeView(View):
         form = CategoryForm()        
         labels = []
         data = {}        
-        stockqueryset = Stock.objects.order_by('-quantity')
+        stockqueryset = Ingredient.objects.order_by('-quantity',)
         quantities = []
         labels =  []
         for item in stockqueryset:

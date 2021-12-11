@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %} {{title}} {% endblock title %}
+
+
+{% block content %}
+
+    <div style="color:#ffa821; font-style: bold; font-size: 2rem; border-bottom: 1px solid white;">{{title}}</div> 
+    
+    <br>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+
+        {{ form.non_field_errors }}
+        
+
+        {% for field in form.visible_fields %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+            </div>
+        {% endfor %}
+        
