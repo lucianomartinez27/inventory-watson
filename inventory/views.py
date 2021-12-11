@@ -191,7 +191,7 @@ class StockDeleteView(View):
 class TableCreateView(SuccessMessageMixin, CreateView):
     model = Table
     form_class = TableForm
-    success_url = '/'
+    success_url = '/inventario/mesas-y-mozos'
     success_message = "Mesa creada correctamente"
     template_name = "edit_table.html"
 

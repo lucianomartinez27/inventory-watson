@@ -1,5 +1,5 @@
 from django.db import models
-from inventory.models import Stock, Table
+from inventory.models import Stock, Table, Waiter
 from django.contrib.auth.models import User
 
 
@@ -63,6 +63,7 @@ class TableSaleBill(models.Model):
     billno = models.AutoField(primary_key=True)
     time = models.DateTimeField(auto_now=True)
     table = models.ForeignKey(Table, on_delete=models.CASCADE, default=1)
+    waiter = models.ForeignKey(Waiter, on_delete=models.CASCADE, default=1)
     closed = models.BooleanField(default=False)
     def __str__(self):
 	    return "Venta N°: " + str(self.billno) + " en mesa " + str(self.table.number)

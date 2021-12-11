@@ -73,12 +73,10 @@ class TableForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['number'].widget.attrs.update({'class': 'textinput form-control', 'maxlength': '10', 'pattern' : '[0-9]{10}', 'title' : 'Numbers only'})
-        self.fields['waiter'].widget  = forms.Select(attrs={'class': 'custom-select','id':'selectWaiter','required': 'true'})
-        self.fields['waiter'].queryset = Waiter.objects.all()
-
+        
     class Meta:
         model = Table
-        fields = ['number', 'waiter']
+        fields = ['number']
 
 
 

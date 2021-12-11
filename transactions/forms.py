@@ -70,7 +70,7 @@ class SaleForm(forms.ModelForm):
 
     class Meta:
         model = TableSaleBill
-        fields = ['table']
+        fields = ['table', 'waiter',]
 
 
 

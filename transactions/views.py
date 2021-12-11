@@ -24,7 +24,7 @@ from .forms import (
     SaleForm,
     SaleItemFormset,
 )
-from inventory.models import Stock
+from inventory.models import Ingredient, Stock
 
 
 # shows a lists of all suppliers
@@ -165,14 +165,14 @@ class PurchaseCreateView(View):
                 # links the bill object to the items
                 billitem.billno = billobj
                 # gets the stock item
-                stock = get_object_or_404(
-                    Stock, name=billitem.stock.name)       # gets the item
+                ingredient = get_object_or_404(
+                    Ingredient, name=billitem.stock.name)       # gets the item
                 # calculates the total price
                 billitem.totalprice = billitem.perprice * billitem.quantity
                 # updates quantity in stock db
-                stock.quantity += billitem.quantity                              # updates quantity
+                ingredient.quantity += billitem.quantity                              # updates quantity
                 # saves bill item and stock
-                stock.save()
+                ingredient.save()
                 billitem.save()
             messages.success(
                 request, "Compra de productos registrada correctamente")
@@ -257,7 +257,6 @@ class SaleCreateView(View):
             # for loop to save each individual form as its own object
             for sold_item in formset:
                
-               
                 # false saves the item and links bill to the item
                 billitem = sold_item.save(commit=False)
                 # links the bill object to the items
@@ -266,8 +265,8 @@ class SaleCreateView(View):
                 stock = get_object_or_404(Stock, name=billitem.stock.name)
                 # calculates the total price
                 billitem.totalprice = billitem.perprice * billitem.quantity
-                # updates quantity in stock db
-                stock.quantity -= billitem.quantity
+                # here we need to update the quantity of ingredientes in every sold product
+                #stock.quantity -= billitem.quantity
                 # saves bill item and stock
                 stock.save()
                 billitem.save()
@@ -290,7 +289,7 @@ class SaleUpdateView(SuccessMessageMixin, View):
     def get(self, request, pk):
 
         form = SaleForm(request.GET or None, initial={
-                        'waiter' : Table.objects.get(number=pk).waiter, 'table': Table.objects.filter(number=pk)})
+                         'table': Table.objects.filter(number=pk)})
 
         formset = SaleItemFormset(initial=[{'stock': product.stock, 'perprice': product.stock.sell_price,
                                             'quantity': product.quantity} for product in self.get_items_for_sale(pk)])
@@ -301,7 +300,7 @@ class SaleUpdateView(SuccessMessageMixin, View):
         context = {
             'form': form,
             'formset': formset,
-            'stocks': self.get_total_stock(pk),
+            'stocks': Stock.objects.all(),
             'title': 'Editar venta'
         }
 
@@ -325,7 +324,7 @@ class SaleUpdateView(SuccessMessageMixin, View):
                 # calculates the total price
                 billitem.totalprice = billitem.perprice * billitem.quantity
                 # updates quantity in stock db
-                stock.quantity -= billitem.quantity
+                #stock.quantity -= billitem.quantity
                 # saves bill item and stock
                 stock.save()
                 billitem.save()
@@ -336,10 +335,6 @@ class SaleUpdateView(SuccessMessageMixin, View):
 
     def restore_stock(self, pk):
         items_for_sale = self.get_items_for_sale(pk)
-        for item in items_for_sale:
-            stock = get_object_or_404(Stock, name=item.stock.name)
-            stock.quantity += item.quantity
-            stock.save()
         items_for_sale.delete()
         
 
@@ -350,13 +345,6 @@ class SaleUpdateView(SuccessMessageMixin, View):
                     number=pk)
             ).get(closed=False))
 
-    def get_total_stock(self, pk): # get total quantity of stock to update sales
-        items_for_sale = self.get_items_for_sale(pk)
-        queryset = [stock for stock in Stock.objects.all()]
-        for item in items_for_sale:
-            stock = next(filter(lambda stock: stock.name == item.stock.name, queryset )) # get the first item that matches condition
-            stock.quantity += item.quantity
-        return queryset
 
 
 class SaleDeleteView(SuccessMessageMixin, DeleteView):

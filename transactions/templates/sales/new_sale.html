@@ -20,8 +20,12 @@
         <div class="panel-body">
             
             <div class="form-group">
-                <label for="{{ form.name.id_for_label }}" class="panel-body-text">Mesa:</label>
+                <label for="{{ form.table.id_for_label }}" class="panel-body-text">Mesa:</label>
                 {{ form.table }}   
+            </div>
+            <div class="form-group">
+                <label for="{{ form.waiter.id_for_label }}" class="panel-body-text">Mozo:</label>
+                {{ form.waiter }}   
             </div>
 
 
@@ -151,7 +155,6 @@
                 {% if not forloop.first %},{% endif %}
                {{ stock.pk }} : {
                     price          : {{ stock.sell_price | safe }},
-                    quantity    : {{ stock.quantity }}
                 }
             {% endfor %}
             };
@@ -175,6 +178,7 @@
         $(document).on('click', '.add-form-row', function(e){
             e.preventDefault();
             cloneMore('.form-row:last', 'form');
+            updatePriceOfItem()
             return false;
         });
         
@@ -186,17 +190,6 @@
 
         window.onload = updatePriceOfItem;
 
-        //stores pk and quantity of all stocks into a js object 'stocks'
-        var stocks = [
-            {% for stock in stocks %}
-                {% if not forloop.first %},{% endif %}
-                {
-                    pk          : {{ stock.pk }},
-                    quantity    : {{ stock.quantity }}
-                }
-            {% endfor %}
-        ];
-
         
 
         //updates the total price by multiplying 'price per item' and 'quantity' 
@@ -204,32 +197,10 @@
             e.preventDefault();
             //gets the values
             var element = $(this);
-            var stock = element.parents('.form-row').find('.stock').val();
             var quantity = element.parents('.form-row').find('.quantity').val();
             var perprice = element.parents('.form-row').find('.price').val();
             //checks if stocks are available
-            stocks.forEach(function(stockSummary, i) {
-                var pk = stocks[i].pk;
-                var squantity = stocks[i].quantity;
-                if(stock == pk) {
-                    //checks if ordered stock is more than available stock
-                    if(quantity > squantity){
-                        quantity = quantity - 1;
-                        if(quantity <= 1){
-                            
-                            //Sets quantity to 0 as failsafe for when the total no of item forms are 1
-                            element.parents('.form-row').find('.quantity').val(0);
-                            deleteForm('form', element);
-                            //no stocks are available. Attempts to delete field
-                            custom_alert.render('No hay suficiente stock de este producto');
-                        } else {
-                            element.parents('.form-row').find('.quantity').val(squantity);
-                            quantity = squantity - 1;
-                            custom_alert.render('No hay suficiente stock para esta venta');
-                        }
-                    }
-                }
-            });     
+              
             //calculates the total
             var tprice = quantity * perprice;
             //sets it to field

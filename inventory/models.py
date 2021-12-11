@@ -90,10 +90,9 @@ class Waiter(models.Model):
 
 class Table(models.Model):
     number = models.IntegerField(primary_key=True,verbose_name='Numero')
-    waiter = models.ForeignKey(Waiter,  on_delete= models.CASCADE, default=1)
     is_free = models.BooleanField(default=True)
     def __str__(self):
-        return 'Mesa N°' + str(self.number) + " atendida por " + str(self.waiter.name)
+        return 'Mesa N°' + str(self.number)
     
 
     class Meta:
