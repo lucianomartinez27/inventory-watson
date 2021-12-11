@@ -22,7 +22,7 @@ class StockForm(forms.ModelForm):
 
 
 
-class IngedientForm(forms.ModelForm):
+class IngredientForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):                                                        # used to set css classes to the various fields
         super().__init__(*args, **kwargs)
         self.fields['name'].widget.attrs.update({'class': 'textinput form-control'})

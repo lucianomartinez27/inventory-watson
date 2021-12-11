@@ -1,10 +1,10 @@
 import django_filters
-from .models import Category, Stock    
+from .models import Category, Ingredient, Stock    
 from django_filters.filters import OrderingFilter
 
-class StockFilter(django_filters.FilterSet):                            # Stockfilter used to filter based on name
+class IngredientFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(lookup_expr='icontains')
-    category = django_filters.ModelChoiceFilter(queryset=Category.objects.all())
+    
     o = OrderingFilter(
         # tuple-mapping retains order
         fields=(
@@ -13,6 +13,12 @@ class StockFilter(django_filters.FilterSet):                            # Stockf
     )
     
     class Meta:
-        model = Stock
+        model = Ingredient
         fields = ['name', 'o', 'category']
 
+class StockFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(lookup_expr='icontains')
+    
+    class Meta:
+        model = Stock
+        fields = ['name',  'category']

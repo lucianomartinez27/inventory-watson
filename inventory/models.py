@@ -53,6 +53,7 @@ class Ingredient(models.Model):
     buy_price = models.FloatField(default=0)
 
     
+    
     def get_total_cost(self):
         return self.buy_price
 

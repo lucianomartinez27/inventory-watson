@@ -9,9 +9,9 @@
 {% block content %}
 
 <div class="row" style="color: #ffa821; font-style: bold; font-size: 2rem; ">
-    <div class="col-md-8">Listado de ingredientes</div>
+    <div class="col-md-8">Listado de productos</div>
     <div class="col-md-4">
-        <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'add-ingredient' %}">Agregar nuevo ingrediente</a>
+        <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-stock' %}">Agregar nuevo producto</a>
         </div>
     </div>
 </div>
@@ -58,13 +58,8 @@
                     <thead class="thead-inverse align-middle">
                         <tr>
                             <th >Nombre de producto</th>
-                            <th >Precio compra</th>
-                            {% if request.GET.o == "o" %}
-                            <th > <a href="?o=-o">
-
-                                    {% else %}
-                            <th > <a href="?o=o">
-                                    {% endif %}Stock en el inventario</a></th>
+                            <th >Precio venta</th>
+                            <th >Costo</th>
                             <th >Opciones</th>
                         </tr>
                     </thead>
@@ -72,17 +67,17 @@
                     {% if object_list %}
 
                     <tbody>
-                        {% for ingredient in object_list %}
+                        {% for stock in object_list %}
                         <tr>
                             <td>
-                                <h4>{{ ingredient.name }}</h4>
+                                <h4>{{ stock.name }}</h4>
                             </td>
                             
-                            <td class="align-middle">{{ ingredient.buy_price }}</td>
-                            <td class="align-middle">{{ ingredient.quantity }}</td>
+                            <td class="align-middle">{{ stock.sell_price }}</td>
+                            <td class="align-middle">{{ stock.get_total_cost }}</td>
                             <td class="align-middle">
-                                <a href="{% url 'edit-ingredient' ingredient.pk %}" class="btn ghost-button">Editar detalles</a>
-                                <a href="{% url 'delete-ingredient' ingredient.pk %}" class="btn ghost-red"> Eliminar ingrediente
+                                <a href="{% url 'edit-stock' stock.pk %}" class="btn ghost-button">Editar detalles</a>
+                                <a href="{% url 'delete-stock' stock.pk %}" class="btn ghost-red"> Eliminar producto
                                 </a>
                             </td>
                         </tr>

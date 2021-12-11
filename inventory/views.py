@@ -9,21 +9,31 @@ from django.contrib import messages
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import DeleteView
 from .models import Category, Ingredient, IngredientQuantity, Stock, Table, Waiter
-from .forms import CategoryForm, IngedientForm, IngredientQuantityItemFormset, StockForm, TableForm, WaiterForm
+from .forms import CategoryForm, IngredientForm, IngredientQuantityItemFormset, StockForm, TableForm, WaiterForm
 from django_filters.views import FilterView
-from .filters import StockFilter
+from .filters import IngredientFilter, StockFilter
+
+
+class IngredientListView(FilterView):
+    model = Ingredient
+    filterset_class = IngredientFilter
+    template_name = 'inventory.html'
+    paginate_by = 10
+    ordering = ['-quantity']
+
+    def get_queryset(self):
+        return Ingredient.objects.all()
 
 
 class StockListView(FilterView):
     model = Stock
     filterset_class = StockFilter
-    template_name = 'inventory.html'
+    template_name = 'products.html'
     paginate_by = 10
     ordering = ['name']
 
     def get_queryset(self):
-        return Stock.objects.filter()
-
+        return Stock.objects.all()
     
 class CategoryDeleteView(View): 
     template_name = "delete_item.html"
@@ -38,9 +48,7 @@ class CategoryDeleteView(View):
         stock.delete()                                              
         messages.success(request, self.success_message)
         return redirect('inventory')
-        
 
-        return context    
 
 class CategoryCreateView(SuccessMessageMixin, CreateView):                                
     model = Stock                                                                       
@@ -113,14 +121,14 @@ class IngredientCreateView(SuccessMessageMixin, CreateView):
     def get(self, request):
                                       
         context = {
-            'form' : IngedientForm(request.GET or None),
+            'form' : IngredientForm(request.GET or None),
             'title'    : "Nuevo ingrediente",
             'savebtn' : 'Agregar al inventario',
         }
 
         return render(request, self.template_name, context)
     def post(self, request):
-            form = IngedientForm(request.POST)
+            form = IngredientForm(request.POST)
             print(form.errors)
             if form.is_valid():
                 form.save()
@@ -254,6 +262,32 @@ class WaiterDeleteView(SuccessMessageMixin, DeleteView):
 
             return context
 
+
+class IngredientDeleteView(SuccessMessageMixin, DeleteView):
+    model = Ingredient
+    template_name = "delete_item.html"
+    success_url = '/inventario/'
+    success_message = 'Ingrediente eliminado correctamente'
+
+    def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            context["cancel_url"] = '/inventario/productos'
+
+            return context
+
+class IngredientUpdateView(SuccessMessageMixin, UpdateView):
+    model = Ingredient
+    template_name = "edit_ingredient.html"
+    success_url = '/inventario/'
+    success_message = 'Ingrediente actualizado correctamente'
+    form_class = IngredientForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Editar Ingrediente'
+        context["savebtn"] = 'Guardar cambios'
+        return context
+     
 
 class WaiterUpdateView(SuccessMessageMixin, UpdateView):
     model = Waiter
