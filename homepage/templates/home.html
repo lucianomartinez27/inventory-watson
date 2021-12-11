@@ -121,7 +121,7 @@
         window.BarStock.data.datasets[0].data = [];
         window.BarStock.data.labels = [];
         {% for category, products in data.items %}
-        if ('{{ category.pk }}' == selectedCategory){
+        if ('{{ category }}' == selectedCategory){
                     window.BarStock.data.datasets[0].data.push(...{{ products.quantity |safe }});
                     window.BarStock.data.labels.push(...{{ products.labels | safe }});
         }

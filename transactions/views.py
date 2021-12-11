@@ -166,11 +166,12 @@ class PurchaseCreateView(View):
                 billitem.billno = billobj
                 # gets the stock item
                 ingredient = get_object_or_404(
-                    Ingredient, name=billitem.stock.name)       # gets the item
+                    Ingredient, name=billitem.ingredient.name)       # gets the item
                 # calculates the total price
                 billitem.totalprice = billitem.perprice * billitem.quantity
                 # updates quantity in stock db
-                ingredient.quantity += billitem.quantity                              # updates quantity
+                ingredient.quantity += billitem.quantity
+                ingredient.buy_price = billitem.perprice                              # updates quantity
                 # saves bill item and stock
                 ingredient.save()
                 billitem.save()

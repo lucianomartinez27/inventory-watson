@@ -33,7 +33,7 @@
                     {% for purchase in bills %}
                     <tr>
                         <td class="align-middle"> <h3>{{ purchase.billno }}</h3> </td>
-                        <td class="align-middle">{% for item in purchase.get_items_list %} {{ item.stock.name }} <br> {% endfor %}</td>
+                        <td class="align-middle">{% for item in purchase.get_items_list %} {{ item.ingredient.name }} <br> {% endfor %}</td>
                         <td class="align-middle">{{ purchase.get_total_price }}</td>
                         <td class="align-middle">{{ purchase.time.date }}</td>
                     </tr>

@@ -5,6 +5,6 @@ from inventory.models import Category
 
 class CategoryForm(forms.Form):
     
-    category = forms.ModelChoiceField(label=('Categorias'),queryset=Category.objects.filter(stock__isnull=False).distinct(), widget=forms.Select(attrs={'class': 'custom-select','id':'selectCategory'}))
+    category = forms.MultipleChoiceField(label=('Categorias'),choices=[('C', 'Cocina'), ('B', 'Barra')], widget=forms.Select(attrs={'class': 'custom-select','id':'selectCategory'}))
 
   
