@@ -1,9 +1,7 @@
 from django.contrib import admin
-from .models import Ingredient, Stock, Category, IngredientQuantity, Table, Waiter
+from .models import  Stock, IngredientQuantity, Table, Waiter
 
 admin.site.register(Stock)
-admin.site.register(Category)
 admin.site.register(IngredientQuantity)
 admin.site.register(Table)
 admin.site.register(Waiter)
-admin.site.register(Ingredient)

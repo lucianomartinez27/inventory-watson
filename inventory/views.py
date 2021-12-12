@@ -8,21 +8,12 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import DeleteView
-from .models import Category, Ingredient, IngredientQuantity, Stock, Table, Waiter
-from .forms import CategoryForm, IngredientForm, IngredientQuantityItemFormset, StockForm, TableForm, WaiterForm
+from .models import IngredientQuantity, Stock, Table, Waiter
+from .forms import  IngredientQuantityItemFormset, StockForm, TableForm, WaiterForm
 from django_filters.views import FilterView
-from .filters import IngredientFilter, StockFilter
+from .filters import StockFilter
 
 
-class IngredientListView(FilterView):
-    model = Ingredient
-    filterset_class = IngredientFilter
-    template_name = 'inventory.html'
-    paginate_by = 10
-    ordering = ['-quantity']
-
-    def get_queryset(self):
-        return Ingredient.objects.all()
 
 
 class StockListView(FilterView):
@@ -35,36 +26,6 @@ class StockListView(FilterView):
     def get_queryset(self):
         return Stock.objects.all()
     
-class CategoryDeleteView(View): 
-    template_name = "delete_item.html"
-    success_message = "Categoria eliminada correctamente"
-    
-    def get(self, request, pk):
-        stock = get_object_or_404(Category, pk=pk)
-        return render(request, self.template_name, {'object' : stock, 'cancel_url': 'new-category'})
-
-    def post(self, request, pk):  
-        stock = get_object_or_404(Category, pk=pk)
-        stock.delete()                                              
-        messages.success(request, self.success_message)
-        return redirect('inventory')
-
-
-class CategoryCreateView(SuccessMessageMixin, CreateView):                                
-    model = Stock                                                                       
-    form_class = CategoryForm                                                              
-    template_name = "add_category.html"                                                  
-    success_url = '/inventario/agregar-categoria'                                                         
-    success_message = "Categoria creada correctamente"                            
-
-    def get_context_data(self, **kwargs):                                              
-        context = super().get_context_data(**kwargs)
-        context["title"] = 'Nueva categoria'
-        context["savebtn"] = 'Agregar categoria'
-        context['categories'] = Category.objects.all()
-        
-
-        return context    
 
 class StockCreateView(SuccessMessageMixin, CreateView):                                 # createview class to add new stock, mixin used to display message
     model = Stock                            # setting 'StockForm' form as form
@@ -112,29 +73,6 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
         }
         return render(request, self.template_name, context)
 
-class IngredientCreateView(SuccessMessageMixin, CreateView):
-    model = Ingredient
-    template_name = "edit_stock.html"
-    success_url = '/inventario'
-    success_message = "Ingrediente creado correctamente"
-
-    def get(self, request):
-                                      
-        context = {
-            'form' : IngredientForm(request.GET or None),
-            'title'    : "Nuevo ingrediente",
-            'savebtn' : 'Agregar al inventario',
-        }
-
-        return render(request, self.template_name, context)
-    def post(self, request):
-            form = IngredientForm(request.POST)
-            print(form.errors)
-            if form.is_valid():
-                form.save()
-                messages.success(request, "Producto agregado correctamente")
-            return redirect('inventory')
-    
 class StockUpdateView(SuccessMessageMixin, UpdateView):                                 # updateview class to edit stock, mixin used to display message
     template_name = "edit_stock.html"                                                   # 'edit_stock.html' used as the template
     success_url = '/inventario'                                                          # redirects to 'inventory' page in the url after submitting the form
@@ -263,31 +201,6 @@ class WaiterDeleteView(SuccessMessageMixin, DeleteView):
             return context
 
 
-class IngredientDeleteView(SuccessMessageMixin, DeleteView):
-    model = Ingredient
-    template_name = "delete_item.html"
-    success_url = '/inventario/'
-    success_message = 'Ingrediente eliminado correctamente'
-
-    def get_context_data(self, **kwargs):
-            context = super().get_context_data(**kwargs)
-            context["cancel_url"] = '/inventario/productos'
-
-            return context
-
-class IngredientUpdateView(SuccessMessageMixin, UpdateView):
-    model = Ingredient
-    template_name = "edit_ingredient.html"
-    success_url = '/inventario/'
-    success_message = 'Ingrediente actualizado correctamente'
-    form_class = IngredientForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["title"] = 'Editar Ingrediente'
-        context["savebtn"] = 'Guardar cambios'
-        return context
-     
 
 class WaiterUpdateView(SuccessMessageMixin, UpdateView):
     model = Waiter

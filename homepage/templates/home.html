@@ -114,7 +114,7 @@
         selectCategory = document.getElementById('selectCategory')
         selectCategory.onchange = filterByCategory;
     };
-
+    {% if data %}
     function filterByCategory() {
         let selectedCategory = selectCategory.value;
         console.log(selectedCategory)
@@ -134,6 +134,7 @@
     console.log( barConfig.data.datasets[0])
     window.BarStock.update();
     }
+    {% endif %}
 </script>
 
 {% endblock content %}

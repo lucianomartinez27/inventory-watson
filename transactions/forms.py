@@ -7,7 +7,7 @@ from .models import (
     TableSaleBill, 
     SaleItem,
 )
-from inventory.models import Ingredient, Stock, Table, Waiter
+from inventory.models import Stock, Table, Waiter
 
 
 # form used to select a supplier
@@ -27,13 +27,13 @@ class SelectSupplierForm(forms.ModelForm):
 class PurchaseItemForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['ingredient'].queryset = Ingredient.objects.all()
-        self.fields['ingredient'].widget.attrs.update({'class': 'textinput form-control setprice stock', 'required': 'true'})
+        self.fields['stock'].queryset = Stock.objects.all()
+        self.fields['stock'].widget.attrs.update({'class': 'textinput form-control setprice stock', 'required': 'true'})
         self.fields['quantity'].widget.attrs.update({'class': 'textinput form-control setprice quantity', 'min': '1', 'required': 'true'})
         self.fields['perprice'].widget.attrs.update({'class': 'textinput form-control setprice price', 'min': '0', 'required': 'true'})
     class Meta:
         model = PurchaseItem
-        fields = ['ingredient', 'quantity', 'perprice']
+        fields = ['stock', 'quantity', 'perprice']
 
 # formset used to render multiple 'PurchaseItemForm'
 PurchaseItemFormset = formset_factory(PurchaseItemForm, extra=1)

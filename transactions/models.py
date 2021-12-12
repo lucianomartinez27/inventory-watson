@@ -1,5 +1,5 @@
 from django.db import models
-from inventory.models import Ingredient, Stock, Table, Waiter
+from inventory.models import Stock, Table, Waiter
 from django.contrib.auth.models import User
 
 
@@ -46,14 +46,14 @@ class PurchaseBill(models.Model):
 #contains the purchase stocks made
 class PurchaseItem(models.Model):
     billno = models.ForeignKey(PurchaseBill, on_delete = models.CASCADE, related_name='purchasebillno')
-    ingredient = models.ForeignKey(Ingredient, on_delete = models.CASCADE, related_name='purchaseitem')
+    stock = models.ForeignKey(Stock, on_delete = models.CASCADE, related_name='purchaseitem')
     buyer = models.ForeignKey(User, on_delete = models.CASCADE, default=1)
     quantity = models.IntegerField(default=1)
     perprice = models.IntegerField(default=1)
     totalprice = models.IntegerField(default=1)
 
     def __str__(self):
-	    return "Venta N°: " + str(self.billno.billno) + ", Item = " + self.ingredient.name
+	    return "Venta N°: " + str(self.billno.billno) + ", Item = " + self.stock.name
 
     class Meta:
         verbose_name = 'Item de compra'
