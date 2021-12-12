@@ -17,7 +17,7 @@ class Stock(models.Model):
         return IngredientQuantity.objects.filter(stock=self)
 
     def get_total_cost(self):
-        total = 0
+        total = self.buy_price
         for quantity in self.get_ingredients():
             total += quantity.ingredient.get_total_cost() * quantity.quantity
         return total

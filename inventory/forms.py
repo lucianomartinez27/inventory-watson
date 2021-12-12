@@ -12,12 +12,15 @@ class StockForm(forms.ModelForm):
         self.fields['category'].widget.attrs.update({'class': 'textinput form-control'})
         self.fields['category'].label = 'Categoria'
         self.fields['name'].label = 'Nombre'
+        self.fields['buy_price'].widget.attrs.update({'class': 'textinput form-control', 'min': '0'})
+        self.fields['buy_price'].label = 'Precio compra'
         self.fields['sell_price'].widget.attrs.update({'class': 'textinput form-control', 'min': '0'})
         self.fields['sell_price'].label = 'Precio venta'
+        self.fields['is_for_sale'].label = 'Para venta al público'
 
     class Meta:
         model = Stock
-        fields = ['name', 'category', 'sell_price']
+        fields = ['name', 'category', 'buy_price', 'is_for_sale', 'sell_price']
 
 
 

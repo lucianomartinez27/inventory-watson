@@ -143,7 +143,7 @@ class TableCreateView(SuccessMessageMixin, CreateView):
 class WaiterCreateView(SuccessMessageMixin, CreateView):
     model = Waiter
     form_class = WaiterForm
-    success_url = '/'
+    success_url = '/tables-and-waiters'
     success_message = "Mozo creado correctamente"
     template_name = "edit_waiter.html"
 

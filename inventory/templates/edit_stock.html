@@ -20,11 +20,18 @@
 
         {% for field in form.visible_fields %}
             <div class="form-group">
+                {% if field.label == 'Precio venta' %}
+                   
+                    {{  form.sell_price.as_hidden }}
+
+                {% else %}
+                
                 {{ field.label_tag }}
                 {{ field }}
+                {% endif %}
             </div>
         {% endfor %}
-        
+       
 
         <br>
       
@@ -165,6 +172,22 @@ $(document).on('change', '.setprice', function(e){
     element.parents('.form-row').find('.totalprice').val(tprice);
     return false;
 });
+
+$(document).ready(function() {
+    let isForSale = $('#id_is_for_sale');
+    let sellPriceInput = $('#id_sell_price')
+    sellPriceInput.attr('class', 'textinput form-control')
+    isForSale.on('change', function() {
+        if (isForSale.is(':checked')) {
+            sellPriceInput.before('<label for="id_sell_price">Precio venta:</label>')
+            sellPriceInput.get('0').type = 'number'
+        }else {
+            $("label[for='id_sell_price']").remove()
+            sellPriceInput.get('0').type = 'hidden'
+        }
+    })
+})
+
 </script>
 
 

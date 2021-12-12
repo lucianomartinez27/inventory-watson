@@ -197,9 +197,8 @@ class PurchaseDeleteView(SuccessMessageMixin, DeleteView):
         items = PurchaseItem.objects.filter(billno=self.object.billno)
         for item in items:
             stock = get_object_or_404(Stock, name=item.stock.name)
-            if stock.is_deleted == False:
-                stock.quantity -= item.quantity
-                stock.save()
+            stock.quantity -= item.quantity
+            stock.save()
         messages.success(
             self.request, "Detalle de compra eliminada correctamente")
         return super(PurchaseDeleteView, self).delete(*args, **kwargs)
@@ -234,7 +233,7 @@ class SaleCreateView(View):
         form = SaleForm(request.GET or None)
         # renders an empty formset
         formset = SaleItemFormset(request.GET or None)
-        stocks = Stock.objects.filter(is_deleted=False)
+        stocks = Stock.objects.filter(is_for_sale=True)
         context = {
             'form': form,
             'formset': formset,
@@ -279,7 +278,7 @@ class SaleCreateView(View):
         context = {
             'form': form,
             'formset': formset,
-            'stocks': Stock.objects.filter(is_deleted=False)
+            'stocks': Stock.objects.filter(is_for_sale=True),
         }
         return render(request, self.template_name, context)
 
