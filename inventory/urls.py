@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.StockListView.as_view(), name='inventory'),
+    path('propios', views.ManufacturedListView.as_view(), name='manufactured'),
     path('nuevo', views.StockCreateView.as_view(), name='new-stock'),
     path('productos/<pk>/editar', views.StockUpdateView.as_view(), name='edit-stock'),
     path('productos/<pk>/eliminar', views.StockDeleteView.as_view(), name='delete-stock'),

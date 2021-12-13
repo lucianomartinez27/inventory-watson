@@ -311,26 +311,16 @@ class SaleUpdateView(SuccessMessageMixin, View):
         return render(request, self.template_name, context)
 
     def post(self, request, pk):
-        # recieves a post method for the formset
         formset = SaleItemFormset(request.POST)
         
         self.restore_stock(pk)
         
         for sold_item in formset:
-            # for loop to save each individual form as its own object
             if sold_item.is_valid():
-                # false saves the item and links bill to the item
                 billitem = sold_item.save(commit=False)
-                # links the bill object to the items
                 billitem.billno = TableSaleBill.objects.get(table=Table.objects.get(
                     pk=pk), closed=False)
-                # gets the stock item
-                # calculates the total price
                 billitem.totalprice = billitem.perprice * billitem.quantity
-                # updates quantity in stock db
-                #stock.quantity -= billitem.quantity
-                # saves bill item and stock
-                
                 billitem.stock.sell(billitem.quantity)
                 billitem.save()
         

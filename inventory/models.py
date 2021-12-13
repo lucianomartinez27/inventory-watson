@@ -54,7 +54,7 @@ class Stock(models.Model):
 
 class StockQuantity(models.Model):
     id = models.AutoField(primary_key=True)
-    stock = models.OneToOneField(Stock, on_delete = models.CASCADE)
+    stock = models.OneToOneField(Stock, on_delete = models.CASCADE, unique=True)
     quantity = models.PositiveIntegerField(default=0)
 
     def sell(self, quantity_sold):
@@ -64,6 +64,9 @@ class StockQuantity(models.Model):
     def buy(self, purchased_amount):
         self.quantity += purchased_amount
         self.save()
+    
+    def __str__(self):
+        return str(self.quantity) + " " + str(self.stock)
 class IngredientQuantity(models.Model):
     id = models.AutoField(primary_key=True)
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE)

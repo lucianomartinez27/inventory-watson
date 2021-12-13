@@ -211,28 +211,46 @@
         let isForSale = $('#id_is_for_sale');
         let sellPriceInput = $('#id_sell_price')
         sellPriceInput.attr('class', 'textinput form-control')
+        {% if object.is_for_sale %}
+            sellPriceInput.get('0').type = 'number'
+            isForSale.prop( "checked", true );
+        {% else %}
+            sellPriceInput.val(0);
+        {% endif %}
         isForSale.on('change', function () {
             if (isForSale.is(':checked')) {
                 sellPriceInput.before('<label class="panel-body-text" for="id_sell_price">Precio venta:</label>')
                 sellPriceInput.get('0').type = 'number'
             } else {
                 $("label[for='id_sell_price']").remove()
-                sellPriceInput.get('0').type = 'hidden'
+                sellPriceInput.get('0').type = 'hidden';
+                sellPriceInput.val(0);
             }
         })
 
 
         let isManufactured = $('#id_is_manufactured');
-        let quantityInput = $('#id_quantity')
+        let quantityInput = $('#id_quantity');
+        let ingredientsInput = $('#stockitem');
+        {% if  empty_stock_quantity %}
+        isManufactured.prop( "checked", true );
+        quantityInput.get('0').type = 'hidden'
+        ingredientsInput.show();
+        {% else %}
+            ingredientsInput.hide();
+        {% endif %}
         quantityInput.attr('class', 'textinput form-control')
         let labelForQuantity = $("label[for='id_quantity']")
         isManufactured.on('change', function () {
             if (isManufactured.is(':checked')) {
                 labelForQuantity.hide();
                 quantityInput.get('0').type = 'hidden'
+                ingredientsInput.show();
+            
             } else {
                 labelForQuantity.show()
                 quantityInput.get('0').type = 'number'
+                ingredientsInput.hide();
             }
         })
 

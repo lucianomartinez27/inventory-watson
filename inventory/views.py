@@ -24,14 +24,30 @@ class StockListView(FilterView):
     ordering = ['name']
 
     def get_queryset(self):
-        return Stock.objects.all()
+        return Stock.objects.all().exclude(stockquantity=None)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["categories"] ={ 'Cocina': context["filter"]._qs.filter(category='C'), 'Barra': context["filter"]._qs.filter(category='B')}
         
         return context
-    
+
+
+class ManufacturedListView(FilterView):
+    model = Stock
+    filterset_class = StockFilter
+    template_name = 'inventory.html'
+    paginate_by = 10
+    ordering = ['name']
+
+    def get_queryset(self):
+        return Stock.objects.filter(stockquantity=None)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["categories"] ={ 'Cocina': context["filter"]._qs.filter(category='C'), 'Barra': context["filter"]._qs.filter(category='B')}
+        
+        return context
 
 class StockCreateView(SuccessMessageMixin, CreateView):                                 # createview class to add new stock, mixin used to display message
     model = Stock                            # setting 'StockForm' form as form
@@ -63,18 +79,20 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
         if form.is_valid():
             stock = form.save(commit=False)
             stock.save()
-            for ingredient_form in formset:
-                if ingredient_form.is_valid() and ingredient_form.cleaned_data:
-                    print(ingredient_form.cleaned_data)
-                    ingredient = IngredientQuantity(stock=stock,
-                    ingredient=ingredient_form.cleaned_data['ingredient'],
-                    quantity=ingredient_form.cleaned_data['quantity'])
-                    ingredient.save()
+            if stock_quantity_form.is_valid() and not stock_quantity_form.cleaned_data['is_manufactured']:
+               
+                quantity = StockQuantity(stock= stock, quantity= stock_quantity_form.cleaned_data['quantity'])
+                quantity.save()
+                for ingredient_form in formset:
+                    if ingredient_form.is_valid() and ingredient_form.cleaned_data:
+                        print(ingredient_form.cleaned_data)
+                        ingredient = IngredientQuantity(stock=stock,
+                        ingredient=ingredient_form.cleaned_data['ingredient'],
+                        quantity=ingredient_form.cleaned_data['quantity'])
+                        ingredient.save()
                  
             
-            if stock_quantity_form.is_valid() and not stock_quantity_form.cleaned_data['is_manufactured']:
-               quantity = StockQuantity(stock= stock, quantity= stock_quantity_form.cleaned_data['quantity'])
-               quantity.save()
+            
 
             messages.success(request, "Producto agregado correctamente")
             return redirect('inventory')
@@ -104,6 +122,8 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):                         
         context["title"] = 'Editar producto'
         context["savebtn"] = 'Actualizar producto'
         context["delbtn"] = 'Vender producto'
+        context['quantity_formset'] = StockQuantityItemForm()
+        context['empty_stock_quantity'] = len(StockQuantity.objects.filter(stock=Stock.objects.get(id=pk))) == 0
         ingredients = IngredientQuantity.objects.filter(stock=context['object'])
         context["formset"] = IngredientQuantityItemFormset(initial=[{'ingredient': ingredient.ingredient, 'quantity': ingredient.quantity} for ingredient in ingredients])
         return render(request, self.template_name, context)
@@ -111,19 +131,30 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):                         
     def post(self, request, pk):
         stock = Stock.objects.get(id=pk)
         form = StockForm(request.POST or None, instance =stock )
-        IngredientQuantity.objects.filter(stock=stock).delete()
-
-        formset = IngredientQuantityItemFormset(request.POST)
-        if form.is_valid():
-            form.save()
-            for ingredient_form in formset:
-                if ingredient_form.is_valid():
-                    ingredient = IngredientQuantity(stock=stock,
-                        ingredient=ingredient_form.cleaned_data['ingredient'],
-                        quantity=ingredient_form.cleaned_data['quantity'])
-                    ingredient.save()
-            messages.success(request, self.success_message)
-        return redirect('inventory')
+        try:
+            IngredientQuantity.objects.filter(stock=stock).delete()
+            StockQuantity.objects.get(stock=stock).delete()
+        except (StockQuantity.DoesNotExist, IngredientQuantity.DoesNotExist):
+            pass
+        finally:
+            formset = IngredientQuantityItemFormset(request.POST)
+            stock_quantity_form = StockQuantityItemForm(request.POST)
+            if form.is_valid():
+                form.save()
+                if stock_quantity_form.is_valid() and not stock_quantity_form.cleaned_data['is_manufactured']:
+                    quantity = StockQuantity(stock= stock, quantity= stock_quantity_form.cleaned_data['quantity'])
+                    quantity.save()
+                else:
+                    for ingredient_form in formset:
+                        if ingredient_form.is_valid() and ingredient_form.cleaned_data:
+                            ingredient = IngredientQuantity(stock=stock,
+                                ingredient=ingredient_form.cleaned_data['ingredient'],
+                                quantity=ingredient_form.cleaned_data['quantity'])
+                            ingredient.save()
+                
+                
+                messages.success(request, self.success_message)
+            return redirect('inventory')
     
 
 
