@@ -7,78 +7,107 @@
 
 {% block content %}
 
-    <div style="color:#ffa821; font-style: bold; font-size: 2rem; border-bottom: 1px solid white;">{{title}}</div> 
-    
-    <br>
-    
-    <form method="post">
-        {% csrf_token %}
-        
+<div style="color:#ffa821; font-style: bold; font-size: 2rem; border-bottom: 1px solid white;">{{title}}</div>
 
-        {{ form.non_field_errors }}
-        
+<br>
+
+<form method="post">
+    {% csrf_token %}
+
+
+    {{ form.non_field_errors }}
+
+    <div class="panel-body">
 
         {% for field in form.visible_fields %}
-            <div class="form-group">
-                {% if field.label == 'Precio venta' %}
-                   
-                    {{  form.sell_price.as_hidden }}
+        <div class="form-group">
+            {% if field.label == 'Precio venta' %}
 
-                {% else %}
-                
-                {{ field.label_tag }}
-                {{ field }}
-                {% endif %}
-            </div>
+            {{ field.as_hidden }}
+
+            {% else %}
+            {% if field.label == 'Para venta al público' %}
+            <label for="id_is_manufactured" class="panel-body-text" data-bs-toggle="tooltip" data-bs-placement="right"
+                data-type="warning"
+                title="Tendrá un precio de venta y aparecerá al momento de hacer una venta en una mesa, de lo contrario, no.">&#9432;
+                {{ field.label }} &nbsp; </label>
+            {% else %}
+
+            <label class="panel-body-text" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% endif %}
+            {{ field }}
+            {% endif %}
+        </div>
         {% endfor %}
-       
 
-        <br>
-      
-        <div id="stockitem"> 
-            <div class="panel-body">
+        <div class="form-group">
+            {{ quantity_formset.quantity.errors }}
+            <label for="id_is_manufactured" class="panel-body-text" data-bs-toggle="tooltip" data-bs-placement="right"
+                data-type="warning"
+                title="No se añadirá al inventario ya que no tiene cantidad en stock">&#9432;
+                Es producción propia: &nbsp; </label>
+            {{ quantity_formset.is_manufactured }}
+        </div>
+
+
+        <div class="form-group form-row">
+            {{ quantity_formset.quantity.errors }}
+            <div class="col-md-2">
+                <label for="id_quantity" class="panel-body-text">Cantidad en stock:</label>
+            </div>
+            <div class="col-md-2">
+                {{ quantity_formset.quantity }}
+            </div>
+
+        </div>
+
+    </div>
+    <br>
+
+    <div id="stockitem">
+        <div class="panel-body">
             {{ formset.management_form }}
             {% for form in formset %}
-                <div class="row form-row">
-                    <div class="form-group col-md-6">
-                        {{ form.ingredient.errors }}
-                        <label class="panel-body-text">Ingrediente:</label>
-                        {{ form.ingredient }}
-                    </div>
-                    <div class="form-group col-md-2">
-                        {{ form.quantity.errors }}
-                        <label class="panel-body-text">Cantidad:</label>
-                        {{ form.quantity }}
-                    </div>
-                    
-                    
-                    <div class="form-group col-md-1">
-                        <label class="panel-body-text" style="color: #000">.</label>
-                        <button class="form-control btn btn-danger remove-form-row">-</button>
-                    </div>
+            <div class="row form-row">
+                <div class="form-group col-md-6">
+                    {{ form.ingredient.errors }}
+                    <label class="panel-body-text">Ingrediente:</label>
+                    {{ form.ingredient }}
                 </div>
-            {% endfor %}
-                <div style="text-align: right;">                    
-                    <a href="#" class="add-form-row">+ Agregar más</a>
+                <div class="form-group col-md-2">
+                    {{ form.quantity.errors }}
+                    <label class="panel-body-text">Cantidad:</label>
+                    {{ form.quantity }}
+                </div>
+
+
+                <div class="form-group col-md-1">
+                    <label class="panel-body-text" style="color: #000">.</label>
+                    <button class="form-control btn btn-danger remove-form-row">-</button>
                 </div>
             </div>
+            {% endfor %}
+            <div style="text-align: right;">
+                <a href="#" class="add-form-row">+ Agregar más</a>
+            </div>
         </div>
+    </div>
 
-        <div class="align-middle">
-            <button type="submit" class="btn ghost-green">{{ savebtn }}</button>
-            {% if title == "New Stock" %}
-                <button type="reset" class="btn ghost-blue" >Resetear</button>
-            {% endif %}
-            {% if delbtn %}
-                <a href="{% url 'delete-stock' object.pk %}" class="btn ghost-red"> Eliminar productos </a>
-            {% endif %}
-            <a href="{% url 'inventory' %}" class="btn ghost-button">Cancelar</a>
-        </div>
-       
+    <div class="align-middle">
+        <button type="submit" class="btn ghost-green">{{ savebtn }}</button>
+        {% if title == "New Stock" %}
+        <button type="reset" class="btn ghost-blue">Resetear</button>
+        {% endif %}
+        {% if delbtn %}
+        <a href="{% url 'delete-stock' object.pk %}" class="btn ghost-red"> Eliminar productos </a>
+        {% endif %}
+        <a href="{% url 'inventory' %}" class="btn ghost-button">Cancelar</a>
+    </div>
+
 
     <br>
 
-    
+
 </form>
 
 </div>
@@ -87,106 +116,130 @@
 <script type="text/javascript" src="{% static 'js/jquery-3.2.1.slim.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/dialogbox.js' %}"></script>
 <script type="text/javascript">
-
-//creates custom alert object
-var custom_alert = new custom_alert();
-
-function updateElementIndex(el, prefix, ndx) {
-    var id_regex = new RegExp('(' + prefix + '-\\d+)');
-    var replacement = prefix + '-' + ndx;
-    if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
-    if (el.id) el.id = el.id.replace(id_regex, replacement);
-    if (el.name) el.name = el.name.replace(id_regex, replacement);
-}
-
-//stores the total no of item forms
-var total = {{ formset | length }};
-
-function cloneMore(selector, prefix) {
-    var newElement = $(selector).clone(true);
-    //var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
-    newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function() {
-        var name = $(this).attr('name')
-        if(name) {
-            name = name.replace('-' + (total-1) + '-', '-' + total + '-');
-            var id = 'id_' + name;
-            $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
-        }
-    });
-    newElement.find('label').each(function() {
-        var forValue = $(this).attr('for');
-        if (forValue) {
-        forValue = forValue.replace('-' + (total-1) + '-', '-' + total + '-');
-        $(this).attr({'for': forValue});
-        }
-    });
-    total++;
-    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
-    $(selector).after(newElement);
-    return false;
-}
-
-function deleteForm(prefix, btn) {
-    //var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
-    if (total > 1){
-        btn.closest('.form-row').remove();
-        var forms = $('.form-row');
-        $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
-        for (var i=0, formCount=forms.length; i<formCount; i++) {
-            $(forms.get(i)).find(':input').each(function() {
-                updateElementIndex(this, prefix, i);
-            });
-        }
-        total--;
-    } else {
-        custom_alert.render("Campo no puede ser eliminado");
-    }
-    return false;
-}
-
-
-
-$(document).on('click', '.add-form-row', function(e){
-    e.preventDefault();
-    cloneMore('.form-row:last', 'form');
-    return false;
-});
-
-$(document).on('click', '.remove-form-row', function(e){
-    e.preventDefault();
-    deleteForm('form', $(this));
-    return false;
-});
-
-
-//updates the total price by multiplying 'price per item' and 'quantity' 
-$(document).on('change', '.setprice', function(e){
-    e.preventDefault();
-    //gets the values
-    var element = $(this);
-    var quantity = element.parents('.form-row').find('.quantity').val();
-    var perprice = element.parents('.form-row').find('.price').val();
-    //calculates the total
-    var tprice = quantity * perprice;
-    //sets it to field
-    element.parents('.form-row').find('.totalprice').val(tprice);
-    return false;
-});
-
-$(document).ready(function() {
-    let isForSale = $('#id_is_for_sale');
-    let sellPriceInput = $('#id_sell_price')
-    sellPriceInput.attr('class', 'textinput form-control')
-    isForSale.on('change', function() {
-        if (isForSale.is(':checked')) {
-            sellPriceInput.before('<label for="id_sell_price">Precio venta:</label>')
-            sellPriceInput.get('0').type = 'number'
-        }else {
-            $("label[for='id_sell_price']").remove()
-            sellPriceInput.get('0').type = 'hidden'
-        }
+    $(document).ready(function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
     })
-})
+    //creates custom alert object
+    var custom_alert = new custom_alert();
+
+    function updateElementIndex(el, prefix, ndx) {
+        var id_regex = new RegExp('(' + prefix + '-\\d+)');
+        var replacement = prefix + '-' + ndx;
+        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+        if (el.id) el.id = el.id.replace(id_regex, replacement);
+        if (el.name) el.name = el.name.replace(id_regex, replacement);
+    }
+
+    //stores the total no of item forms
+    var total = {{ formset | length }};
+
+    function cloneMore(selector, prefix) {
+        var newElement = $(selector).clone(true);
+        //var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+        newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function () {
+            var name = $(this).attr('name')
+            if (name) {
+                name = name.replace('-' + (total - 1) + '-', '-' + total + '-');
+                var id = 'id_' + name;
+                $(this).attr({ 'name': name, 'id': id }).val('').removeAttr('checked');
+            }
+        });
+        newElement.find('label').each(function () {
+            var forValue = $(this).attr('for');
+            if (forValue) {
+                forValue = forValue.replace('-' + (total - 1) + '-', '-' + total + '-');
+                $(this).attr({ 'for': forValue });
+            }
+        });
+        total++;
+        $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+        $(selector).after(newElement);
+        return false;
+    }
+
+    function deleteForm(prefix, btn) {
+        //var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        if (total > 1) {
+            btn.closest('.form-row').remove();
+            var forms = $('.form-row');
+            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+            for (var i = 0, formCount = forms.length; i < formCount; i++) {
+                $(forms.get(i)).find(':input').each(function () {
+                    updateElementIndex(this, prefix, i);
+                });
+            }
+            total--;
+        } else {
+            custom_alert.render("Campo no puede ser eliminado");
+        }
+        return false;
+    }
+
+
+
+    $(document).on('click', '.add-form-row', function (e) {
+        e.preventDefault();
+        cloneMore('.form-row:last', 'form');
+        return false;
+    });
+
+    $(document).on('click', '.remove-form-row', function (e) {
+        e.preventDefault();
+        deleteForm('form', $(this));
+        return false;
+    });
+
+
+    //updates the total price by multiplying 'price per item' and 'quantity' 
+    $(document).on('change', '.setprice', function (e) {
+        e.preventDefault();
+        //gets the values
+        var element = $(this);
+        var quantity = element.parents('.form-row').find('.quantity').val();
+        var perprice = element.parents('.form-row').find('.price').val();
+        //calculates the total
+        var tprice = quantity * perprice;
+        //sets it to field
+        element.parents('.form-row').find('.totalprice').val(tprice);
+        return false;
+    });
+
+    $(document).ready(function () {
+        let isForSale = $('#id_is_for_sale');
+        let sellPriceInput = $('#id_sell_price')
+        sellPriceInput.attr('class', 'textinput form-control')
+        isForSale.on('change', function () {
+            if (isForSale.is(':checked')) {
+                sellPriceInput.before('<label class="panel-body-text" for="id_sell_price">Precio venta:</label>')
+                sellPriceInput.get('0').type = 'number'
+            } else {
+                $("label[for='id_sell_price']").remove()
+                sellPriceInput.get('0').type = 'hidden'
+            }
+        })
+
+
+        let isManufactured = $('#id_is_manufactured');
+        let quantityInput = $('#id_quantity')
+        quantityInput.attr('class', 'textinput form-control')
+        let labelForQuantity = $("label[for='id_quantity']")
+        isManufactured.on('change', function () {
+            if (isManufactured.is(':checked')) {
+                labelForQuantity.hide();
+                quantityInput.get('0').type = 'hidden'
+            } else {
+                labelForQuantity.show()
+                quantityInput.get('0').type = 'number'
+            }
+        })
+
+
+
+
+    })
 
 </script>
 

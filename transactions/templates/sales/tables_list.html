@@ -27,7 +27,6 @@
                 <th >Cantidad vendida</th>
                 <th >Total vendido</th>
                 <th>Fecha venta</th>
-                <th>Mesa</th>
                 <th>Opciones</th>
             </tr>
         </thead>
@@ -38,12 +37,11 @@
             {% for sale in tables %}
             <tr>
                 <td class="align-middle"> <h3>{{ sale.table.number }}</h3> </td>
-                <td class="align-middle"> {{ sale.table.waiter }} <br> </td>
+                <td class="align-middle"> {{ sale.waiter }} <br> </td>
                 <td class="align-middle">{% for item in sale.get_items_list %} {{ item.stock.name }} <br> {% endfor %}</td>
                 <td class="align-middle">{% for item in sale.get_items_list %} {{ item.quantity }} <br> {% endfor %}</td>     
                 <td class="align-middle">$ {{ sale.get_total_price }}</td>
                 <td class="align-middle">{{ sale.time.date }}</td>
-                <td class="align-middle">{{ sale.table.number }}</td>
                 <td class="align-middle">
                     <a href="{% url 'edit-sale' sale.table.number %}" class="btn ghost-button">Editar venta</a>
                     <a href="{% url 'delete-sale' sale.pk %}" class="btn ghost-red"> Cerrar venta

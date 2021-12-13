@@ -19,7 +19,7 @@
 body,
 html {
   height: 100%;
-  background-color: #000000;
+  background-color:#18191b;
 }
 
 .form-group{
@@ -447,3 +447,4 @@ html { width: 100%; height:100%; overflow:hidden; }
   background-color: #e9ecef3b;
   opacity: 1;
 }
+

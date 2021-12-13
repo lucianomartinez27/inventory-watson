@@ -8,8 +8,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import DeleteView
-from .models import IngredientQuantity, Stock, Table, Waiter
-from .forms import  IngredientQuantityItemFormset, StockForm, TableForm, WaiterForm
+from .models import IngredientQuantity, Stock, StockQuantity, Table, Waiter
+from .forms import  IngredientQuantityItemFormset, StockQuantityItemForm, StockForm, TableForm, WaiterForm
 from django_filters.views import FilterView
 from .filters import StockFilter
 
@@ -19,12 +19,18 @@ from .filters import StockFilter
 class StockListView(FilterView):
     model = Stock
     filterset_class = StockFilter
-    template_name = 'products.html'
+    template_name = 'inventory.html'
     paginate_by = 10
     ordering = ['name']
 
     def get_queryset(self):
         return Stock.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["cocina"] = Stock.objects.filter(category='C')
+        context["barra"] = Stock.objects.filter(category='B')
+        return context
     
 
 class StockCreateView(SuccessMessageMixin, CreateView):                                 # createview class to add new stock, mixin used to display message
@@ -37,11 +43,13 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
     def get(self, request):
         form = StockForm(request.GET or None)
         formset = IngredientQuantityItemFormset(request.GET or None)
+        quantity_formset = StockQuantityItemForm()
                                                      
         
         context = {
             'form'      : form,
             'formset'   : formset,
+            'quantity_formset': quantity_formset,
             'title'    : "Nuevo producto",
             'savebtn' : 'Agregar al inventario',
         }
@@ -50,18 +58,24 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
 
     def post(self, request):
         form = StockForm(request.POST)
-        
+        stock_quantity_form = StockQuantityItemForm(request.POST)
         formset = IngredientQuantityItemFormset(request.POST)
         if form.is_valid():
             stock = form.save(commit=False)
             stock.save()
-            if formset.is_valid():
-                for form in formset:
-                    # false saves the item and links bill to the item
+            for ingredient_form in formset:
+                if ingredient_form.is_valid() and ingredient_form.cleaned_data:
+                    print(ingredient_form.cleaned_data)
                     ingredient = IngredientQuantity(stock=stock,
-                    ingredient=form.cleaned_data['ingredient'],
-                    quantity=form.cleaned_data['quantity'])
+                    ingredient=ingredient_form.cleaned_data['ingredient'],
+                    quantity=ingredient_form.cleaned_data['quantity'])
                     ingredient.save()
+                 
+            
+            if stock_quantity_form.is_valid() and not stock_quantity_form.cleaned_data['is_manufactured']:
+               quantity = StockQuantity(stock= stock, quantity= stock_quantity_form.cleaned_data['quantity'])
+               quantity.save()
+
             messages.success(request, "Producto agregado correctamente")
             return redirect('inventory')
 
@@ -70,6 +84,8 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
         context = {
             'form'      : form,
             'formset'   : formset,
+            'title'    : "Nuevo producto",
+            'savebtn' : 'Agregar al inventario',
         }
         return render(request, self.template_name, context)
 

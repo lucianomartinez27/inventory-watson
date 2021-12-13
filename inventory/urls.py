@@ -3,7 +3,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    path('inventario', views.StockListView.as_view(), name='inventory'),
+    path('', views.StockListView.as_view(), name='inventory'),
     path('nuevo', views.StockCreateView.as_view(), name='new-stock'),
     path('productos/<pk>/editar', views.StockUpdateView.as_view(), name='edit-stock'),
     path('productos/<pk>/eliminar', views.StockDeleteView.as_view(), name='delete-stock'),

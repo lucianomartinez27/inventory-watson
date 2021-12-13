@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.formsets import formset_factory
-from .models import  IngredientQuantity, Stock, Table, Waiter
+from .models import  IngredientQuantity, Stock, StockQuantity, Table, Waiter
 
 
 
@@ -35,12 +35,20 @@ class WaiterForm(forms.ModelForm):
         model = Waiter
         fields = ['name']
 
-class IngredientQuantityItemForm(forms.Form):
-    ingredient = forms.ModelChoiceField(label=('Stock'),queryset=Stock.objects.all(),
+class IngredientQuantityItemForm(forms.ModelForm):
+    ingredient = forms.ModelChoiceField( label=('Stock'),queryset=Stock.objects.all(),blank=False,
     widget=forms.Select(attrs={'class': 'custom-select','id':'selectCategory'}))
-    quantity = forms.IntegerField()
-    quantity.widget.attrs.update({'class': 'textinput form-control setprice quantity', 'min': '1', 'required': 'true'})
+    quantity = forms.IntegerField(min_value=1)
+    quantity.widget.attrs.update({'class': 'textinput form-control setprice quantity', 'min': '1', })
+
+    class Meta:
+        model = IngredientQuantity
+        fields = ['quantity', 'ingredient']
     
+class StockQuantityItemForm(forms.Form):
+    quantity = forms.IntegerField(required=False)
+    is_manufactured = forms.BooleanField(label=('Es producción propia: '), required=False)
+    quantity.widget.attrs.update({'class': 'textinput form-control setprice quantity', 'min': '1', })
 
 
 class TableForm(forms.ModelForm):

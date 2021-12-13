@@ -11,7 +11,7 @@
 <div class="row" style="color: #ffa821; font-style: bold; font-size: 2rem; ">
     <div class="col-md-8">Listado de stock</div>
     <div class="col-md-4">
-        <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'add-ingredient' %}">Agregar nuevo stock</a>
+        <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-stock' %}">Agregar nuevo stock</a>
         </div>
     </div>
 </div>
@@ -47,59 +47,125 @@
             </div>
         </form>
 
-        <div class="row">
-            <div class="col mx-auto">
-
-                <table class="table table-css">
 
 
-                    <br>
+<div class="content-section">
+    <div class="row">
 
-                    <thead class="thead-inverse align-middle">
-                        <tr>
-                            <th >Nombre de producto</th>
-                            <th >Precio compra</th>
-                            {% if request.GET.o == "o" %}
-                            <th > <a href="?o=-o">
+        <div class="col-md-6">
+            <div style="color:#ffa821; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff">Cocina</div><br>
 
-                                    {% else %}
-                            <th > <a href="?o=o">
-                                    {% endif %}Stock en el inventario</a></th>
-                            <th >Opciones</th>
-                        </tr>
-                    </thead>
+            {% if cocina %}
+            <table class="table table-css">
 
-                    {% if object_list %}
 
-                    <tbody>
-                        {% for ingredient in object_list %}
-                        <tr>
-                            <td>
-                                <h4>{{ ingredient.name }}</h4>
-                            </td>
-                            
-                            <td class="align-middle">{{ ingredient.buy_price }}</td>
-                            <td class="align-middle">{{ ingredient.quantity }}</td>
-                            <td class="align-middle">
-                                <a href="{% url 'edit-ingredient' ingredient.pk %}" class="btn ghost-button">Editar detalles</a>
-                                <a href="{% url 'delete-ingredient' ingredient.pk %}" class="btn ghost-red"> Eliminar ingrediente
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
+                <thead class="thead-inverse align-middle">
+                    <tr>
+                        <th >Nombre de producto</th>
+                        <th >Precio compra</th>
+                        {% if request.GET.o == "o" %}
+                        <th > <a href="?o=-o">
 
-                </table>
-            </div>
-        </div>
+                                {% else %}
+                        <th > <a href="?o=o">
+                                {% endif %}Stock en el inventario</a></th>
+                        <th >Opciones</th>
+                    </tr>
+                </thead>
+
+
+                <tbody>
+                    {% for item in cocina %}
+                    <tr>
+                        <td>
+                            <h6>{{ item.name }}</h6>
+                        </td>
+                        
+                        <td class="align-middle">{{ item.buy_price }}</td>
+                        <td class="align-middle">{{ item.get_quantity }}</td>
+                        <td class="align-middle">
+                            <a href="{% url 'edit-stock' item.pk %}" class="btn ghost-button">Editar detalles</a>
+                            <a href="{% url 'delete-stock' item.pk %}" class="btn ghost-red"> Eliminar ingrediente
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+            {% else %}
+
+            <div style="color: #ffa821; font-style: bold; font-size: 1.5rem; text-align: center;">Ups, parece vacío</div>
+
+            {% endif %}
+
+
+
+
     </div>
+    <div class="col-md-6">
+        <div style="color:#ffa821; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff">Barra</div><br>
+        {% if barra %}
+            
+
+        <table class="table table-css">
+
+
+            <br>
+
+            <thead class="thead-inverse align-middle">
+                <tr>
+                    <th >Nombre de producto</th>
+                    <th >Precio compra</th>
+                    {% if request.GET.o == "o" %}
+                    <th > <a href="?o=-o">
+
+                            {% else %}
+                    <th > <a href="?o=o">
+                            {% endif %}Stock en el inventario</a></th>
+                    <th >Opciones</th>
+                </tr>
+            </thead>
+
+
+            <tbody>
+                {% for item in barra %}
+                <tr>
+                    <td>
+                        <h6>{{ item.name }}</h6>
+                    </td>
+                    
+                    <td class="align-middle">{{ item.buy_price }}</td>
+                    <td class="align-middle">{{ item.get_quantity }}</td>
+                    <td class="align-middle">
+                        <a href="{% url 'edit-stock' item.pk %}" class="btn ghost-button">Editar detalles</a>
+                        <a href="{% url 'delete-stock' item.pk %}" class="btn ghost-red"> Eliminar ingrediente
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+        {% else %}
+
+            <div style="color: #ffa821; font-style: bold; font-size: 1.5rem; text-align: center;">Ups, parece vacío</div>
+
+            {% endif %}
+
 </div>
+</div>
+
+</div>
+
+
+
 
 <div class="align-middle">
     {% if is_paginated %}
 
     {% if page_obj.has_previous %}
-    <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+    <a class="btn btn-outline-info mb-4" href="?page=1">Primero</a>
     <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previo</a>
     {% endif %}
 
@@ -119,14 +185,5 @@
         {% endif %}
 </div>
 
-{% else %}
-
-<tbody></tbody>
-</table>
-
-<br><br><br><br><br><br><br><br>
-<div style="color: #ffa821; font-style: bold; font-size: 1.5rem; text-align: center;">Ups, parece vacío</div>
-
-{% endif %}
 
 {% endblock content %}

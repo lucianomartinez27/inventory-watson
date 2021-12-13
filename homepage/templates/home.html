@@ -56,7 +56,7 @@
                     Atendido por {{ item.waiter.name }} <br>
                     <small>{{ item.time.date }}</small>
                 </div>
-                <div class="col-md-2"> {{ item.get_total_price }} <br> <br>  </div>
+                <div class="col-md-2"> Total: ${{ item.get_total_price }} <br> <br>  </div>
             </div>
             {% endfor %}
         </div>
