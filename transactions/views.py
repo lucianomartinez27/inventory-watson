@@ -24,7 +24,7 @@ from .forms import (
     SaleForm,
     SaleItemFormset,
 )
-from inventory.models import Stock
+from inventory.models import Stock, StockQuantity
 
 
 # shows a lists of all suppliers
@@ -165,15 +165,16 @@ class PurchaseCreateView(View):
                 # links the bill object to the items
                 billitem.billno = billobj
                 # gets the stock item
-                ingredient = get_object_or_404(
-                    Ingredient, name=billitem.ingredient.name)       # gets the item
+                stock_quantity = get_object_or_404(
+                    StockQuantity, stock__name=billitem.stock.name)       # gets the item
                 # calculates the total price
                 billitem.totalprice = billitem.perprice * billitem.quantity
                 # updates quantity in stock db
-                ingredient.quantity += billitem.quantity
-                ingredient.buy_price = billitem.perprice                              # updates quantity
+                stock_quantity.quantity += billitem.quantity
+                stock_quantity.stock.buy_price = billitem.perprice                              # updates quantity
                 # saves bill item and stock
-                ingredient.save()
+                stock_quantity.stock.save()
+                stock_quantity.save()
                 billitem.save()
             messages.success(
                 request, "Compra de productos registrada correctamente")
@@ -262,14 +263,17 @@ class SaleCreateView(View):
                 # links the bill object to the items
                 billitem.billno = billobj
                 # gets the stock item
-                stock = get_object_or_404(Stock, name=billitem.stock.name)
+                
                 # calculates the total price
                 billitem.totalprice = billitem.perprice * billitem.quantity
+                billitem.save()
                 # here we need to update the quantity of ingredientes in every sold product
                 #stock.quantity -= billitem.quantity
                 # saves bill item and stock
-                stock.save()
-                billitem.save()
+                billitem.stock.sell(billitem.quantity)
+            
+                
+                
             messages.success(
                 request, "Mesa iniciada correctamente")
             return redirect('open-tables')
@@ -311,6 +315,7 @@ class SaleUpdateView(SuccessMessageMixin, View):
         formset = SaleItemFormset(request.POST)
         
         self.restore_stock(pk)
+        
         for sold_item in formset:
             # for loop to save each individual form as its own object
             if sold_item.is_valid():
@@ -320,22 +325,26 @@ class SaleUpdateView(SuccessMessageMixin, View):
                 billitem.billno = TableSaleBill.objects.get(table=Table.objects.get(
                     pk=pk), closed=False)
                 # gets the stock item
-                stock = get_object_or_404(Stock, name=billitem.stock.name)
                 # calculates the total price
                 billitem.totalprice = billitem.perprice * billitem.quantity
                 # updates quantity in stock db
                 #stock.quantity -= billitem.quantity
                 # saves bill item and stock
-                stock.save()
+                
+                billitem.stock.sell(billitem.quantity)
                 billitem.save()
+        
+                
         messages.success(
             request, "Mesa actualizada correctamente")
         
         return redirect('open-tables')
 
     def restore_stock(self, pk):
-        items_for_sale = self.get_items_for_sale(pk)
-        items_for_sale.delete()
+        for item in self.get_items_for_sale(pk):
+            item.stock.buy(item.quantity)
+            item.delete()
+            
         
 
     def get_items_for_sale(self, pk):

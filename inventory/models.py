@@ -26,6 +26,22 @@ class Stock(models.Model):
             return StockQuantity.objects.get(stock=self).quantity
         except StockQuantity.DoesNotExist:
             return '-'
+    
+    def sell(self, quantity_sold):
+        try:
+            StockQuantity.objects.get(stock=self).sell(quantity_sold)
+        except StockQuantity.DoesNotExist:
+            pass
+        for ingredient in IngredientQuantity.objects.filter(stock=self):
+            ingredient.ingredient.sell(ingredient.quantity * quantity_sold)
+
+    def buy(self, purchased_amount):
+        try:
+            StockQuantity.objects.get(stock=self).buy(purchased_amount)
+        except StockQuantity.DoesNotExist:
+            pass
+        for ingredient in IngredientQuantity.objects.filter(stock=self):
+            ingredient.ingredient.buy(ingredient.quantity * purchased_amount)
 
     class Meta:
         ordering = ['name']
@@ -41,7 +57,13 @@ class StockQuantity(models.Model):
     stock = models.OneToOneField(Stock, on_delete = models.CASCADE)
     quantity = models.PositiveIntegerField(default=0)
 
-
+    def sell(self, quantity_sold):
+        self.quantity -= quantity_sold
+        self.save()
+    
+    def buy(self, purchased_amount):
+        self.quantity += purchased_amount
+        self.save()
 class IngredientQuantity(models.Model):
     id = models.AutoField(primary_key=True)
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
