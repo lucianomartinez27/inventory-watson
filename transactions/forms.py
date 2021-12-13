@@ -1,4 +1,5 @@
 from django import forms
+from django.db.models.query_utils import Q
 from django.forms import formset_factory
 from .models import (
     Supplier, 
@@ -27,7 +28,7 @@ class SelectSupplierForm(forms.ModelForm):
 class PurchaseItemForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['stock'].queryset = Stock.objects.all()
+        self.fields['stock'].queryset = Stock.objects.all().exclude(stockquantity=None)
         self.fields['stock'].widget.attrs.update({'class': 'textinput form-control setprice stock', 'required': 'true'})
         self.fields['quantity'].widget.attrs.update({'class': 'textinput form-control setprice quantity', 'min': '1', 'required': 'true'})
         self.fields['perprice'].widget.attrs.update({'class': 'textinput form-control setprice price', 'min': '0', 'required': 'true'})

@@ -68,10 +68,10 @@
                         <th >Precio venta</th>
                         <th>Costo</th>
                         {% if request.GET.o == "o" %}
-                        <th > <a href="?o=-o">
+                        <th > <a href="?name={{ request.GET.name }}&category={{ request.GET.category }}&o=-o">
 
                                 {% else %}
-                        <th > <a href="?o=o">
+                        <th > <a href="?name={{ request.GET.name }}&category={{ request.GET.category }}&o=o">
                                 {% endif %}Stock en el inventario</a></th>
                         <th >Opciones</th>
                     </tr>
@@ -91,7 +91,7 @@
                         <td class="align-middle">{{ item.get_quantity }}</td>
                         <td class="align-middle">
                             <a href="{% url 'edit-stock' item.pk %}" class="btn ghost-button">Editar detalles</a>
-                            <a href="{% url 'delete-stock' item.pk %}" class="btn ghost-red"> Eliminar ingrediente
+                            <a href="{% url 'delete-stock' item.pk %}" class="btn ghost-red"> Eliminar stock
                             </a>
                         </td>
                     </tr>

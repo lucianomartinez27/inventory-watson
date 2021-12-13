@@ -75,4 +75,5 @@ class Table(models.Model):
     class Meta:
         verbose_name = 'Mesa'
         verbose_name_plural = 'Mesas'
+        
 

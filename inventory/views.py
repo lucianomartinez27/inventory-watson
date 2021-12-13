@@ -133,7 +133,7 @@ class StockDeleteView(View):
     
     def get(self, request, pk):
         stock = get_object_or_404(Stock, pk=pk)
-        return render(request, self.template_name, {'object' : stock,'cancel_url': 'inventory'})
+        return render(request, self.template_name, {'object' : stock,'cancel_url': 'inventory', 'title': 'Eliminar Stock'})
 
     def post(self, request, pk):  
         stock = get_object_or_404(Stock, pk=pk)
@@ -188,6 +188,7 @@ class TableDeleteView(SuccessMessageMixin, DeleteView):
     def get_context_data(self, **kwargs):
             context = super().get_context_data(**kwargs)
             context["cancel_url"] = 'tables-and-waiters'
+            context["title"] = 'Eliminar mesa'
             return context
 
 class TableUpdateView(SuccessMessageMixin, UpdateView):
@@ -213,6 +214,7 @@ class WaiterDeleteView(SuccessMessageMixin, DeleteView):
     def get_context_data(self, **kwargs):
             context = super().get_context_data(**kwargs)
             context["cancel_url"] = 'tables-and-waiters'
+            context["title"] = 'Eliminar mozo'
 
             return context
 

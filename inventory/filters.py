@@ -8,7 +8,7 @@ class StockFilter(django_filters.FilterSet):
     o = OrderingFilter(
         # tuple-mapping retains order
         fields=(
-            ('quantity', 'o'),
+            ('stockquantity', 'o'),
         ), widget=django_filters.widgets.LinkWidget
     )
     
