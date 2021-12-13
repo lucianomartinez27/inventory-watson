@@ -28,8 +28,8 @@ class StockListView(FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["cocina"] = Stock.objects.filter(category='C')
-        context["barra"] = Stock.objects.filter(category='B')
+        context["categories"] ={ 'Cocina': context["filter"]._qs.filter(category='C'), 'Barra': context["filter"]._qs.filter(category='B')}
+        
         return context
     
 

@@ -51,11 +51,13 @@
 
 <div class="content-section">
     <div class="row">
+        {% for category, items in categories.items %}
+        <div class="col">
+            
 
-        <div class="col-md-6">
-            <div style="color:#ffa821; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff">Cocina</div><br>
-
-            {% if cocina %}
+            <div style="color:#ffa821; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff"> {{ category }} </div><br>
+            
+            {% if items %}
             <table class="table table-css">
 
 
@@ -63,6 +65,8 @@
                     <tr>
                         <th >Nombre de producto</th>
                         <th >Precio compra</th>
+                        <th >Precio venta</th>
+                        <th>Costo</th>
                         {% if request.GET.o == "o" %}
                         <th > <a href="?o=-o">
 
@@ -75,13 +79,15 @@
 
 
                 <tbody>
-                    {% for item in cocina %}
+                    {% for item in items %}
                     <tr>
                         <td>
                             <h6>{{ item.name }}</h6>
                         </td>
                         
                         <td class="align-middle">{{ item.buy_price }}</td>
+                        <td class="align-middle">{{ item.sell_price }}</td>
+                        <td class="align-middle">{{ item.get_total_cost }}</td>
                         <td class="align-middle">{{ item.get_quantity }}</td>
                         <td class="align-middle">
                             <a href="{% url 'edit-stock' item.pk %}" class="btn ghost-button">Editar detalles</a>
@@ -103,57 +109,8 @@
 
 
     </div>
-    <div class="col-md-6">
-        <div style="color:#ffa821; font-style: bold; font-size: 1.3em; border-bottom: 2px solid #fff">Barra</div><br>
-        {% if barra %}
-            
+    {% endfor %}
 
-        <table class="table table-css">
-
-
-            <br>
-
-            <thead class="thead-inverse align-middle">
-                <tr>
-                    <th >Nombre de producto</th>
-                    <th >Precio compra</th>
-                    {% if request.GET.o == "o" %}
-                    <th > <a href="?o=-o">
-
-                            {% else %}
-                    <th > <a href="?o=o">
-                            {% endif %}Stock en el inventario</a></th>
-                    <th >Opciones</th>
-                </tr>
-            </thead>
-
-
-            <tbody>
-                {% for item in barra %}
-                <tr>
-                    <td>
-                        <h6>{{ item.name }}</h6>
-                    </td>
-                    
-                    <td class="align-middle">{{ item.buy_price }}</td>
-                    <td class="align-middle">{{ item.get_quantity }}</td>
-                    <td class="align-middle">
-                        <a href="{% url 'edit-stock' item.pk %}" class="btn ghost-button">Editar detalles</a>
-                        <a href="{% url 'delete-stock' item.pk %}" class="btn ghost-red"> Eliminar ingrediente
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-
-        </table>
-        {% else %}
-
-            <div style="color: #ffa821; font-style: bold; font-size: 1.5rem; text-align: center;">Ups, parece vacío</div>
-
-            {% endif %}
-
-</div>
 </div>
 
 </div>
