@@ -28,9 +28,9 @@
     <div class="align-middle">
         <button type="submit" class="btn ghost-green">{{ savebtn }}</button>
         {% if delbtn %}
-        <a href="{% url 'delete-supplier' supplier.pk %}" class="btn ghost-red"> Eliminar mozo </a>
+        <a href="{% url 'delete-waiter' supplier.pk %}" class="btn ghost-red"> Eliminar mozo </a>
         {% endif %}
-        <a href="{% url 'suppliers-list' %}" class="btn ghost-button">Cancelar</a>
+        <a href="{% url 'tables-and-waiters' %}" class="btn ghost-button">Cancelar</a>
     </div>
 
 </form>
