@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db import IntegrityError, transaction
 from django.views.generic import (
     View,
     ListView,
@@ -217,7 +218,7 @@ class SaleView(ListView):
 
 class OpenTablesSaleView(ListView):
     model = TableSaleBill
-    queryset = TableSaleBill.objects.filter(closed=False)
+    queryset = TableSaleBill.objects.filter(closed=False, table__is_free=False)
     template_name = "sales/tables_list.html"
     context_object_name = 'tables'
     ordering = ['-time']
@@ -248,35 +249,32 @@ class SaleCreateView(View):
         form = SaleForm(request.POST)
         # recieves a post method for the formset
         formset = SaleItemFormset(request.POST)
-        if form.is_valid() and formset.is_valid():
-            # saves bill
-            billobj = form.save(commit=False)
-            billobj.save()
-            table = Table.objects.get(number=request.POST['table'])
-            table.is_free = False
-            table.save()
-            # for loop to save each individual form as its own object
-            for sold_item in formset:
+        try:
+            if form.is_valid() and formset.is_valid():
+                with transaction.atomic():
                
-                # false saves the item and links bill to the item
-                billitem = sold_item.save(commit=False)
-                # links the bill object to the items
-                billitem.billno = billobj
-                # gets the stock item
-                
-                # calculates the total price
-                billitem.totalprice = billitem.perprice * billitem.quantity
-                billitem.save()
-                # here we need to update the quantity of ingredientes in every sold product
-                #stock.quantity -= billitem.quantity
-                # saves bill item and stock
-                billitem.stock.sell(billitem.quantity)
-            
-                
-                
-            messages.success(
+                    # saves bill
+                    billobj = form.save(commit=False)
+                    billobj.save()
+                    table = Table.objects.get(number=request.POST['table'])
+                        
+                    for sold_item in formset:
+                        billitem = sold_item.save(commit=False)
+                        billitem.stock.sell(billitem.quantity)
+                        billitem.billno = billobj
+                        billitem.totalprice = billitem.perprice * billitem.quantity
+                        billitem.save()
+                        
+                    table.is_free = False 
+                    table.save()
+                    messages.success(
                 request, "Mesa iniciada correctamente")
+                    return redirect('open-tables')
+        except IntegrityError:
+            messages.error(
+                request, f"Mesa no pudo ser iniciada. No hay suficiente stock para vender un/a {billitem.stock}")
             return redirect('open-tables')
+        
         sold_item = SaleForm(request.GET or None)
         formset = SaleItemFormset(request.GET or None)
         context = {
@@ -296,7 +294,7 @@ class SaleUpdateView(SuccessMessageMixin, View):
                          'table': Table.objects.filter(number=pk)})
 
         formset = SaleItemFormset(initial=[{'stock': product.stock, 'perprice': product.stock.sell_price,
-                                            'quantity': product.quantity} for product in self.get_items_for_sale(pk)])
+                                            'quantity': product.quantity} for product in self.get_sold_items(pk)])
         form.fields['table'].choices = [
             (table.pk, str(table)) for table in Table.objects.filter(number=pk)]
         form.fields['table'].readonly = True
@@ -313,17 +311,23 @@ class SaleUpdateView(SuccessMessageMixin, View):
     def post(self, request, pk):
         formset = SaleItemFormset(request.POST)
         
-        self.restore_stock(pk)
-        
-        for sold_item in formset:
-            if sold_item.is_valid():
-                billitem = sold_item.save(commit=False)
-                billitem.billno = TableSaleBill.objects.get(table=Table.objects.get(
-                    pk=pk), closed=False)
-                billitem.totalprice = billitem.perprice * billitem.quantity
-                billitem.stock.sell(billitem.quantity)
-                billitem.save()
-        
+        try:
+            with transaction.atomic():
+                self.restore_stock(pk)
+
+                for sold_item in formset:
+                    if sold_item.is_valid():
+                        billitem = sold_item.save(commit=False)
+                        billitem.billno = TableSaleBill.objects.get(table=Table.objects.get(
+                            pk=pk), closed=False)
+                        billitem.totalprice = billitem.perprice * billitem.quantity
+                        billitem.stock.sell(billitem.quantity)
+                        billitem.save()
+        except IntegrityError:
+            messages.error(
+                request, f"Mesa no pudo ser actualizada. No hay suficiente stock para vender un/a {billitem.stock}")
+            return redirect('open-tables')
+
                 
         messages.success(
             request, "Mesa actualizada correctamente")
@@ -331,13 +335,13 @@ class SaleUpdateView(SuccessMessageMixin, View):
         return redirect('open-tables')
 
     def restore_stock(self, pk):
-        for item in self.get_items_for_sale(pk):
+        for item in self.get_sold_items(pk):
             item.stock.buy(item.quantity)
             item.delete()
             
         
 
-    def get_items_for_sale(self, pk):
+    def get_sold_items(self, pk):
         return SaleItem.objects.filter(
             billno=TableSaleBill.objects.filter(
                 table=Table.objects.get(
@@ -358,5 +362,5 @@ class SaleDeleteView(SuccessMessageMixin, DeleteView):
         self.object.closed = True
         self.object.save()
         messages.success(
-            self.request, "Detalle de venta eliminada correctamente")
+            self.request, "Venta cerrada correctamente correctamente")
         return redirect('/transacciones/ventas')
