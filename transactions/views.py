@@ -362,5 +362,5 @@ class SaleDeleteView(SuccessMessageMixin, DeleteView):
         self.object.closed = True
         self.object.save()
         messages.success(
-            self.request, "Venta cerrada correctamente correctamente")
+            self.request, "Venta cerrada correctamente")
         return redirect('/transacciones/ventas')

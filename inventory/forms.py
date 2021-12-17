@@ -1,6 +1,7 @@
 from django import forms
 from django.forms.formsets import formset_factory
-from .models import  IngredientQuantity, Stock, StockQuantity, Table, Waiter
+from django.forms.models import inlineformset_factory
+from .models import  IngredientQuantity, MeasureUnit, Stock, StockQuantity, Table, Waiter
 
 
 
@@ -50,6 +51,15 @@ class StockQuantityItemForm(forms.Form):
     is_manufactured = forms.BooleanField(label=('Es producción propia: '), required=False)
     quantity.widget.attrs.update({'class': 'textinput form-control setprice quantity', 'min': '1', })
 
+class MeasureUnitForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['unit'].widget.attrs.update({'class': 'custom-select'})
+        self.fields['quantity'].widget.attrs.update({'class': 'textinput form-control setprice quantity', 'min': '0',})
+    class Meta:
+        model = MeasureUnit
+        fields = ['unit', 'quantity']
+
 
 class TableForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -64,3 +74,4 @@ class TableForm(forms.ModelForm):
 
 # formset used to render multiple 'SaleItemForm'
 IngredientQuantityItemFormset = formset_factory(IngredientQuantityItemForm, extra=1)
+MeasureUnitItemFormset = formset_factory(MeasureUnitForm, extra=1)

@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import DeleteView
 from .models import IngredientQuantity, Stock, StockQuantity, Table, Waiter
-from .forms import  IngredientQuantityItemFormset, StockQuantityItemForm, StockForm, TableForm, WaiterForm
+from .forms import  IngredientQuantityItemFormset, MeasureUnitItemFormset, StockQuantityItemForm, StockForm, TableForm, WaiterForm, MeasureUnitForm
 from django_filters.views import FilterView
 from .filters import StockFilter
 
@@ -66,6 +66,8 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
             'form'      : form,
             'formset'   : formset,
             'quantity_formset': quantity_formset,
+            'stock_measure_form': MeasureUnitForm(request.GET or None),
+            'ingredient_measure_form':MeasureUnitItemFormset(request.GET or None, prefix='ingredient-measure'),
             'title'    : "Nuevo producto",
             'savebtn' : 'Agregar al inventario',
         }
@@ -74,22 +76,29 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
 
     def post(self, request):
         form = StockForm(request.POST)
+        measure_form = MeasureUnitItemFormset(request.POST,prefix='ingredient-measure')
         stock_quantity_form = StockQuantityItemForm(request.POST)
         formset = IngredientQuantityItemFormset(request.POST)
+        
         if form.is_valid():
-            stock = form.save(commit=False)
-            stock.save()
+            
+            stock = form.save()
             if stock_quantity_form.is_valid() and not stock_quantity_form.cleaned_data['is_manufactured']:
                
-                quantity = StockQuantity(stock= stock, quantity= stock_quantity_form.cleaned_data['quantity'])
+                quantity = StockQuantity(stock= stock, quantity= stock_quantity_form.cleaned_data['quantity'],
+                measure_unit=stock_quantity_form.save())
                 quantity.save()
-                for ingredient_form in formset:
-                    if ingredient_form.is_valid() and ingredient_form.cleaned_data:
-                        print(ingredient_form.cleaned_data)
+            
+            else:
+                for index, ingredient_form in enumerate(formset):
+                    if ingredient_form.is_valid() and ingredient_form.cleaned_data and measure_form[index].is_valid():
+                        measure =  measure_form[index].save()
                         ingredient = IngredientQuantity(stock=stock,
                         ingredient=ingredient_form.cleaned_data['ingredient'],
-                        quantity=ingredient_form.cleaned_data['quantity'])
+                        quantity=ingredient_form.cleaned_data['quantity'],
+                        measure_unit=measure)
                         ingredient.save()
+                
                  
             
             
@@ -190,7 +199,7 @@ class TableCreateView(SuccessMessageMixin, CreateView):
 class WaiterCreateView(SuccessMessageMixin, CreateView):
     model = Waiter
     form_class = WaiterForm
-    success_url = '/mesas-y-mozos'
+    success_url = '/inventario/mesas-y-mozos'
     success_message = "Mozo creado correctamente"
     template_name = "edit_waiter.html"
 

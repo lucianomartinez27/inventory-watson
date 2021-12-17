@@ -51,13 +51,19 @@
 
 
         <div class="form-group form-row">
-            {{ quantity_formset.quantity.errors }}
-            <div class="col-md-2">
-                <label for="id_quantity" class="panel-body-text">Cantidad en stock:</label>
-            </div>
-            <div class="col-md-2">
-                {{ quantity_formset.quantity }}
-            </div>
+                <div class="form-group col-md-3">
+                    {{ stock_measure_form.quantity.errors }}
+                    <label for="id_quantity" class="panel-body-text">Cantidad:</label>
+                    {{ stock_measure_form.quantity }}
+                </div>
+                
+                <div class="form-group col-md-3">
+                    <label for="id_unit" class="panel-body-text">Unidad:</label>
+                    {{ stock_measure_form.unit.errors }}
+                    
+                    {{ stock_measure_form.unit }}
+                </div>
+                
 
         </div>
 
@@ -69,17 +75,31 @@
             {{ formset.management_form }}
             {% for form in formset %}
             <div class="row form-row">
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-5">
                     {{ form.ingredient.errors }}
                     <label class="panel-body-text">Ingrediente:</label>
                     {{ form.ingredient }}
                 </div>
-                <div class="form-group col-md-2">
+                <div class="form-group col-md-5">
                     {{ form.quantity.errors }}
-                    <label class="panel-body-text">Cantidad:</label>
+                    <label class="panel-body-text">Cant:</label>
                     {{ form.quantity }}
                 </div>
-
+                {{ ingredient_measure_form.management_form }}
+                {% for ingredient_form in ingredient_measure_form %}
+                <div class="form-group col-md-3">
+                    {{ ingredient_form.quantity.errors }}
+                    <label class="panel-body-text">Cantidad:</label>
+                    {{ ingredient_form.quantity }}
+                </div>
+                
+                <div class="form-group col-md-3">
+                    <label class="panel-body-text">Unidad:</label>
+                    {{ ingredient_form.unit.errors }}
+                    
+                    {{ ingredient_form.unit }}
+                </div>
+                {% endfor %}
 
                 <div class="form-group col-md-1">
                     <label class="panel-body-text" style="color: #000">.</label>
@@ -231,25 +251,33 @@
 
         let isManufactured = $('#id_is_manufactured');
         let quantityInput = $('#id_quantity');
+        let unitInput = $('#id_unit');
+
         let ingredientsInput = $('#stockitem');
         {% if  empty_stock_quantity %}
         isManufactured.prop( "checked", true );
         quantityInput.get('0').type = 'hidden'
+        unitInput.get('0').type = 'hidden'
         ingredientsInput.show();
         {% else %}
             ingredientsInput.hide();
         {% endif %}
         quantityInput.attr('class', 'textinput form-control')
         let labelForQuantity = $("label[for='id_quantity']")
+        let labelForUnit = $("label[for='id_unit']")
         isManufactured.on('change', function () {
             if (isManufactured.is(':checked')) {
                 labelForQuantity.hide();
+                labelForUnit.hide()
                 quantityInput.get('0').type = 'hidden'
+                unitInput.hide()
                 ingredientsInput.show();
             
             } else {
                 labelForQuantity.show()
+                labelForUnit.show()
                 quantityInput.get('0').type = 'number'
+                unitInput.show()
                 ingredientsInput.hide();
             }
         })

@@ -1,5 +1,5 @@
 from django.db import models
-    
+from unum.units import *
 
 
 
@@ -51,11 +51,34 @@ class Stock(models.Model):
     def __str__(self):
 	    return self.name
 
+class MeasureUnit(models.Model):
+    MEASURE_CHOICES = [
+        ('kg','KILOGRAMOS'),
+        ('g', 'GRAMOS'),
+        ('cc', 'CENTIMETROS CUBICOS'),
+        ('lt', 'LITROS')
+    ]
+    id = models.AutoField(primary_key=True)
+    unit = models.CharField(max_length=2, choices=MEASURE_CHOICES, default='gr')
+    quantity = models.PositiveIntegerField(default=0)
 
+
+    def as_unit(self):
+        units = {'g':g, 'kg':kg, 'cc':cm*cm*cm, 'lt': L}
+        return self.quantity * units[self.unit]
+
+    def substract_quantity_by_unit(self, another_unit):
+        return self.as_unit() - another_unit.as_unit()
+
+    def __str__(self):
+        return str(self.quantity) + ' ' + self.unit
+
+        
 class StockQuantity(models.Model):
     id = models.AutoField(primary_key=True)
     stock = models.OneToOneField(Stock, on_delete = models.CASCADE, unique=True)
     quantity = models.PositiveIntegerField(default=0)
+    measure_unit = models.ForeignKey(MeasureUnit, on_delete = models.CASCADE, null=True, blank=True)
 
     def sell(self, quantity_sold):
         self.quantity -= quantity_sold
@@ -64,17 +87,26 @@ class StockQuantity(models.Model):
     def buy(self, purchased_amount):
         self.quantity += purchased_amount
         self.save()
-    
+
+
     def __str__(self):
         return str(self.quantity) + " " + str(self.stock)
+
 class IngredientQuantity(models.Model):
     id = models.AutoField(primary_key=True)
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Stock, on_delete=models.CASCADE, null=True, related_name="ingredient")
     quantity = models.IntegerField(default=1)
+    measure_unit = models.ForeignKey(MeasureUnit, on_delete = models.CASCADE, null=True, blank=True)
+
     
     def __str__(self):
-        return self.ingredient.name + " para " + self.stock.name
+        if (self.measure_unit):
+            quantity = str(self.measure_unit.quantity) + " " + self.measure_unit.unit
+        else:
+            quantity = str(self.quantity)
+
+        return quantity + " de " + self.ingredient.name + " para " + self.stock.name
 
     class Meta:
         unique_together = ('ingredient', 'stock',)
