@@ -1,5 +1,5 @@
 from django.db import models
-from inventory.models import MeasureUnit, Stock, StockQuantity, Table, Waiter
+from inventory.models import MeasureUnit, Stock, Table, Waiter
 from django.contrib.auth.models import User
 
 
@@ -42,6 +42,9 @@ class PurchaseBill(models.Model):
     class Meta:
         verbose_name = 'Factura de compra'
         verbose_name_plural = 'Facturas de compra'
+        
+
+
 
 #contains the purchase stocks made
 class PurchaseItem(models.Model):
@@ -67,6 +70,7 @@ class PurchaseItem(models.Model):
     class Meta:
         verbose_name = 'Item de compra'
         verbose_name_plural = 'Items de compra'
+        get_latest_by = "billno__time"
 
 class TableSaleBill(models.Model):
     billno = models.AutoField(primary_key=True)

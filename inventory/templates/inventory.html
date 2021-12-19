@@ -85,9 +85,9 @@
                             <h6>{{ item.name }}</h6>
                         </td>
                         
-                        <td class="align-middle">{{ item.buy_price }}</td>
-                        <td class="align-middle">{{ item.sell_price }}</td>
-                        <td class="align-middle">{{ item.get_total_cost }}</td>
+                        <td class="align-middle">${{ item.get_buy_price }}</td>
+                        <td class="align-middle">${{ item.sell_price }}</td>
+                        <td class="align-middle">${{ item.get_total_cost }}</td>
                         <td class="align-middle">{{ item.get_quantity }}</td>
                         <td class="align-middle">
                             <a href="{% url 'edit-stock' item.pk %}" class="btn ghost-button">Editar detalles</a>

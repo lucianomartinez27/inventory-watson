@@ -168,7 +168,7 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):
             formset = IngredientQuantityItemFormset(
                 request.POST, prefix='ingredient-form')
             measure_form = MeasureUnitItemFormset(
-                request.POST, prefix='ingredient-measure-form')
+                request.POST, prefix='ingredient-measure')
             stock_quantity_form = StockQuantityItemForm(request.POST)
             if form.is_valid():
                 form.save()
@@ -178,9 +178,6 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):
                     quantity.save()
                 else:
                     for index, ingredient_form in enumerate(formset):
-                        print(ingredient_form.errors)
-                        print(measure_form[index].errors)
-                        print(ingredient_form.is_valid() and ingredient_form.cleaned_data and measure_form[index].is_valid())
                         if ingredient_form.is_valid() and ingredient_form.cleaned_data and measure_form[index].is_valid():
                             
                             measure = measure_form[index].save()
