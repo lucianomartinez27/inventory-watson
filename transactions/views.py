@@ -10,6 +10,8 @@ from django.views.generic import (
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+from inventory.forms import MeasureUnitItemFormset
 from .models import (
     PurchaseBill,
     Supplier,
@@ -143,6 +145,7 @@ class PurchaseCreateView(View):
         supplierobj = get_object_or_404(Supplier, pk=pk)
         context = {
             'formset': formset,
+            'quantity_form': MeasureUnitItemFormset(request.GET or None, prefix='quantity-form'),
             'supplier': supplierobj,
         }                                                                       # sends the supplier and formset as context
         return render(request, self.template_name, context)
@@ -150,6 +153,8 @@ class PurchaseCreateView(View):
     def post(self, request, pk):
         # recieves a post method for the formset
         formset = PurchaseItemFormset(request.POST)
+        measure_form = MeasureUnitItemFormset(
+            request.POST, prefix='quantity-form')
         # gets the supplier object
         supplierobj = get_object_or_404(Supplier, pk=pk)
         if formset.is_valid():
@@ -160,30 +165,36 @@ class PurchaseCreateView(View):
             billobj.save()
 
             # for loop to save each individual form as its own object
-            for form in formset:
-                # false saves the item and links bill to the item
-                billitem = form.save(commit=False)
-                # links the bill object to the items
-                billitem.billno = billobj
-                # gets the stock item
-                stock_quantity = get_object_or_404(
-                    StockQuantity, stock__name=billitem.stock.name)       # gets the item
-                # calculates the total price
-                billitem.totalprice = billitem.perprice * billitem.quantity
-                # updates quantity in stock db
-                stock_quantity.quantity += billitem.quantity
-                stock_quantity.stock.buy_price = billitem.perprice                              # updates quantity
-                # saves bill item and stock
-                stock_quantity.stock.save()
-                stock_quantity.save()
-                billitem.save()
-            messages.success(
-                request, "Compra de productos registrada correctamente")
-            return redirect('inventory')
+            for index, form in enumerate(formset):
+                print(measure_form[index].errors)
+                if measure_form[index].is_valid():
+                    # false saves the item and links bill to the item
+                    billitem = form.save(commit=False)
+                    # links the bill object to the items
+                    billitem.billno = billobj
+                    # gets the stock item
+                    stock_quantity = get_object_or_404(
+                        StockQuantity, stock__name=billitem.stock.name)       # gets the item
+                    # calculates the total price
+                    measure_unit = measure_form[index].save()
+                    billitem.totalprice = billitem.perprice * billitem.quantity
+                    # updates quantity in stock db
+                    stock_quantity.buy(measure_unit)
+                    measure_unit.delete()
+                    # updates quantity
+                    stock_quantity.stock.buy_price = billitem.perprice
+                    # saves bill item and stock
+                    stock_quantity.stock.save()
+                    stock_quantity.save()
+                    billitem.save()
+                    messages.success(
+                        request, "Compra de productos registrada correctamente")
+                    return redirect('inventory')
         formset = PurchaseItemFormset(request.GET or None)
         context = {
             'formset': formset,
-            'supplier': supplierobj
+            'supplier': supplierobj,
+            'quantity-form': measure_form,
         }
         return render(request, self.template_name, context)
 
@@ -234,12 +245,17 @@ class SaleCreateView(View):
 
         form = SaleForm(request.GET or None)
         # renders an empty formset
-        formset = SaleItemFormset(request.GET or None)
-        stocks = Stock.objects.filter(is_for_sale=True)
+        formset = SaleItemFormset(request.GET or None, prefix='sale-form')
+        measure_formset = MeasureUnitItemFormset(
+            request.GET or None, prefix='quantity-form')
+        formsets = zip(formset, measure_formset)
         context = {
             'form': form,
-            'formset': formset,
-            'stocks': stocks,
+            'formset': formsets,
+            'measure_form': measure_formset,
+            'sale_form':formset,
+            'stocks': Stock.objects.filter(is_for_sale=True),
+            'stock_quantitys': [stock for stock in StockQuantity.objects.all()],
             'title': 'Nueva venta'
         }
 
@@ -248,38 +264,45 @@ class SaleCreateView(View):
     def post(self, request):
         form = SaleForm(request.POST)
         # recieves a post method for the formset
-        formset = SaleItemFormset(request.POST)
+        formset = SaleItemFormset(request.POST, prefix='sale-form')
+        measure_formset = MeasureUnitItemFormset(
+            request.POST or None, prefix='quantity-form')
+
         try:
             if form.is_valid() and formset.is_valid():
                 with transaction.atomic():
-               
+
                     # saves bill
                     billobj = form.save(commit=False)
                     billobj.save()
                     table = Table.objects.get(number=request.POST['table'])
-                        
-                    for sold_item in formset:
+
+                    for index, sold_item in enumerate(formset):
                         billitem = sold_item.save(commit=False)
-                        billitem.stock.sell(billitem.quantity)
-                        billitem.billno = billobj
-                        billitem.totalprice = billitem.perprice * billitem.quantity
-                        billitem.save()
-                        
-                    table.is_free = False 
+                        print(measure_formset[index].errors)
+                        if measure_formset[index].is_valid():
+                            measure = measure_formset[index].save()
+                            billitem.quantity_of = measure
+                            billitem.stock.sell(measure)
+                            billitem.billno = billobj
+                            billitem.totalprice = billitem.perprice * billitem.quantity
+                            billitem.save()
+
+                    table.is_free = False
                     table.save()
                     messages.success(
-                request, "Mesa iniciada correctamente")
+                        request, "Mesa iniciada correctamente")
                     return redirect('open-tables')
         except IntegrityError:
             messages.error(
                 request, f"Mesa no pudo ser iniciada. No hay suficiente stock para vender un/a {billitem.stock}")
             return redirect('open-tables')
-        
+
         sold_item = SaleForm(request.GET or None)
         formset = SaleItemFormset(request.GET or None)
         context = {
             'form': form,
-            'formset': formset,
+            'formset': zip(formset, measure_formset),
             'stocks': Stock.objects.filter(is_for_sale=True),
         }
         return render(request, self.template_name, context)
@@ -291,55 +314,63 @@ class SaleUpdateView(SuccessMessageMixin, View):
     def get(self, request, pk):
 
         form = SaleForm(request.GET or None, initial={
-                         'table': Table.objects.filter(number=pk)})
+            'table': Table.objects.filter(number=pk)})
 
         formset = SaleItemFormset(initial=[{'stock': product.stock, 'perprice': product.stock.sell_price,
-                                            'quantity': product.quantity} for product in self.get_sold_items(pk)])
+                                            'quantity': product.quantity, } for product in self.get_sold_items(pk)], prefix='sale-form')
+        measure_formset = MeasureUnitItemFormset(initial=[{'unit': sold_item.quantity_of.unit, 'quantity': sold_item.quantity_of.quantity, }
+                                                          for sold_item in self.get_sold_items(pk)], prefix='measure-form')
         form.fields['table'].choices = [
             (table.pk, str(table)) for table in Table.objects.filter(number=pk)]
         form.fields['table'].readonly = True
-
+        formsets = zip(formset, measure_formset)
         context = {
             'form': form,
-            'formset': formset,
+            'formset': formsets,
+            'measure_form': measure_formset,
+            'sale_form':formset,
             'stocks': Stock.objects.all(),
+            'stock_quantitys': [stock for stock in StockQuantity.objects.all()],
             'title': 'Editar venta'
         }
 
         return render(request, self.template_name, context)
 
     def post(self, request, pk):
-        formset = SaleItemFormset(request.POST)
-        
+        formset = SaleItemFormset(request.POST, prefix='sale-form')
+        measure_formset = MeasureUnitItemFormset(request.POST, prefix='measure-form')
         try:
             with transaction.atomic():
                 self.restore_stock(pk)
 
-                for sold_item in formset:
-                    if sold_item.is_valid():
+                for index, sold_item in enumerate(formset):
+                    if sold_item.is_valid() and measure_formset[index].is_valid:
                         billitem = sold_item.save(commit=False)
                         billitem.billno = TableSaleBill.objects.get(table=Table.objects.get(
                             pk=pk), closed=False)
                         billitem.totalprice = billitem.perprice * billitem.quantity
-                        billitem.stock.sell(billitem.quantity)
+                        measure = measure_formset[index].save()
+                        billitem.quantity_of = measure
+                        billitem.stock.sell(measure)
                         billitem.save()
+                    else:
+                        messages.error(
+                    request, f"Mesa no pudo ser actualizada. {sold_item.errors}")
+                        return redirect('open-tables')
         except IntegrityError:
             messages.error(
                 request, f"Mesa no pudo ser actualizada. No hay suficiente stock para vender un/a {billitem.stock}")
             return redirect('open-tables')
 
-                
         messages.success(
             request, "Mesa actualizada correctamente")
-        
+
         return redirect('open-tables')
 
     def restore_stock(self, pk):
         for item in self.get_sold_items(pk):
-            item.stock.buy(item.quantity)
+            item.stock.buy(item.quantity_of)
             item.delete()
-            
-        
 
     def get_sold_items(self, pk):
         return SaleItem.objects.filter(
@@ -347,7 +378,6 @@ class SaleUpdateView(SuccessMessageMixin, View):
                 table=Table.objects.get(
                     number=pk)
             ).get(closed=False))
-
 
 
 class SaleDeleteView(SuccessMessageMixin, DeleteView):

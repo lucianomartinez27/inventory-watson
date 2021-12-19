@@ -70,6 +70,7 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
             'ingredient_measure_form':MeasureUnitItemFormset(request.GET or None, prefix='ingredient-measure'),
             'title'    : "Nuevo producto",
             'savebtn' : 'Agregar al inventario',
+            'stock_quantitys': [stock for stock in StockQuantity.objects.all()],
         }
 
         return render(request, self.template_name, context)       

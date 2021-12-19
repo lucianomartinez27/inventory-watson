@@ -1,5 +1,5 @@
 from django.db import models
-from inventory.models import Stock, Table, Waiter
+from inventory.models import MeasureUnit, Stock, StockQuantity, Table, Waiter
 from django.contrib.auth.models import User
 
 
@@ -49,6 +49,7 @@ class PurchaseItem(models.Model):
     stock = models.ForeignKey(Stock, on_delete = models.CASCADE, related_name='purchaseitem')
     buyer = models.ForeignKey(User, on_delete = models.CASCADE, default=1)
     quantity = models.IntegerField(default=1)
+    quantity_of = models.ForeignKey(StockQuantity, on_delete = models.CASCADE, null=True, blank=True)
     perprice = models.IntegerField(default=1)
     totalprice = models.IntegerField(default=1)
 
@@ -87,6 +88,7 @@ class SaleItem(models.Model):
     billno = models.ForeignKey(TableSaleBill, on_delete = models.CASCADE, related_name='salebillno')
     stock = models.ForeignKey(Stock, on_delete = models.CASCADE, related_name='saleitem')
     quantity = models.IntegerField(default=1)
+    quantity_of = models.ForeignKey(MeasureUnit, on_delete = models.CASCADE, null=True, blank=True)
     perprice = models.FloatField(default=1)
     totalprice = models.FloatField(default=1)
     def __str__(self):

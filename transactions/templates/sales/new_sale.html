@@ -2,212 +2,266 @@
 {% load static %}
 
 
-{% block title %}  {{ title }} {% endblock title %}
+{% block title %} {{ title }} {% endblock title %}
 
 
 {% block content %}
 
-    <div style="color:#ffa821; font-style: bold; font-size: 2rem; border-bottom: 1px solid white;">{{ title }}</div>
-    
+<div style="color:#ffa821; font-style: bold; font-size: 2rem; border-bottom: 1px solid white;">{{ title }}</div>
+
+<br>
+
+<form method="post" class="panel panel-default">
+
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="panel-heading panel-heading-text">Detalles</div>
+    <div class="panel-body">
+
+        <div class="form-group">
+            <label for="{{ form.table.id_for_label }}" class="panel-body-text">Mesa:</label>
+            {{ form.table }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.waiter.id_for_label }}" class="panel-body-text">Mozo:</label>
+            {{ form.waiter }}
+        </div>
+
+
+    </div>
+
     <br>
 
-    <form method="post" class="panel panel-default">
-        
-        {% csrf_token %}
-        {{ form.non_field_errors }}
+    <div class="panel panel-default">
 
-        <div class="panel-heading panel-heading-text">Detalles</div>
-        <div class="panel-body">
-            
-            <div class="form-group">
-                <label for="{{ form.table.id_for_label }}" class="panel-body-text">Mesa:</label>
-                {{ form.table }}   
+
+
+        <div class="panel-heading panel-heading-text">Detalles de producto</div>
+
+        <div id="stockitem">
+            <div class="panel-body">
+                {{ sale_form.management_form }}
+                {{ measure_form.management_form }}
+                {% for sale, measure in formset %}
+
+
+                <div class="row form-row">
+                    <div class="form-group col-md-3">
+                        {{ sale.stock.errors }}
+                        <label class="panel-body-text">Producto:</label>
+                        {{ sale.stock }}
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label class="panel-body-text">Precio por item:</label>
+                        {{ sale.perprice }}
+                    </div>
+                    <div class="form-group col-md-2">
+                        {{ sale.quantity.errors }}
+                        <label class="panel-body-text">Cantidad:</label>
+                        {{ sale.quantity }}
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        {{ measure.quantity.errors }}
+                        <label class="panel-body-text">Cantidad:</label>
+                        {{ measure.quantity }}
+                    </div>
+
+
+                    <div class="form-group col-md-3">
+                        <label class="panel-body-text">Unidad:</label>
+                        {{ measure.unit.errors }}
+                        {{ measure.unit }}
+                    </div>
+
+
+                    <div class="form-group col-md-1">
+                        <label class="panel-body-text">Total $:</label>
+                        <input type="text" class="textinput form-control totalprice" value="1" disabled required>
+                    </div>
+                    <div class="form-group col-md-1">
+                        <label class="panel-body-text" style="color: #000">.</label>
+                        <button class="form-control btn btn-danger remove-form-row">-</button>
+                    </div>
+                </div>
+                {% endfor %}
+                <div style="text-align: right;">
+                    <a href="#" class="add-form-row">+ Agregar más</a>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="{{ form.waiter.id_for_label }}" class="panel-body-text">Mozo:</label>
-                {{ form.waiter }}   
-            </div>
-
-
         </div>
+
 
         <br>
 
-        <div class="panel panel-default">
-
-            
-
-            <div class="panel-heading panel-heading-text">Detalles de producto</div>
-            
-                <div id="stockitem"> 
-                    <div class="panel-body">
-                    {{ formset.management_form }}
-                    {% for iform in formset %}
-                        <div class="row form-row">
-                            <div class="form-group col-md-6">
-                                {{ iform.stock.errors }}
-                                <label class="panel-body-text">Producto:</label>
-                                {{ iform.stock }}
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label class="panel-body-text">Precio por item:</label>
-                                {{ iform.perprice }}
-                            </div>
-                            <div class="form-group col-md-2">
-                                {{ iform.quantity.errors }}
-                                <label class="panel-body-text">Cantidad:</label>
-                                {{ iform.quantity }}
-                            </div>
-                            <div class="form-group col-md-1">
-                                <label class="panel-body-text">Total $:</label>
-                                <input type="text" class="textinput form-control totalprice" value="1" disabled required>
-                            </div>
-                            <div class="form-group col-md-1">
-                                <label class="panel-body-text" style="color: #000">.</label>
-                                <button class="form-control btn btn-danger remove-form-row">-</button>
-                            </div>
-                        </div>
-                    {% endfor %}
-                        <div style="text-align: right;">                    
-                            <a href="#" class="add-form-row">+ Agregar más</a>
-                        </div>
-                    </div>
-                </div>
-
-
-            <br>
-
-            <div class="align-middle">
-                <button type="submit" class="btn ghost-green">Agregar a ventas</button>
-                <a href="{% url 'sales-list' %}" class="btn ghost-button">Cancelar</a>
-            </div>
-            
+        <div class="align-middle">
+            <button type="submit" class="btn ghost-green">Agregar a ventas</button>
+            <a href="{% url 'sales-list' %}" class="btn ghost-button">Cancelar</a>
         </div>
 
-    </form>
+    </div>
 
-    <!-- Custom JS to add and remove item forms -->
-    <script type="text/javascript" src="{% static 'js/jquery-3.2.1.slim.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/dialogbox.js' %}"></script>
-    <script type="text/javascript">
-        
-        //creates custom alert object
-        var custom_alert = new custom_alert();
+</form>
 
-        function updateElementIndex(el, prefix, ndx) {
-            var id_regex = new RegExp('(' + prefix + '-\\d+)');
-            var replacement = prefix + '-' + ndx;
-            if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
-            if (el.id) el.id = el.id.replace(id_regex, replacement);
-            if (el.name) el.name = el.name.replace(id_regex, replacement);
+<!-- Custom JS to add and remove item forms -->
+<script type="text/javascript" src="{% static 'js/jquery-3.2.1.slim.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dialogbox.js' %}"></script>
+<script type="text/javascript">
+
+    //creates custom alert object
+    var custom_alert = new custom_alert();
+    $(document).ready(getUnitChoices)
+
+
+    function updateElementIndex(el, prefix, ndx) {
+        var id_regex = new RegExp('(' + prefix + '-\\d+)');
+        var replacement = prefix + '-' + ndx;
+        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+        if (el.id) el.id = el.id.replace(id_regex, replacement);
+        if (el.name) el.name = el.name.replace(id_regex, replacement);
+    }
+   
+    function getUnitChoices(el, prefix, ndx) {
+        var stocksById = {
+            {% for stock in stock_quantitys %}
+        {% if not forloop.first %}, {% endif %}
+        {{ stock.stock.pk }} : {
+            unit: {{ stock.measure_unit.related_units | safe }},
         }
-        
-        //stores the total no of item forms
-        var total = {{ formset | length }};
+        {% endfor %}
 
-        function cloneMore(selector, prefix) {
-            var newElement = $(selector).clone(true);
-            //var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
-            newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function() {
-                var name = $(this).attr('name')
-                if(name) {
-                    name = name.replace('-' + (total-1) + '-', '-' + total + '-');
-                    var id = 'id_' + name;
-                    $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
-                }
-            });
-            newElement.find('label').each(function() {
-                var forValue = $(this).attr('for');
-                if (forValue) {
-                forValue = forValue.replace('-' + (total-1) + '-', '-' + total + '-');
-                $(this).attr({'for': forValue});
-                }
-            });
-            total++;
-            $('#id_' + prefix + '-TOTAL_FORMS').val(total);
-            $(selector).after(newElement);
-            return false;
-        }
-        
-        function deleteForm(prefix, btn) {
-            //var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
-            
-            if (total > 1){
-                btn.closest('.form-row').remove();
-                var forms = $('.form-row');
-                $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
-                for (var i=0, formCount=forms.length; i<formCount; i++) {
-                    $(forms.get(i)).find(':input').each(function() {
-                        updateElementIndex(this, prefix, i);
-                    });
-                }
-                total--;
-            } else {
-                custom_alert.render('Campo no puede ser eliminado o no hay suficiente stock');
-            }
-            return false;
-        }
 
-        function updatePriceOfItem(){
-            
+    };
+
+    Array.prototype.forEach.call(
+        document.getElementsByClassName('stock'), function (element, index) {
+            element.addEventListener('change', function (e) {
+                e.preventDefault();
+
+                let select = $('#id_quantity-form-' + index + '-unit');
+                    select.find('option')
+                    .remove()
+                    .end();
+                    if (stocksById[element.value]){
+                    stocksById[element.value].unit.forEach(function(option) {
+                        select.append('<option value="'+ option[0]+'">'+option[1]+'</option>')
+                        .val(option[0])
+                    })
+                }else{
+                    select.append('<option value="u">UNIDAD/ES</option>')
+                        .val('u')
+                }
+                    
+            })
+        })
+    }
+
+
+    function updatePriceOfItem() {
+
             var stocksById = {
-            {% for stock in stocks %}
-                {% if not forloop.first %},{% endif %}
-               {{ stock.pk }} : {
-                    price          : {{ stock.sell_price | safe }},
-                }
+                {% for stock in stocks %}
+            {% if not forloop.first %}, {% endif %}
+            {{ stock.pk }} : {
+                price: {{ stock.sell_price | safe }},
+            }
             {% endfor %}
             };
-           
+
             Array.prototype.forEach.call(
-                document.getElementsByClassName('stock'), function(element, index){
-            element.addEventListener('change', function(e){
-                e.preventDefault();
-                document.getElementById('id_form-' + index + '-perprice').value = Number(stocksById[element.value].price);
-            })
-            
-    })
-}
+            document.getElementsByClassName('stock'), function (element, index) {
+                element.addEventListener('change', function (e) {
+                    e.preventDefault();
+                    document.getElementById('id_sale-form-' + index + '-perprice').value = Number(stocksById[element.value].price);
+                })
 
+        })
+        }
 
-       
-
-
-
-
-        $(document).on('click', '.add-form-row', function(e){
-            e.preventDefault();
-            cloneMore('.form-row:last', 'form');
-            updatePriceOfItem()
-            return false;
+    function cloneMore(selector, prefix) {
+        var newElement = $(selector).clone(true);
+        var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+        newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function () {
+            var name = $(this).attr('name')
+            if (name) {
+                name = name.replace('-' + (total - 1) + '-', '-' + total + '-');
+                var id = 'id_' + name;
+                $(this).attr({ 'name': name, 'id': id }).val('').removeAttr('checked');
+            }
         });
-        
-        $(document).on('click', '.remove-form-row', function(e){
-            e.preventDefault();
-            deleteForm('form', $(this));
-            return false;
+        newElement.find('label').each(function () {
+            var forValue = $(this).attr('for');
+            if (forValue) {
+                forValue = forValue.replace('-' + (total - 1) + '-', '-' + total + '-');
+                $(this).attr({ 'for': forValue });
+            }
         });
+        total++;
+        $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+        $(selector).after(newElement);
+        return false;
+    }
 
-        window.onload = updatePriceOfItem;
+    function deleteForm(prefix, btn) {
+        var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        console.log(total)
+        if (total > 1) {
+            btn.closest('.form-row').remove();
+            var forms = $('.form-row');
+            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+            for (var i = 0, formCount = forms.length; i < formCount; i++) {
+                $(forms.get(i)).find(':input').each(function () {
+                    updateElementIndex(this, prefix, i);
+                });
+            }
+            total--;
+        } else {
+            custom_alert.render('Campo no puede ser eliminado o no hay suficiente stock');
+        }
+        return false;
+    }
 
-        
 
-        //updates the total price by multiplying 'price per item' and 'quantity' 
-        $(document).on('change', '.setprice', function(e){
-            e.preventDefault();
-            //gets the values
-            var element = $(this);
-            var quantity = element.parents('.form-row').find('.quantity').val();
-            var perprice = element.parents('.form-row').find('.price').val();
-            //checks if stocks are available
-              
-            //calculates the total
-            var tprice = quantity * perprice;
-            //sets it to field
-            element.parents('.form-row').find('.totalprice').val(tprice);
-            return false;
-        });
 
-    </script>
+
+
+
+
+
+
+    $(document).on('click', '.add-form-row', function (e) {
+        e.preventDefault();
+        cloneMore('.form-row:last', 'sale-form');
+        updatePriceOfItem()
+        getUnitChoices()
+        return false;
+    });
+
+    $(document).on('click', '.remove-form-row', function (e) {
+        e.preventDefault();
+        deleteForm('sale-form', $(this));
+        return false;
+    });
+
+
+
+    //updates the total price by multiplying 'price per item' and 'quantity' 
+    $(document).on('change', '.setprice', function (e) {
+        e.preventDefault();
+        //gets the values
+        var element = $(this);
+        var quantity = element.parents('.form-row').find('.quantity').val();
+        var perprice = element.parents('.form-row').find('.price').val();
+        //checks if stocks are available
+
+        //calculates the total
+        var tprice = quantity * perprice;
+        //sets it to field
+        element.parents('.form-row').find('.totalprice').val(tprice);
+        return false;
+    });
+
+</script>
 
 {% endblock content %}

@@ -80,11 +80,7 @@
                     <label class="panel-body-text">Ingrediente:</label>
                     {{ form.ingredient }}
                 </div>
-                <div class="form-group col-md-5">
-                    {{ form.quantity.errors }}
-                    <label class="panel-body-text">Cant:</label>
-                    {{ form.quantity }}
-                </div>
+                
                 {{ ingredient_measure_form.management_form }}
                 {% for ingredient_form in ingredient_measure_form %}
                 <div class="form-group col-md-3">
@@ -203,6 +199,7 @@
     $(document).on('click', '.add-form-row', function (e) {
         e.preventDefault();
         cloneMore('.form-row:last', 'form');
+        getUnitChoices()
         return false;
     });
 
@@ -226,7 +223,42 @@
         element.parents('.form-row').find('.totalprice').val(tprice);
         return false;
     });
+    function getUnitChoices(el, prefix, ndx) {
+        var stocksById = {
+            {% for stock in stock_quantitys %}
+        {% if not forloop.first %}, {% endif %}
+        {{ stock.stock.pk }} : {
+            unit: {{ stock.measure_unit.related_units | safe }},
+        }
+        {% endfor %}
 
+
+    };
+    Array.prototype.forEach.call(
+        document.getElementsByClassName('ingredient'), function (element, index) {
+            element.addEventListener('change', function (e) {
+                e.preventDefault();
+                console.log('#id_ingredient-measure-' + index + '-unit')
+                let select = $('#id_ingredient-measure-' + index + '-unit'); // tTODO: add
+                    select.find('option')
+                    .remove()
+                    .end();
+    
+                    console.log(element)
+                    if (stocksById[element.value]){
+                    stocksById[element.value].unit.forEach(function(option) {
+                        select.append('<option value="'+ option[0]+'">'+option[1]+'</option>')
+                        .val(option[0])
+                    })
+                }else{
+                    select.append('<option value="u">UNIDAD/ES</option>')
+                        .val('u')
+                }
+                    
+            })
+        })
+    }
+    $(document).ready(getUnitChoices)
     $(document).ready(function () {
         let isForSale = $('#id_is_for_sale');
         let sellPriceInput = $('#id_sell_price')

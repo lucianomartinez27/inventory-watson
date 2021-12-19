@@ -38,7 +38,7 @@ class WaiterForm(forms.ModelForm):
 
 class IngredientQuantityItemForm(forms.ModelForm):
     ingredient = forms.ModelChoiceField( label=('Stock'),queryset=Stock.objects.all(),blank=False,
-    widget=forms.Select(attrs={'class': 'custom-select','id':'selectCategory'}))
+    widget=forms.Select(attrs={'class': 'custom-select ingredient'}))
     quantity = forms.IntegerField(min_value=1)
     quantity.widget.attrs.update({'class': 'textinput form-control setprice quantity', 'min': '1', })
 
@@ -54,7 +54,7 @@ class StockQuantityItemForm(forms.Form):
 class MeasureUnitForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['unit'].widget.attrs.update({'class': 'custom-select'})
+        self.fields['unit'].widget.attrs.update({'class': 'custom-select '})
         self.fields['quantity'].widget.attrs.update({'class': 'textinput form-control setprice quantity', 'min': '0',})
     class Meta:
         model = MeasureUnit
