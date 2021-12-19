@@ -11,16 +11,16 @@ class HomeView(View):
         form = CategoryForm()        
         labels = []
         data = {}        
-        stockqueryset = StockQuantity.objects.all().order_by('-quantity',)
+        stockqueryset = StockQuantity.objects.all().order_by('-measure_unit__quantity',)
         quantities = []
         labels =  []
         for item in stockqueryset:
             data.setdefault(item.stock.category, {})
             data[item.stock.category].setdefault('labels', [])
             data[item.stock.category].setdefault('quantity', [])
-            data[item.stock.category]['quantity'].append(item.quantity)
+            data[item.stock.category]['quantity'].append(item.measure_unit.quantity)
             data[item.stock.category]['labels'].append(item.stock.name)
-            quantities.append(item.quantity)
+            quantities.append(item.measure_unit.quantity)
             labels.append(item.stock.name)
         sales = TableSaleBill.objects.order_by('-time')[:3]
         purchases = PurchaseBill.objects.order_by('-time')[:3]

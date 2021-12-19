@@ -24,7 +24,7 @@
                 <th>Detalle N°</th>
                 <th >Mozo</th>
                 <th >Producto vendido</th>
-                <th >Cantdad vendida</th>
+                <th >Cantidad vendida</th>
                 <th >Total vendido</th>
                 <th>Fecha venta</th>
                 <th>Mesa</th>
@@ -39,7 +39,7 @@
                 <td class="align-middle"> <h3>{{ sale.billno }}</h3> </td>
                 <td class=""> {{ sale.waiter.name }} </td>
                 <td class="align-middle">{% for item in sale.get_items_list %} {{ item.stock.name }} <br> {% endfor %}</td>
-                <td class="align-middle">{% for item in sale.get_items_list %} {{ item.quantity }} <br> {% endfor %}</td>     
+                <td class="align-middle">{% for item in sale.get_items_list %} {{ item.quantity_sold }} <br> {% endfor %}</td>     
                 <td class="align-middle">{{ sale.get_total_price }}</td>
                 <td class="align-middle">{{ sale.time.date }}</td>
                 <td class="align-middle">{{ sale.table.number }}</td>

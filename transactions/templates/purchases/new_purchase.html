@@ -46,7 +46,7 @@
         <div class="panel-body">
             {% for form in formset %}
             <div class="row form-row">
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     {{ form.stock.errors }}
                     <label class="panel-body-text">Producto:</label>
                     {{ form.stock }}
@@ -55,20 +55,16 @@
                     <label class="panel-body-text">Precio por item:</label>
                     {{ form.perprice }}
                 </div>
+                
+                {{ quantity_form.management_form }}
+                {% for form in quantity_form %}
                 <div class="form-group col-md-2">
                     {{ form.quantity.errors }}
                     <label class="panel-body-text">Cantidad:</label>
                     {{ form.quantity }}
                 </div>
-                {{ quantity_form.management_form }}
-                {% for form in quantity_form %}
-                <div class="form-group col-md-3">
-                    {{ form.quantity.errors }}
-                    <label class="panel-body-text">Cantidad:</label>
-                    {{ form.quantity }}
-                </div>
 
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-2">
                     <label class="panel-body-text">Unidad:</label>
                     {{ form.unit.errors }}
 
@@ -165,11 +161,44 @@
         return false;
     }
 
+    function getUnitChoices() {
+        var stocksById = {
+            {% for stock in stock_quantitys %}
+        {% if not forloop.first %}, {% endif %}
+        {{ stock.stock.pk }} : {
+            unit: {{ stock.measure_unit.related_units | safe }},
+        }
+        {% endfor %}
 
+
+    };
+    Array.prototype.forEach.call(
+        document.getElementsByClassName('stock'), function (element, index) {
+            element.addEventListener('change', function (e) {
+                e.preventDefault();
+                let select = $('#id_quantity-form-' + index + '-unit'); // tTODO: add
+                    select.find('option')
+                    .remove()
+                    .end();
+    
+                    if (stocksById[element.value]){
+                    stocksById[element.value].unit.forEach(function(option) {
+                        select.append('<option value="'+ option[0]+'">'+option[1]+'</option>')
+                        .val(option[0])
+                    })
+                }else{
+                    select.append('<option value="u">UNIDAD/ES</option>')
+                        .val('u')
+                }
+                    
+            })
+        })
+    }
 
     $(document).on('click', '.add-form-row', function (e) {
         e.preventDefault();
         cloneMore('.form-row:last', 'form');
+        getUnitChoices()
         return false;
     });
 
@@ -179,6 +208,7 @@
         return false;
     });
 
+    $(document).ready(getUnitChoices)
 
     //updates the total price by multiplying 'price per item' and 'quantity' 
     $(document).on('change', '.setprice', function (e) {

@@ -48,13 +48,21 @@ class PurchaseItem(models.Model):
     billno = models.ForeignKey(PurchaseBill, on_delete = models.CASCADE, related_name='purchasebillno')
     stock = models.ForeignKey(Stock, on_delete = models.CASCADE, related_name='purchaseitem')
     buyer = models.ForeignKey(User, on_delete = models.CASCADE, default=1)
-    quantity = models.IntegerField(default=1)
-    quantity_of = models.ForeignKey(StockQuantity, on_delete = models.CASCADE, null=True, blank=True)
+    quantity = models.ForeignKey(MeasureUnit, on_delete = models.CASCADE, null=True, blank=True)
     perprice = models.IntegerField(default=1)
     totalprice = models.IntegerField(default=1)
 
     def __str__(self):
 	    return "Venta N°: " + str(self.billno.billno) + ", Item = " + self.stock.name
+
+    def quantity_purchased(self):
+        return str(self.quantity)
+
+    def total_price(self):
+        return self.totalprice
+    
+    def per_price(self):
+        return str(self.perprice) + " por " + self.quantity.unit
 
     class Meta:
         verbose_name = 'Item de compra'
@@ -87,13 +95,19 @@ class TableSaleBill(models.Model):
 class SaleItem(models.Model):
     billno = models.ForeignKey(TableSaleBill, on_delete = models.CASCADE, related_name='salebillno')
     stock = models.ForeignKey(Stock, on_delete = models.CASCADE, related_name='saleitem')
-    quantity = models.IntegerField(default=1)
     quantity_of = models.ForeignKey(MeasureUnit, on_delete = models.CASCADE, null=True, blank=True)
     perprice = models.FloatField(default=1)
     totalprice = models.FloatField(default=1)
     def __str__(self):
 	    return "Venta N°: " + str(self.billno.billno) + ", Item = " + self.stock.name
 
+    def quantity_sold(self):
+        try:
+            return self.quantity_of.quantity
+        except AttributeError:
+            return 1
+    def total_price(self):
+        return self.totalprice
     class Meta:
         verbose_name = 'Item de venta'
         verbose_name_plural = 'Items de venta'

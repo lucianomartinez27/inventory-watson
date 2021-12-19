@@ -147,6 +147,8 @@ class PurchaseCreateView(View):
             'formset': formset,
             'quantity_form': MeasureUnitItemFormset(request.GET or None, prefix='quantity-form'),
             'supplier': supplierobj,
+            'stock_quantitys': [stock for stock in StockQuantity.objects.all()],
+            
         }                                                                       # sends the supplier and formset as context
         return render(request, self.template_name, context)
 
@@ -166,10 +168,10 @@ class PurchaseCreateView(View):
 
             # for loop to save each individual form as its own object
             for index, form in enumerate(formset):
-                print(measure_form[index].errors)
                 if measure_form[index].is_valid():
                     # false saves the item and links bill to the item
                     billitem = form.save(commit=False)
+                    
                     # links the bill object to the items
                     billitem.billno = billobj
                     # gets the stock item
@@ -177,10 +179,10 @@ class PurchaseCreateView(View):
                         StockQuantity, stock__name=billitem.stock.name)       # gets the item
                     # calculates the total price
                     measure_unit = measure_form[index].save()
-                    billitem.totalprice = billitem.perprice * billitem.quantity
+                    billitem.quantity = measure_unit
+                    billitem.totalprice = billitem.perprice * billitem.quantity.quantity
                     # updates quantity in stock db
                     stock_quantity.buy(measure_unit)
-                    measure_unit.delete()
                     # updates quantity
                     stock_quantity.stock.buy_price = billitem.perprice
                     # saves bill item and stock

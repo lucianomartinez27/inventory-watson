@@ -27,7 +27,7 @@
 
             {% else %}
             {% if field.label == 'Para venta al público' %}
-            <label for="id_is_manufactured" class="panel-body-text" data-bs-toggle="tooltip" data-bs-placement="right"
+            <label for="id_is_for_sale" class="panel-body-text" data-bs-toggle="tooltip" data-bs-placement="right"
                 data-type="warning"
                 title="Tendrá un precio de venta y aparecerá al momento de hacer una venta en una mesa, de lo contrario, no.">&#9432;
                 {{ field.label }} &nbsp; </label>
@@ -41,7 +41,6 @@
         {% endfor %}
 
         <div class="form-group">
-            {{ quantity_formset.quantity.errors }}
             <label for="id_is_manufactured" class="panel-body-text" data-bs-toggle="tooltip" data-bs-placement="right"
                 data-type="warning"
                 title="No se añadirá al inventario ya que no tiene cantidad en stock">&#9432;
@@ -72,6 +71,38 @@
 
     <div id="stockitem">
         <div class="panel-body">
+            {% if formsets %}
+            {{ formset.management_form }}
+            {{ measure_formset.management_form }}
+            {% for form, ingredient_form in formsets %}
+            <div class="row form-row">
+                <div class="form-group col-md-5">
+                    {{ form.ingredient.errors }}
+                    <label class="panel-body-text">Ingrediente:</label>
+                    {{ form.ingredient }}
+                </div>
+                
+                {{ ingredient_measure_form.management_form }}
+                <div class="form-group col-md-3">
+                    {{ ingredient_form.quantity.errors }}
+                    <label class="panel-body-text">Cantidad:</label>
+                    {{ ingredient_form.quantity }}
+                </div>
+                
+                <div class="form-group col-md-3">
+                    <label class="panel-body-text">Unidad:</label>
+                    {{ ingredient_form.unit.errors }}
+                    
+                    {{ ingredient_form.unit }}
+                </div>
+
+                <div class="form-group col-md-1">
+                    <label class="panel-body-text" style="color: #000">.</label>
+                    <button class="form-control btn btn-danger remove-form-row">-</button>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
             {{ formset.management_form }}
             {% for form in formset %}
             <div class="row form-row">
@@ -103,6 +134,7 @@
                 </div>
             </div>
             {% endfor %}
+            {% endif %}
             <div style="text-align: right;">
                 <a href="#" class="add-form-row">+ Agregar más</a>
             </div>
@@ -238,13 +270,11 @@
         document.getElementsByClassName('ingredient'), function (element, index) {
             element.addEventListener('change', function (e) {
                 e.preventDefault();
-                console.log('#id_ingredient-measure-' + index + '-unit')
                 let select = $('#id_ingredient-measure-' + index + '-unit'); // tTODO: add
                     select.find('option')
                     .remove()
                     .end();
     
-                    console.log(element)
                     if (stocksById[element.value]){
                     stocksById[element.value].unit.forEach(function(option) {
                         select.append('<option value="'+ option[0]+'">'+option[1]+'</option>')
@@ -263,7 +293,8 @@
         let isForSale = $('#id_is_for_sale');
         let sellPriceInput = $('#id_sell_price')
         sellPriceInput.attr('class', 'textinput form-control')
-        {% if object.is_for_sale %}
+    
+        {% if object.is_for_sale  %}
             sellPriceInput.get('0').type = 'number'
             isForSale.prop( "checked", true );
         {% else %}
@@ -284,19 +315,21 @@
         let isManufactured = $('#id_is_manufactured');
         let quantityInput = $('#id_quantity');
         let unitInput = $('#id_unit');
-
+        let labelForQuantity = $("label[for='id_quantity']")
+        let labelForUnit = $("label[for='id_unit']")
         let ingredientsInput = $('#stockitem');
         {% if  empty_stock_quantity %}
         isManufactured.prop( "checked", true );
         quantityInput.get('0').type = 'hidden'
-        unitInput.get('0').type = 'hidden'
+        unitInput.hide()
         ingredientsInput.show();
+        labelForQuantity.hide();
+        labelForUnit.hide();
         {% else %}
             ingredientsInput.hide();
         {% endif %}
         quantityInput.attr('class', 'textinput form-control')
-        let labelForQuantity = $("label[for='id_quantity']")
-        let labelForUnit = $("label[for='id_unit']")
+        
         isManufactured.on('change', function () {
             if (isManufactured.is(':checked')) {
                 labelForQuantity.hide();

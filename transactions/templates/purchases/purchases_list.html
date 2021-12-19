@@ -20,10 +20,11 @@
         
                 <thead class="thead-inverse align-middle">
                     <tr>
-                        <th scope="col">Detalle N°</th>
-                        <th scope="col">Productos comprados</th>
-                        <th scope="col">Precio total de compra</th>
-                        <th scope="col">Fecha de compra</th>
+                        <th scope="col-2">Detalle N°</th>
+                        <th scope="col-2">Productos comprados</th>
+                        <th class="col-2">Precio unitario</th>
+                        <th scope="col-2">Precio total de compra</th>
+                        <th scope="col-2">Fecha de compra</th>
                     </tr>
                 </thead>
         
@@ -33,8 +34,9 @@
                     {% for purchase in bills %}
                     <tr>
                         <td class="align-middle"> <h3>{{ purchase.billno }}</h3> </td>
-                        <td class="align-middle">{% for item in purchase.get_items_list %} {{ item.ingredient.name }} <br> {% endfor %}</td>
-                        <td class="align-middle">{{ purchase.get_total_price }}</td>
+                        <td class="align-middle">{% for item in purchase.get_items_list %} {{ item.stock.name }} ({{item.quantity_purchased}}) <br> {% endfor %}</td>
+                        <td class="align-middle">{% for item in purchase.get_items_list %}  ${{item.per_price}} <br> {% endfor %}</td>
+                        <td class="align-middle">${{ purchase.get_total_price }}</td>
                         <td class="align-middle">{{ purchase.time.date }}</td>
                     </tr>
                     {% endfor %}

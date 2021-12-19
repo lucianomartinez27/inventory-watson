@@ -39,7 +39,7 @@
                 <td class="align-middle"> <h3>{{ sale.table.number }}</h3> </td>
                 <td class="align-middle"> {{ sale.waiter }} <br> </td>
                 <td class="align-middle">{% for item in sale.get_items_list %} {{ item.stock.name }} <br> {% endfor %}</td>
-                <td class="align-middle">{% for item in sale.get_items_list %} {{ item.quantity }} <br> {% endfor %}</td>     
+                <td class="align-middle">{% for item in sale.get_items_list %} {{ item.quantity_sold}} <br> {% endfor %}</td>     
                 <td class="align-middle">$ {{ sale.get_total_price }}</td>
                 <td class="align-middle">{{ sale.time.date }}</td>
                 <td class="align-middle">

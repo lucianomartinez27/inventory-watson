@@ -39,7 +39,7 @@ class WaiterForm(forms.ModelForm):
 class IngredientQuantityItemForm(forms.ModelForm):
     ingredient = forms.ModelChoiceField( label=('Stock'),queryset=Stock.objects.all(),blank=False,
     widget=forms.Select(attrs={'class': 'custom-select ingredient'}))
-    quantity = forms.IntegerField(min_value=1)
+    quantity = forms.IntegerField(min_value=1, required=False)
     quantity.widget.attrs.update({'class': 'textinput form-control setprice quantity', 'min': '1', })
 
     class Meta:

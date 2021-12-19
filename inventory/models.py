@@ -19,12 +19,17 @@ class Stock(models.Model):
     def get_total_cost(self):
         total = self.buy_price
         for ingredient_quantity in self.get_ingredients():
-            total += ingredient_quantity.ingredient.get_total_cost() * ingredient_quantity.quantity
+            if ingredient_quantity.measure_unit:
+                quantity = ingredient_quantity.measure_unit.quantity
+            else:
+                quantity = 1
+            total += ingredient_quantity.ingredient.get_total_cost() * quantity
         return total
     
     def get_quantity(self):
+        measure_unit = StockQuantity.objects.get(stock=self).measure_unit
         try:
-            return StockQuantity.objects.get(stock=self).quantity
+            return str(measure_unit.quantity) + " " +  measure_unit.unit
         except StockQuantity.DoesNotExist:
             return '-'
     
@@ -137,7 +142,6 @@ class MeasureUnit(models.Model):
 class StockQuantity(models.Model):
     id = models.AutoField(primary_key=True)
     stock = models.OneToOneField(Stock, on_delete = models.CASCADE, unique=True)
-    quantity = models.PositiveIntegerField(default=0)
     measure_unit = models.ForeignKey(MeasureUnit, on_delete = models.CASCADE, null=True, blank=True)
 
     def sell(self, quantity_sold):
@@ -160,16 +164,12 @@ class IngredientQuantity(models.Model):
     id = models.AutoField(primary_key=True)
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Stock, on_delete=models.CASCADE, null=True, related_name="ingredient")
-    quantity = models.IntegerField(default=1)
     measure_unit = models.ForeignKey(MeasureUnit, on_delete = models.CASCADE, null=True, blank=True)
 
     
     def __str__(self):
-        if (self.measure_unit):
-            quantity = str(self.measure_unit.quantity) + " " + self.measure_unit.unit
-        else:
-            quantity = str(self.quantity)
-
+        quantity = str(self.measure_unit.quantity) + " " + self.measure_unit.unit
+        
         return quantity + " de " + self.ingredient.name + " para " + self.stock.name
 
     class Meta:
