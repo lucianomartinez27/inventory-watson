@@ -182,15 +182,16 @@
     }
 
     //stores the total no of item forms
-    var total = {{ formset | length }};
+    
 
-    function cloneMore(selector, prefix) {
+    function cloneMore(selector, prefixes) {
         var newElement = $(selector).clone(true);
-        //var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+        var total = $('#id_' + prefixes[0] + '-TOTAL_FORMS').val();
+        total++;
         newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function () {
             var name = $(this).attr('name')
             if (name) {
-                name = name.replace('-' + (total - 1) + '-', '-' + total + '-');
+                name = name.replace('-' + (total-2) + '-', '-' + (total-1) + '-');
                 var id = 'id_' + name;
                 $(this).attr({ 'name': name, 'id': id }).val('').removeAttr('checked');
             }
@@ -198,28 +199,57 @@
         newElement.find('label').each(function () {
             var forValue = $(this).attr('for');
             if (forValue) {
-                forValue = forValue.replace('-' + (total - 1) + '-', '-' + total + '-');
+                forValue = forValue.replace('-' + (total-2) + '-', '-' + (total - 1) + '-');
                 $(this).attr({ 'for': forValue });
             }
         });
-        total++;
-        $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+        
+        Array.prototype.forEach.call(prefixes,
+                 function (prefix) {
+                    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+            },)
+
+        lastUnitSelect = newElement.find('select').last();
+        lastUnitSelect.find('option')
+                    .remove()
+                    .end();
+        lastUnitSelect.append('<option value="kg">KILOGRAMO/S</option>')
+                        .val('kg');
+        lastUnitSelect.append('<option value="g">GRAMO/S</option>')
+                        .val('g')    
+        lastUnitSelect.append('<option value="cc">CENTIMETRO/S CUBICO/S</option>')
+                        .val('cc')
+        lastUnitSelect.append('<option value="lt">LITRO/S</option>')
+                        .val('lt')  
+        lastUnitSelect.append('<option value="u">UNIDAD/ES</option>')
+                        .val('u')
+        
         $(selector).after(newElement);
+
         return false;
     }
 
-    function deleteForm(prefix, btn) {
-        //var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
-        if (total > 1) {
+    function deleteForm(prefixes, btn) {
+        
+        var total = parseInt($('#id_' + prefixes[0] + '-TOTAL_FORMS').val());
+        total--;
+        if (total >= 1) {
             btn.closest('.form-row').remove();
             var forms = $('.form-row');
-            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
-            for (var i = 0, formCount = forms.length; i < formCount; i++) {
+           
+            Array.prototype.forEach.call(prefixes,
+                 function (prefix) {
+                     console.log(total)
+                    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+            for (var i = 0; i < total+1; i++) {
+                
                 $(forms.get(i)).find(':input').each(function () {
-                    updateElementIndex(this, prefix, i);
+                    updateElementIndex(this, prefix, i-1);
+                    
                 });
             }
-            total--;
+        },);
+           
         } else {
             custom_alert.render("Campo no puede ser eliminado");
         }
@@ -230,14 +260,14 @@
 
     $(document).on('click', '.add-form-row', function (e) {
         e.preventDefault();
-        cloneMore('.form-row:last', 'form');
+        cloneMore('.form-row:last', ['ingredient-form','ingredient-measure']);
         getUnitChoices()
         return false;
     });
 
     $(document).on('click', '.remove-form-row', function (e) {
         e.preventDefault();
-        deleteForm('form', $(this));
+        deleteForm(['ingredient-form','ingredient-measure'], $(this));
         return false;
     });
 
