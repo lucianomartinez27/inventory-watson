@@ -8,6 +8,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import DeleteView
+
+from transactions.models import PurchaseBill, PurchaseItem, SaleItem
 from .models import IngredientQuantity, Stock, StockQuantity, Table, Waiter
 from .forms import IngredientQuantityItemFormset, MeasureUnitItemFormset, StockQuantityItemForm, StockForm, TableForm, WaiterForm, MeasureUnitForm
 from django_filters.views import FilterView
@@ -62,8 +64,10 @@ class StockCreateView(SuccessMessageMixin, CreateView):
 
     def get(self, request):
         form = StockForm(request.GET or None)
-        formset = IngredientQuantityItemFormset(request.GET or None,prefix='ingredient-form')
-        measure_formset = MeasureUnitItemFormset(request.GET or None, prefix='ingredient-measure')
+        formset = IngredientQuantityItemFormset(
+            request.GET or None, prefix='ingredient-form')
+        measure_formset = MeasureUnitItemFormset(
+            request.GET or None, prefix='ingredient-measure')
         quantity_formset = StockQuantityItemForm()
         formsets = zip(formset, measure_formset)
         context = {
@@ -85,18 +89,26 @@ class StockCreateView(SuccessMessageMixin, CreateView):
         measure_form = MeasureUnitItemFormset(
             request.POST, prefix='ingredient-measure')
         stock_quantity_form = MeasureUnitForm(request.POST)
-        formset = IngredientQuantityItemFormset(request.POST, prefix='ingredient-form')
+        formset = IngredientQuantityItemFormset(
+            request.POST, prefix='ingredient-form')
         is_manufactured = StockQuantityItemForm(request.POST)
 
         if form.is_valid():
 
             stock = form.save()
+
             if stock_quantity_form.is_valid() and is_manufactured.is_valid() and not is_manufactured.cleaned_data['is_manufactured']:
-
+                quantity_unit = stock_quantity_form.save()
                 quantity = StockQuantity(stock=stock,
-                                         quantity=stock_quantity_form.save())
+                                         quantity=quantity_unit)
                 quantity.save()
-
+                bill = PurchaseBill(buyer=request.user)
+                bill.save()
+                quantity_unit.pk = None
+                quantity_unit.save()
+                sale = PurchaseItem(billno=bill, stock=stock, quantity=quantity_unit,
+                                    perprice=stock.buy_price, totalprice=stock.buy_price * quantity_unit.quantity)
+                sale.save()
             else:
                 for index, ingredient_form in enumerate(formset):
                     if ingredient_form.is_valid() and ingredient_form.cleaned_data and measure_form[index].is_valid():
@@ -175,10 +187,21 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):
             stock_quantity = MeasureUnitForm(request.POST)
             if form.is_valid():
                 form.save()
+                
                 if is_manufactured.is_valid() and not is_manufactured.cleaned_data['is_manufactured']:
+                    quantity_unit = stock_quantity.save()
                     quantity = StockQuantity(
-                        stock=stock, quantity=stock_quantity.save())
+                        stock=stock, quantity=quantity_unit)
                     quantity.save()
+
+                    
+                    quantity_unit.pk = None
+                    quantity_unit.save()
+                    bill = PurchaseBill(buyer=request.user)
+                    bill.save()
+                    sale = PurchaseItem(billno=bill, stock=stock, quantity=quantity_unit,
+                                        perprice=stock.buy_price, totalprice=stock.buy_price * quantity_unit.quantity)
+                    sale.save()
                 else:
                     print(len(formset))
                     print(len(measure_form))
@@ -186,7 +209,7 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):
                         print(measure_form[index].is_valid())
                         print(ingredient_form.is_valid())
                         if ingredient_form.is_valid() and ingredient_form.cleaned_data and measure_form[index].is_valid():
-                            
+
                             measure = measure_form[index].save()
                             ingredient = IngredientQuantity(stock=stock,
                                                             ingredient=ingredient_form.cleaned_data['ingredient'],

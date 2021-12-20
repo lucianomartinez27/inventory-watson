@@ -24,7 +24,7 @@ class Supplier(models.Model):
 class PurchaseBill(models.Model):
     billno = models.AutoField(primary_key=True)
     time = models.DateTimeField(auto_now=True)
-    supplier = models.ForeignKey(Supplier, on_delete = models.CASCADE, related_name='purchasesupplier')
+    supplier = models.ForeignKey(Supplier, on_delete = models.CASCADE, related_name='purchasesupplier', null=True)
     buyer = models.ForeignKey(User, on_delete = models.CASCADE, default=1)
     def __str__(self):
 	    return "Compra N°: " + str(self.billno) + " realizada por " + self.buyer.username

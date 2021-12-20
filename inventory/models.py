@@ -29,6 +29,7 @@ class Stock(models.Model):
 
     def last_price_unit(self):
         try:
+            print(self.last_buy().quantity.as_unit().unit())
             return self.last_buy().quantity.as_unit().unit()
         except apps.get_model("transactions", "PurchaseItem").DoesNotExist:
             if self.get_quantity():
@@ -41,7 +42,6 @@ class Stock(models.Model):
         for ingredient_quantity in self.get_ingredients():
 
             quantity = ingredient_quantity.quantity.as_unit().cast_unit(ingredient_quantity.ingredient.last_price_unit())
-             
             total += ingredient_quantity.ingredient.get_total_cost() * quantity.number()
 
         return total
