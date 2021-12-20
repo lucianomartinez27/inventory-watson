@@ -324,7 +324,7 @@ class SaleUpdateView(SuccessMessageMixin, View):
         formset = SaleItemFormset(initial=[{'stock': sold_product.stock, 'perprice': sold_product.stock.sell_price,
                                             'quantity': sold_product.quantity_of.quantity, } for sold_product in self.get_sold_items(pk)], prefix='sale-form')
         measure_formset = MeasureUnitItemFormset(initial=[{'unit': sold_item.quantity_of.unit, 'quantity': sold_item.quantity_of.quantity, }
-                                                          for sold_item in self.get_sold_items(pk)], prefix='measure-form')
+                                                          for sold_item in self.get_sold_items(pk)], prefix='quantity-form')
         form.fields['table'].choices = [
             (table.pk, str(table)) for table in Table.objects.filter(number=pk)]
         form.fields['table'].readonly = True
@@ -343,7 +343,7 @@ class SaleUpdateView(SuccessMessageMixin, View):
 
     def post(self, request, pk):
         formset = SaleItemFormset(request.POST, prefix='sale-form')
-        measure_formset = MeasureUnitItemFormset(request.POST, prefix='measure-form')
+        measure_formset = MeasureUnitItemFormset(request.POST, prefix='quantity-form')
         try:
             with transaction.atomic():
                 self.restore_stock(pk)

@@ -144,7 +144,7 @@ class MeasureUnit(models.Model):
         if not isinstance(another_unit, (int, Unum)):
             new_measure = self.as_unit() + another_unit.as_unit()
             self.quantity = new_measure.number()
-            self.unit = self.UNITS[str(another_unit.as_unit().unit())]
+            self.unit = self.UNITS[str(new_measure.unit())]
         elif isinstance(another_unit, Unum):
             new_measure = self.as_unit() + another_unit
             self.quantity = new_measure.number()

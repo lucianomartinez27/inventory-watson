@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import DeleteView
 
-from transactions.models import PurchaseBill, PurchaseItem, SaleItem
+from transactions.models import PurchaseBill, PurchaseItem
 from .models import IngredientQuantity, Stock, StockQuantity, Table, Waiter
 from .forms import IngredientQuantityItemFormset, MeasureUnitItemFormset, StockQuantityItemForm, StockForm, TableForm, WaiterForm, MeasureUnitForm
 from django_filters.views import FilterView
