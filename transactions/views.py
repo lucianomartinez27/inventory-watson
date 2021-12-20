@@ -245,6 +245,10 @@ class SaleCreateView(View):
 
     def get(self, request):
 
+        if len(Table.objects.filter(is_free = True)) == 0:
+            messages.error(
+                        request, "No hay mesas disponible. Intenta agregar una nueva")
+            return redirect('tables-and-waiters')
         form = SaleForm(request.GET or None)
         # renders an empty formset
         formset = SaleItemFormset(request.GET or None, prefix='sale-form')
