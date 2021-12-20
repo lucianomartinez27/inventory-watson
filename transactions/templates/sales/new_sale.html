@@ -106,7 +106,8 @@
 
     //creates custom alert object
     var custom_alert = new custom_alert();
-    $(document).ready(getUnitChoices)
+    $(document).ready(getUnitChoices);
+    $(document).ready(updatePriceOfItem);
 
 
     function updateElementIndex(el, prefix, ndx) {
@@ -122,7 +123,7 @@
             {% for stock in stock_quantitys %}
         {% if not forloop.first %}, {% endif %}
         {{ stock.stock.pk }} : {
-            unit: {{ stock.measure_unit.related_units | safe }},
+            unit: {{ stock.quiantity.related_units | safe }},
         }
         {% endfor %}
 

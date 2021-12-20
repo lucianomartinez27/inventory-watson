@@ -136,7 +136,7 @@ class StockUpdateView(SuccessMessageMixin, UpdateView):
         ingredients = IngredientQuantity.objects.filter(stock=this_instance)
         formset = IngredientQuantityItemFormset(
             initial=[{'ingredient': ingredient.ingredient} for ingredient in ingredients], prefix='ingredient-form')
-        measure_formset = MeasureUnitItemFormset(initial=[{'unit': ingredient.measure_unit.unit, 'quantity': ingredient.measure_unit.quantity, }
+        measure_formset = MeasureUnitItemFormset(initial=[{'unit': ingredient.quantity.unit, 'quantity': ingredient.quantity.quantity, }
                                                           for ingredient in ingredients], prefix='ingredient-measure')
 
         formsets = zip(formset, measure_formset)

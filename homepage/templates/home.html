@@ -22,7 +22,15 @@
     <div class="input-group-prepend">
         <label class="input-group-text" for="selectCategory">Categorias</label>
     </div>
-      {{ form.category }}
+    <select name="category" class="custom-select" id="selectCategory">
+        <option value="">Todos</option>
+
+        {% for category in form.category %}
+      
+        {{ category }}
+        {% endfor %}
+      </select>
+      
 </div>
 
 <br>

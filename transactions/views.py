@@ -287,7 +287,7 @@ class SaleCreateView(View):
                             billitem.quantity_of = measure
                             billitem.stock.sell(measure)
                             billitem.billno = billobj
-                            billitem.totalprice = billitem.perprice * billitem.quantity
+                            billitem.totalprice = billitem.perprice * measure.quantity
                             billitem.save()
 
                     table.is_free = False
@@ -318,8 +318,8 @@ class SaleUpdateView(SuccessMessageMixin, View):
         form = SaleForm(request.GET or None, initial={
             'table': Table.objects.filter(number=pk)})
 
-        formset = SaleItemFormset(initial=[{'stock': product.stock, 'perprice': product.stock.sell_price,
-                                            'quantity': product.quantity, } for product in self.get_sold_items(pk)], prefix='sale-form')
+        formset = SaleItemFormset(initial=[{'stock': sold_product.stock, 'perprice': sold_product.stock.sell_price,
+                                            'quantity': sold_product.quantity_of.quantity, } for sold_product in self.get_sold_items(pk)], prefix='sale-form')
         measure_formset = MeasureUnitItemFormset(initial=[{'unit': sold_item.quantity_of.unit, 'quantity': sold_item.quantity_of.quantity, }
                                                           for sold_item in self.get_sold_items(pk)], prefix='measure-form')
         form.fields['table'].choices = [
@@ -350,8 +350,9 @@ class SaleUpdateView(SuccessMessageMixin, View):
                         billitem = sold_item.save(commit=False)
                         billitem.billno = TableSaleBill.objects.get(table=Table.objects.get(
                             pk=pk), closed=False)
-                        billitem.totalprice = billitem.perprice * billitem.quantity
                         measure = measure_formset[index].save()
+                        billitem.totalprice = billitem.perprice * measure.quantity
+
                         billitem.quantity_of = measure
                         billitem.stock.sell(measure)
                         billitem.save()

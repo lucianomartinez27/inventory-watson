@@ -260,7 +260,7 @@
             {% for stock in stock_quantitys %}
         {% if not forloop.first %}, {% endif %}
         {{ stock.stock.pk }} : {
-            unit: {{ stock.measure_unit.related_units | safe }},
+            unit: {{ stock.quantity.related_units | safe }},
         }
         {% endfor %}
 

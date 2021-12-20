@@ -30,20 +30,25 @@ class Stock(models.Model):
         for ingredient_quantity in self.get_ingredients():
 
             try:
-                quantity = ingredient_quantity.measure_unit.as_unit().cast_unit(
+                quantity = ingredient_quantity.quantity.as_unit().cast_unit(
                     ingredient_quantity.ingredient.last_buy().quantity.as_unit().unit()).number()
             except apps.get_model("transactions", "PurchaseItem").DoesNotExist:
-                quantity = ingredient_quantity.measure_unit.quantity
+                quantity = ingredient_quantity.quantity.quantity
             total += ingredient_quantity.ingredient.get_total_cost() * quantity
 
         return total
+    
+    def display_cost(self):
+        if self.get_quantity():
+            return str(self.get_total_cost()) + " por " + str(self.last_buy().quantity.unit)
+        else: return str(self.get_total_cost()) + " unidad"
 
     def get_quantity(self):
-        measure_unit = StockQuantity.objects.get(stock=self).measure_unit
         try:
-            return str(measure_unit.quantity) + " " + measure_unit.unit
+            quantity_in_stock = StockQuantity.objects.get(stock=self).quantity
+            return quantity_in_stock
         except StockQuantity.DoesNotExist:
-            return '-'
+            return False
 
     def sell(self, quantity_sold):
         if isinstance(quantity_sold, (MeasureUnit)):
@@ -53,8 +58,8 @@ class Stock(models.Model):
         except StockQuantity.DoesNotExist:
             quantity_sold = as_number(quantity_sold)
         for ingredient in IngredientQuantity.objects.filter(stock=self):
-            if ingredient.measure_unit:
-                ingredient_ammount = ingredient.measure_unit.as_unit()
+            if ingredient.quantity:
+                ingredient_ammount = ingredient.quantity.as_unit()
             else:
                 ingredient_ammount = ingredient.quantity
 
@@ -68,8 +73,8 @@ class Stock(models.Model):
         except StockQuantity.DoesNotExist:
             purchased_amount = as_number(purchased_amount)
         for ingredient in IngredientQuantity.objects.filter(stock=self):
-            if ingredient.measure_unit:
-                ingredient_ammount = ingredient.measure_unit.as_unit()
+            if ingredient.quantity:
+                ingredient_ammount = ingredient.quantity.as_unit()
             else:
                 ingredient_ammount = ingredient.quantity
 
@@ -146,30 +151,30 @@ class MeasureUnit(models.Model):
             new_unit = self.as_unit().cast_unit(L)
         else:
             new_unit = self.as_unit()
-        return str(new_unit.number()) + " " + self.UNITS[str(new_unit.unit())]
+        return new_unit
 
     def __str__(self):
-
-        return self.convert_to_max_unit()
+        new_unit = self.convert_to_max_unit()
+        return str(new_unit.number()) + " " + self.UNITS[str(new_unit.unit())]
 
 
 class StockQuantity(models.Model):
     id = models.AutoField(primary_key=True)
     stock = models.OneToOneField(Stock, on_delete=models.CASCADE, unique=True)
-    measure_unit = models.ForeignKey(
+    quantity = models.ForeignKey(
         MeasureUnit, on_delete=models.CASCADE, null=True, blank=True)
 
     def sell(self, quantity_sold):
-        self.measure_unit.substract_quantity_by_unit(quantity_sold)
+        self.quantity.substract_quantity_by_unit(quantity_sold)
         self.save()
 
     def buy(self, purchased_amount):
-        self.measure_unit.add_quantity_by_unit(purchased_amount)
+        self.quantity.add_quantity_by_unit(purchased_amount)
         self.save()
 
     def __str__(self):
-        if (self.measure_unit):
-            quantity = str(self.measure_unit)
+        if (self.quantity):
+            quantity = str(self.quantity)
         else:
             quantity = str(self.quantity)
         return quantity + " de " + self.stock.name
@@ -180,12 +185,12 @@ class IngredientQuantity(models.Model):
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(
         Stock, on_delete=models.CASCADE, null=True, related_name="ingredient")
-    measure_unit = models.ForeignKey(
+    quantity = models.ForeignKey(
         MeasureUnit, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        quantity = str(self.measure_unit.quantity) + \
-            " " + self.measure_unit.unit
+        quantity = str(self.quantity.quantity) + \
+            " " + self.quantity.unit
 
         return quantity + " de " + self.ingredient.name + " para " + self.stock.name
 
