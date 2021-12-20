@@ -98,11 +98,7 @@ class StockCreateView(SuccessMessageMixin, CreateView):
                 quantity.save()
 
             else:
-                print(len(formset))
-                print(len(measure_form))
                 for index, ingredient_form in enumerate(formset):
-                    print(measure_form[index].is_valid())
-                    print(ingredient_form.is_valid())
                     if ingredient_form.is_valid() and ingredient_form.cleaned_data and measure_form[index].is_valid():
                         measure = measure_form[index].save()
                         ingredient = IngredientQuantity(stock=stock,

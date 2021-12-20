@@ -281,7 +281,6 @@ class SaleCreateView(View):
 
                     for index, sold_item in enumerate(formset):
                         billitem = sold_item.save(commit=False)
-                        print(measure_formset[index].errors)
                         if measure_formset[index].is_valid():
                             measure = measure_formset[index].save()
                             billitem.quantity_of = measure

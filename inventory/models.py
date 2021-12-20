@@ -1,5 +1,6 @@
 from django.db import models
 from django.apps import apps
+from django.db.models.query_utils import Q
 
 from unum.units import *
 from unum import *
@@ -25,23 +26,31 @@ class Stock(models.Model):
     def last_buy(self):
         return apps.get_model("transactions", "PurchaseItem").objects.filter(stock=self).latest()
 
+
+    def last_price_unit(self):
+        try:
+            return self.last_buy().quantity.as_unit().unit()
+        except apps.get_model("transactions", "PurchaseItem").DoesNotExist:
+            if self.get_quantity():
+                return self.get_quantity().as_unit().unit()
+            else:
+                return U
+            
     def get_total_cost(self):
         total = self.buy_price
         for ingredient_quantity in self.get_ingredients():
 
-            try:
-                quantity = ingredient_quantity.quantity.as_unit().cast_unit(
-                    ingredient_quantity.ingredient.last_buy().quantity.as_unit().unit()).number()
-            except apps.get_model("transactions", "PurchaseItem").DoesNotExist:
-                quantity = ingredient_quantity.quantity.quantity
-            total += ingredient_quantity.ingredient.get_total_cost() * quantity
+            quantity = ingredient_quantity.quantity.as_unit().cast_unit(ingredient_quantity.ingredient.last_price_unit())
+             
+            total += ingredient_quantity.ingredient.get_total_cost() * quantity.number()
 
         return total
-    
+
     def display_cost(self):
         if self.get_quantity():
-            return str(self.get_total_cost()) + " por " + str(self.last_buy().quantity.unit)
-        else: return str(self.get_total_cost()) + " unidad"
+            return str(self.get_total_cost()) + " por " + str(self.last_price_unit())
+        else:
+            return str(self.get_total_cost()) + " unidad"
 
     def get_quantity(self):
         try:
@@ -97,7 +106,8 @@ class MeasureUnit(models.Model):
         ('lt', 'LITRO/S'),
         ('u', 'UNIDAD/ES')
     ]
-    UNITS = {str(g): 'g', str(kg): 'kg', str(cm*cm*cm): 'cc', str(L): 'lt', str(U): 'u'}
+    UNITS = {str(g): 'g', str(kg): 'kg', str(cm*cm*cm)
+                 : 'cc', str(L): 'lt', str(U): 'u'}
     id = models.AutoField(primary_key=True)
     unit = models.CharField(
         max_length=2, choices=MEASURE_CHOICES, default='gr')

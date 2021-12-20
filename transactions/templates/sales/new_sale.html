@@ -57,14 +57,14 @@
                         {{ sale.perprice }}
                     </div>
 
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-2">
                         {{ measure.quantity.errors }}
                         <label class="panel-body-text">Cantidad:</label>
                         {{ measure.quantity }}
                     </div>
 
 
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-2">
                         <label class="panel-body-text">Unidad:</label>
                         {{ measure.unit.errors }}
                         {{ measure.unit }}
@@ -106,9 +106,9 @@
 
     //creates custom alert object
     var custom_alert = new custom_alert();
-    $(document).ready(getUnitChoices);
+    //$(document).ready(getUnitChoices);
     $(document).ready(updatePriceOfItem);
-
+    $(document).ready(getUnitChoices)
 
     function updateElementIndex(el, prefix, ndx) {
         var id_regex = new RegExp('(' + prefix + '-\\d+)');
@@ -118,40 +118,7 @@
         if (el.name) el.name = el.name.replace(id_regex, replacement);
     }
    
-    function getUnitChoices(el, prefix, ndx) {
-        var stocksById = {
-            {% for stock in stock_quantitys %}
-        {% if not forloop.first %}, {% endif %}
-        {{ stock.stock.pk }} : {
-            unit: {{ stock.quiantity.related_units | safe }},
-        }
-        {% endfor %}
 
-
-    };
-
-    Array.prototype.forEach.call(
-        document.getElementsByClassName('stock'), function (element, index) {
-            element.addEventListener('change', function (e) {
-                e.preventDefault();
-
-                let select = $('#id_quantity-form-' + index + '-unit');
-                    select.find('option')
-                    .remove()
-                    .end();
-                    if (stocksById[element.value]){
-                    stocksById[element.value].unit.forEach(function(option) {
-                        select.append('<option value="'+ option[0]+'">'+option[1]+'</option>')
-                        .val(option[0])
-                    })
-                }else{
-                    select.append('<option value="u">UNIDAD/ES</option>')
-                        .val('u')
-                }
-                    
-            })
-        })
-    }
 
 
     function updatePriceOfItem() {
@@ -174,14 +141,48 @@
 
         })
         }
+    
+    function getUnitChoices(el, prefix, ndx) {
+        var stocksById = {
+            {% for stock in stock_quantitys %}
+        
+        {{ stock.stock.pk }} : {
+            unit: {{ stock.quantity.related_units | safe }},
+        }{% if not forloop.last %}, {% endif %}
+        {% endfor %}
 
-    function cloneMore(selector, prefix) {
+
+    };
+
+    Array.prototype.forEach.call(
+        document.getElementsByClassName('stock'), function (element, index) {
+            element.addEventListener('change', function (e) {
+                e.preventDefault();
+                let select = $('#id_quantity-form-' + index + '-unit');
+                    select.find('option')
+                    .remove()
+                    .end();
+                    if (stocksById[element.value]){
+                    stocksById[element.value].unit.forEach(function(option) {
+                        select.append('<option value="'+ option[0]+'">'+option[1]+'</option>')
+                        .val(option[0])
+                    })
+                }else{
+                    select.append('<option value="u">UNIDAD/ES</option>')
+                        .val('u')
+                }
+                    
+            })
+        })
+    }
+    function cloneMore(selector, prefixes) {
         var newElement = $(selector).clone(true);
-        var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+        var total = $('#id_' + prefixes[0] + '-TOTAL_FORMS').val();
+        total++;
         newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function () {
             var name = $(this).attr('name')
             if (name) {
-                name = name.replace('-' + (total - 1) + '-', '-' + total + '-');
+                name = name.replace('-' + (total-2) + '-', '-' + (total-1) + '-');
                 var id = 'id_' + name;
                 $(this).attr({ 'name': name, 'id': id }).val('').removeAttr('checked');
             }
@@ -189,31 +190,59 @@
         newElement.find('label').each(function () {
             var forValue = $(this).attr('for');
             if (forValue) {
-                forValue = forValue.replace('-' + (total - 1) + '-', '-' + total + '-');
+                forValue = forValue.replace('-' + (total-2) + '-', '-' + (total - 1) + '-');
                 $(this).attr({ 'for': forValue });
             }
         });
-        total++;
-        $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+        
+        Array.prototype.forEach.call(prefixes,
+                 function (prefix) {
+                    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+            },)
+
+        lastUnitSelect = newElement.find('select').last();
+        lastUnitSelect.find('option')
+                    .remove()
+                    .end();
+        lastUnitSelect.append('<option value="kg">KILOGRAMO/S</option>')
+                        .val('kg');
+        lastUnitSelect.append('<option value="g">GRAMO/S</option>')
+                        .val('g')    
+        lastUnitSelect.append('<option value="cc">CENTIMETRO/S CUBICO/S</option>')
+                        .val('cc')
+        lastUnitSelect.append('<option value="lt">LITRO/S</option>')
+                        .val('lt')  
+        lastUnitSelect.append('<option value="u">UNIDAD/ES</option>')
+                        .val('u')
+        
         $(selector).after(newElement);
+
         return false;
     }
 
-    function deleteForm(prefix, btn) {
-        var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
-        console.log(total)
-        if (total > 1) {
+    function deleteForm(prefixes, btn) {
+        
+        var total = parseInt($('#id_' + prefixes[0] + '-TOTAL_FORMS').val());
+        total--;
+        if (total >= 1) {
             btn.closest('.form-row').remove();
             var forms = $('.form-row');
-            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
-            for (var i = 0, formCount = forms.length; i < formCount; i++) {
+           
+            Array.prototype.forEach.call(prefixes,
+                 function (prefix) {
+                     console.log(total)
+                    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+            for (var i = 0; i < total+1; i++) {
+                
                 $(forms.get(i)).find(':input').each(function () {
                     updateElementIndex(this, prefix, i);
+                    
                 });
             }
-            total--;
+        },);
+           
         } else {
-            custom_alert.render('Campo no puede ser eliminado o no hay suficiente stock');
+            custom_alert.render("Campo no puede ser eliminado");
         }
         return false;
     }
@@ -226,9 +255,11 @@
 
 
 
+
+
     $(document).on('click', '.add-form-row', function (e) {
         e.preventDefault();
-        cloneMore('.form-row:last', 'sale-form');
+        cloneMore('.form-row:last', ['sale-form','quantity-form']);
         updatePriceOfItem()
         getUnitChoices()
         return false;
@@ -236,11 +267,9 @@
 
     $(document).on('click', '.remove-form-row', function (e) {
         e.preventDefault();
-        deleteForm('sale-form', $(this));
+        deleteForm(['sale-form','quantity-form'], $(this));
         return false;
     });
-
-
 
     //updates the total price by multiplying 'price per item' and 'quantity' 
     $(document).on('change', '.setprice', function (e) {
