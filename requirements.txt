@@ -29,7 +29,7 @@ six==1.13.0
 sqlparse==0.3.0
 sympy==1.9
 toml==0.10.2
-git+git://github.com/trzemecki/Unum.git
+git+https://github.com/trzemecki/Unum.git
 virtualenv==20.4.3
 whitenoise==5.3.0
 wrapt==1.11.2

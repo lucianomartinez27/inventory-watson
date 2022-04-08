@@ -146,3 +146,13 @@ dmypy.json
 major project.code-workspace
 
 # End of https://www.gitignore.io/api/django
+/.idea/inventory-watson.iml
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/vcs.xml
+/VENV/bin/gunicorn
+/VENV/bin/isympy
+/VENV/share/man/man1/isympy.1
+/VENV/
